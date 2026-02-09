@@ -15,7 +15,7 @@ interface ShopMapProps {
     center?: [number, number];
 }
 
-export const ShopMap = ({ shops, center = [51.505, -0.09] }: ShopMapProps) => {
+export const ShopMap = ({ shops, center = [-6.17, 35.74] }: ShopMapProps) => {
     return (
         <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="h-full w-full rounded-xl z-0">
             <TileLayer

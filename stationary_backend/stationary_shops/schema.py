@@ -156,81 +156,47 @@ class Query(graphene.ObjectType):
     shops = graphene.Field(ShopResponseDTO, filter_input=ShopFilterInput())
     my_shops = graphene.Field(ShopResponseDTO)
     shop_details = graphene.Field(SingleShopResponseDTO, id=graphene.UUID(required=True))
+    pending_shops = graphene.Field(ShopResponseDTO)
 
     def resolve_shops(self, info, filter_input=None):
-        # Extract geo params before passing to standard util to avoid "FieldError"
+        # Start with base queryset
+        qs = Shop.objects.filter(is_accepting_orders=True)
+        
+        # Extract geo params
         lat = getattr(filter_input, 'latitude', None)
         lon = getattr(filter_input, 'longitude', None)
         radius = getattr(filter_input, 'radius_km', None)
+        search_term = getattr(filter_input, 'search_term', None)
         
-        # Remove them from filter_input object so util doesn't try to filter by them directly
-        # Since filter_input is an InputObjectType, we can convert to dict first?
-        # get_paginated... converts to dict. We can pass modified dict?
-        # But get_paginated... takes filtering_object which is expected to be dict-like.
-        # We can implement custom logic here.
-        
-        qs = Shop.objects.filter(is_accepting_orders=True) # Public default
-        
-        # Geo Logic (Simple implementation for now)
+        # Apply geographic filtering if coordinates provided
         if lat is not None and lon is not None and radius is not None:
-             # Basic Bounding Box first (approx 1 degree ~ 111km)
-             lat_delta = radius / 111.0
-             lon_delta = radius / (111.0 * math.cos(math.radians(lat)))
-             qs = qs.filter(
-                 latitude__range=(lat - lat_delta, lat + lat_delta),
-                 longitude__range=(lon - lon_delta, lon + lon_delta)
-             )
-             # Then exact distance filtering in Python if dataset is small, 
-             # OR if using PostGIS use filtered QuerySet.
-             # Since strict pagination is required and we are in Python:
-             # We might lose pagination accuracy if we filter in memory.
-             # DANGER: In-memory filtering breaks pagination if applied AFTER db limit.
-             # Current Env: SQLite + No Spatialite guarantees.
-             # Strategy: Return Box-filtered results.
-             
-             # Distance Annotation for sorting
-             # We can't easily annotate simplistic haversine in SQLite without custom func.
-             pass
+            lat_delta = radius / 111.0
+            try:
+                cos_val = math.cos(math.radians(lat))
+                if abs(cos_val) < 0.0001: cos_val = 0.0001
+                lon_delta = radius / (111.0 * cos_val)
+                
+                qs = qs.filter(
+                    latitude__range=(lat - lat_delta, lat + lat_delta),
+                    longitude__range=(lon - lon_delta, lon + lon_delta)
+                )
+            except:
+                pass
+        
+        # Apply search term filtering
+        if search_term:
+            qs = qs.filter(
+                Q(name__icontains=search_term) | 
+                Q(address__icontains=search_term)
+            )
+        
+        # Return in the expected format
+        return {
+            "response": build_success_response(),
+            "data": qs,
+            "page": PageObject(has_next_page=False, total_elements=qs.count())
+        }
 
-        return get_paginated_and_non_paginated_data(
-            Shop,
-            filter_input,
-            ShopType,
-            # We can pass additional filters via Q if needed, handled by 'additional_filters' argument
-            # But we already filtered `qs`. get_paginated... starts from `model.objects`.
-            # Wait, get_paginated... takes `model` TYPE, not queryset. 
-            # Check util code: `queryset = model.objects.filter(**filter_dict)`.
-            # It creates a FRESH queryset. 
-            # I cannot pass my pre-filtered `qs`.
-            # I must pass filters via `filtering_object` or `additional_filters` (Q object).
-            # So I should convert my Box filter to Q object and pass as `additional_filters`.
-            additional_filters=None # I'll build Q here
-        )
-        
-        # Re-reading get_paginated_and_non_paginated_data:
-        # arguments: model, filtering_object, graphene_type, additional_filters, ...
-        # logic: queryset = model.objects.filter(**filter_dict) -> apply additional -> apply search -> paginate.
-        
-        q_geo = Q()
-        if lat is not None and lon is not None and radius is not None:
-             lat_delta = radius / 111.0
-             try:
-                 # Cosine can be 0 at poles, simple guard
-                 cos_val = math.cos(math.radians(lat))
-                 if abs(cos_val) < 0.0001: cos_val = 0.0001
-                 lon_delta = radius / (111.0 * cos_val)
-                 
-                 q_geo &= Q(latitude__range=(lat - lat_delta, lat + lat_delta))
-                 q_geo &= Q(longitude__range=(lon - lon_delta, lon + lon_delta))
-             except:
-                 pass
-        
-        return get_paginated_and_non_paginated_data(
-             Shop,
-             filter_input,
-             ShopType,
-             additional_filters=q_geo
-        )
     
     def resolve_my_shops(self, info):
         user = info.context.user
@@ -248,6 +214,18 @@ class Query(graphene.ObjectType):
             return {"response": build_success_response(), "data": shop}
         except Shop.DoesNotExist:
             return {"response": build_error("Shop not found"), "data": None}
+
+    def resolve_pending_shops(self, info):
+        user = info.context.user
+        if not user.is_authenticated or user.role != 'ADMIN':
+            return {"response": build_error("Admin access required"), "data": []}
+        
+        qs = Shop.objects.filter(is_verified=False)
+        return {
+            "response": build_success_response(),
+            "data": qs,
+            "page": PageObject(has_next_page=False, total_elements=qs.count())
+        }
 
 class Mutation(graphene.ObjectType):
     create_shop = CreateShopMutation.Field()

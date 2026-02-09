@@ -9,10 +9,14 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
     const token = localStorage.getItem('token');
+    // Only send the header if we actually have a token
+    if (!token || token === 'null' || token === 'undefined') {
+        return { headers };
+    }
     return {
         headers: {
             ...headers,
-            authorization: token ? `JWT ${token}` : "",
+            authorization: `JWT ${token}`,
         }
     }
 });

@@ -35,3 +35,9 @@ export interface ShopFilterInput {
     longitude?: number;
     searchTerm?: string;
 }
+export interface GetShopDetailsData {
+    shopDetails: {
+        response: Response;
+        data: Shop;
+    };
+}

@@ -12,7 +12,7 @@ from tarxemo_django_graphene_utils import (
 )
 from decimal import Decimal
 import json
-from django.db import transaction
+from django.db import transaction, models
 
 # ------------------------------
 # Types
@@ -218,5 +218,46 @@ class Query(graphene.ObjectType):
         except:
              return []
 
+class UpdateOrderStatusMutation(graphene.Mutation):
+    class Arguments:
+        order_id = graphene.UUID(required=True)
+        status = graphene.String(required=True)
+
+    response = graphene.Field(ResponseObject)
+    order = graphene.Field(OrderType)
+
+    def mutate(self, info, order_id, status):
+        user = info.context.user
+        if not user.is_authenticated:
+            return UpdateOrderStatusMutation(response=build_error("Authentication required"))
+
+        try:
+            order = Order.objects.get(id=order_id)
+            # Check if user owns the shop associated with the order
+            if order.shop.owner != user:
+                return UpdateOrderStatusMutation(response=build_error("Permission denied"))
+            
+            # Validate status
+            if status not in Order.Status.values:
+                 return UpdateOrderStatusMutation(response=build_error("Invalid status"))
+
+            order.status = status
+            # Auto-set timestamps if needed (e.g. completed_at)
+            from django.utils import timezone
+            if status == Order.Status.COMPLETED:
+                order.completed_at = timezone.now()
+            
+            order.save()
+
+            return UpdateOrderStatusMutation(
+                response=build_success_response("Order status updated"),
+                order=order
+            )
+        except Order.DoesNotExist:
+             return UpdateOrderStatusMutation(response=build_error("Order not found"))
+        except Exception as e:
+             return UpdateOrderStatusMutation(response=build_error(str(e)))
+
 class Mutation(graphene.ObjectType):
     create_order = CreateOrderMutation.Field()
+    update_order_status = UpdateOrderStatusMutation.Field()

@@ -22,7 +22,7 @@ class UserType(DjangoObjectType):
     class Meta:
         model = User
         fields = (
-            "id", "email", "role", "subscription_tier", 
+            "id", "email", "first_name", "last_name", "role", "subscription_tier", 
             "phone_number", "is_verified", "avatar", 
             "created_at", "updated_at", "is_active",
             "date_joined", "last_login"
@@ -36,11 +36,20 @@ class AuthResponseDTO(BaseResponseDTO):
     refresh_token = graphene.String()
     user = graphene.Field(UserType)
 
+class LoginResponseDTO(graphene.ObjectType):
+    token = graphene.String()
+    refresh_token = graphene.String()
+    user = graphene.Field(UserType)
+    response = graphene.Field(ResponseObject)
+
 # ------------------------------
 # Mutations
 # ------------------------------
 
 class RegisterUserMutation(graphene.Mutation):
+    # This ensures the mutation remains accessible even if a malformed token is present
+    allow_any = True
+
     class Arguments:
         email = graphene.String(required=True)
         password = graphene.String(required=True)
@@ -76,26 +85,27 @@ class RegisterUserMutation(graphene.Mutation):
             return RegisterUserMutation(response=build_error(str(e)))
 
 
-class LoginMutation(graphql_jwt.JSONWebTokenMutation):
-    # Extending default to add our standardized response wrapper
-    response = graphene.Field(ResponseObject)
+class LoginMutation(graphql_jwt.ObtainJSONWebToken):
+    # Standardizing the response to match the frontend expectations
+    # ObtainJSONWebToken returns token by default, but we need to explicitly 
+    # redefine 'user' if we want it to be guaranteed in our custom class
     user = graphene.Field(UserType)
+    response = graphene.Field(ResponseObject)
 
     @classmethod
     def resolve(cls, root, info, **kwargs):
         try:
+            # super().resolve handles the authentication via the GraphQL-JWT logic
             result = super().resolve(root, info, **kwargs)
-            # result is the mutation instance with token, etc. set
-            if result and result.token:
+            
+            # If authentication is successful, we populate our custom fields
+            if result:
+                # The authenticated user is placed in info.context.user by the backend
+                result.user = info.context.user
                 result.response = build_success_response("Login successful.")
-                # We need to fetch the user if 'user' isn't populated by default logic in strict way
-                # but JSONWebTokenMutation sets .user usually if requested.
-            else:
-                # Should not happen if super().resolve returns success without error
-                pass
             return result
         except Exception as e:
-            return cls(response=build_error(str(e)))
+            return cls(user=None, response=build_error(str(e)))
 
 # ------------------------------
 # Schema Definition

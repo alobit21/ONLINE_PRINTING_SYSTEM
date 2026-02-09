@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party apps
     "graphene_django",
+    "corsheaders",
+    "graphql_jwt.refresh_token",
     "tarxemo_django_graphene_utils",
 
     # Local apps
@@ -54,6 +56,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -133,7 +136,7 @@ AUTH_USER_MODEL = "stationary_accounts.User"
 GRAPHENE = {
     "SCHEMA": "stationary_config.schema.schema",
     "MIDDLEWARE": [
-        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+        "stationary_core.middleware.SafeJSONWebTokenMiddleware",
     ],
 }
 
@@ -142,4 +145,18 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+GRAPHQL_JWT = {
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+    "JWT_HIDE_TOKEN_EXPIRED": True,
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_jwt.mutations.Verify",
+        "graphql_jwt.mutations.Refresh",
+        "stationary_accounts.schema.RegisterUserMutation",
+    ],
+}
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]

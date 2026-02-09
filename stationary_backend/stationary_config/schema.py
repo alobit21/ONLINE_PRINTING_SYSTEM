@@ -3,9 +3,11 @@ import stationary_accounts.schema
 import stationary_shops.schema
 import stationary_storage.schema
 import stationary_orders.schema
+import stationary_core.schema
 
 class Query(stationary_accounts.schema.Query, stationary_shops.schema.Query, 
-            stationary_storage.schema.Query, stationary_orders.schema.Query, graphene.ObjectType):
+            stationary_storage.schema.Query, stationary_orders.schema.Query,
+            stationary_core.schema.Query, graphene.ObjectType):
     # Aggregate other apps here later
     pass
 

@@ -5,6 +5,7 @@ import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { CustomerDashboard } from './pages/dashboard/CustomerDashboard';
 import { ShopDashboard } from './pages/dashboard/ShopDashboard';
+import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { useAuthStore } from './stores/authStore';
 import { DashboardLayout } from './layouts/DashboardLayout';
 
@@ -35,9 +36,10 @@ function App() {
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute allowedRoles={['CUSTOMER', 'SHOP_OWNER', 'ADMIN']} />}>
+              <Route path="/dashboard/customer/*" element={<CustomerDashboard />} />
               <Route element={<DashboardLayout />}>
-                <Route path="/dashboard/customer" element={<CustomerDashboard />} />
-                <Route path="/dashboard/shop" element={<ShopDashboard />} />
+                <Route path="/dashboard/shop/*" element={<ShopDashboard />} />
+                <Route path="/dashboard/admin/*" element={<AdminDashboard />} />
                 {/* Add more nested routes here */}
               </Route>
             </Route>
