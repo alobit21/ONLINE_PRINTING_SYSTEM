@@ -9,6 +9,8 @@ import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { useAuthStore } from './stores/authStore';
 import { DashboardLayout } from './layouts/DashboardLayout';
 
+import { LandingPage } from './pages/landing/LandingPage';
+
 // Protected Route Component
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -24,6 +26,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   return <Outlet />;
 };
 
+
 function App() {
   return (
     <ApolloProvider client={client}>
@@ -31,6 +34,7 @@ function App() {
         <div className="min-h-screen bg-slate-50 font-sans antialiased">
           <Routes>
             {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
@@ -44,8 +48,6 @@ function App() {
               </Route>
             </Route>
 
-            {/* Redirect root to login for now */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
       </Router>
