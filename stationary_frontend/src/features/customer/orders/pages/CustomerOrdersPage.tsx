@@ -1,17 +1,24 @@
 import { useState } from 'react';
 import { useCustomerOrders } from '../hooks/useCustomerOrders';
+import { useOrderLiveTracking } from '../hooks/useOrderLiveTracking';
 import { OrdersTabs } from '../components/OrdersTabs';
 import { OrderCard } from '../components/OrderCard';
 import { OrderDetailsDrawer } from '../components/OrderDetailsDrawer';
-import type { Order } from '../types';
+import { OrderTimelineModal } from '../components/OrderTimelineModal';
+import { ReorderFlow } from '../components/ReorderFlow';
+import { NotificationCenter } from '../components/NotificationCenter';
+import type { Order, OrderStatus } from '../types';
 import { Loader2, PackageSearch, ArrowLeft, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../lib/utils';
+import { useNotificationStore } from '../../../../stores/notificationStore';
 
 export const CustomerOrdersPage = () => {
     const navigate = useNavigate();
+    const { addNotification } = useNotificationStore();
+
     const {
         activeOrders,
         completedOrders,
@@ -22,6 +29,53 @@ export const CustomerOrdersPage = () => {
 
     const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'cancelled'>('active');
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [timelineOrder, setTimelineOrder] = useState<Order | null>(null);
+    const [reorderOrder, setReorderOrder] = useState<Order | null>(null);
+
+    // Live tracking for active orders
+    const { isTracking } = useOrderLiveTracking({
+        onStatusChange: (newStatus: OrderStatus, order: Order) => {
+            // Send notification on status change
+            const statusMessages: Record<OrderStatus, { title: string; message: string }> = {
+                UPLOADED: {
+                    title: 'Order Uploaded',
+                    message: `Your order has been uploaded to ${order.shop.name}`
+                },
+                ACCEPTED: {
+                    title: 'Order Accepted',
+                    message: `${order.shop.name} has accepted your order`
+                },
+                PRINTING: {
+                    title: 'Printing Started',
+                    message: `Your documents are now being printed`
+                },
+                READY: {
+                    title: 'Order Ready! 🎉',
+                    message: `Your order is ready for pickup at ${order.shop.name}`
+                },
+                COMPLETED: {
+                    title: 'Order Completed',
+                    message: `Thank you for using our service!`
+                },
+                CANCELLED: {
+                    title: 'Order Cancelled',
+                    message: `Your order has been cancelled`
+                }
+            };
+
+            const statusInfo = statusMessages[newStatus];
+            if (statusInfo) {
+                addNotification({
+                    type: newStatus === 'READY' ? 'order_ready' : newStatus === 'COMPLETED' ? 'order_completed' : 'order_status',
+                    title: statusInfo.title,
+                    message: statusInfo.message,
+                    orderId: order.id,
+                    orderStatus: newStatus,
+                    actionUrl: '/dashboard/customer/orders'
+                });
+            }
+        }
+    });
 
     const counts = {
         active: activeOrders.length,
@@ -34,6 +88,16 @@ export const CustomerOrdersPage = () => {
         completed: completedOrders,
         cancelled: cancelledOrders
     }[activeTab];
+
+    const handleReorderSuccess = () => {
+        refetch();
+        addNotification({
+            type: 'success',
+            title: 'Order Placed Successfully',
+            message: 'Your reorder has been placed and is being processed',
+            actionUrl: '/dashboard/customer/orders'
+        });
+    };
 
     return (
         <div className="space-y-6 fade-in pb-32 max-w-2xl mx-auto">
@@ -50,13 +114,27 @@ export const CustomerOrdersPage = () => {
                         <p className="text-slate-500 font-medium text-sm">Track and manage your print jobs</p>
                     </div>
                 </div>
-                <button
-                    onClick={() => refetch()}
-                    disabled={loading}
-                    className="p-2.5 bg-white border border-slate-100 rounded-2xl shadow-sm text-slate-400 hover:text-brand-600 transition-all hover:rotate-180 disabled:opacity-50"
-                >
-                    <RotateCcw className={cn("h-5 w-5", loading && "animate-spin")} />
-                </button>
+                <div className="flex items-center gap-2">
+                    {/* Live tracking indicator */}
+                    {isTracking && activeOrders.length > 0 && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-xl">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                            <span className="text-xs font-bold text-green-700">Live</span>
+                        </div>
+                    )}
+
+                    {/* Notification Center */}
+                    <NotificationCenter />
+
+                    {/* Refresh Button */}
+                    <button
+                        onClick={() => refetch()}
+                        disabled={loading}
+                        className="p-2.5 bg-white border border-slate-100 rounded-2xl shadow-sm text-slate-400 hover:text-brand-600 transition-all hover:rotate-180 disabled:opacity-50"
+                    >
+                        <RotateCcw className={cn("h-5 w-5", loading && "animate-spin")} />
+                    </button>
+                </div>
             </header>
 
             <OrdersTabs
@@ -120,9 +198,31 @@ export const CustomerOrdersPage = () => {
                 )}
             </div>
 
+            {/* Order Details Drawer */}
             <OrderDetailsDrawer
                 order={selectedOrder}
                 onClose={() => setSelectedOrder(null)}
+                onViewTimeline={(order) => {
+                    setTimelineOrder(order);
+                    setSelectedOrder(null);
+                }}
+                onReorder={(order) => {
+                    setReorderOrder(order);
+                    setSelectedOrder(null);
+                }}
+            />
+
+            {/* Timeline Modal */}
+            <OrderTimelineModal
+                order={timelineOrder}
+                onClose={() => setTimelineOrder(null)}
+            />
+
+            {/* Reorder Flow */}
+            <ReorderFlow
+                order={reorderOrder}
+                onClose={() => setReorderOrder(null)}
+                onSuccess={handleReorderSuccess}
             />
         </div>
     );

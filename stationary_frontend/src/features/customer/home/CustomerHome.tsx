@@ -1,11 +1,90 @@
 import { useNavigate } from 'react-router-dom';
-import { FileUp, Clock, MapPin, Zap, TrendingUp, ChevronRight, Star } from 'lucide-react';
+import { FileUp, Clock, MapPin, Zap, TrendingUp, ChevronRight, Star, AlertCircle } from 'lucide-react';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import { cn } from '../../../lib/utils';
+import { useQuery } from '@apollo/client/react';
+import { GET_MY_ORDERS } from '../orders/api';
+import { GET_SHOPS } from '../../shops/api';
+import { useState, useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 
 export const CustomerHome = () => {
     const navigate = useNavigate();
+    const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
+    // Get user's geolocation
+    useEffect(() => {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation([position.coords.latitude, position.coords.longitude]);
+                },
+                () => {
+                    // Fallback to default location (Dodoma, Tanzania)
+                    setUserLocation([-6.17, 35.74]);
+                }
+            );
+        } else {
+            setUserLocation([-6.17, 35.74]);
+        }
+    }, []);
+
+    const { data: ordersData, loading: ordersLoading, error: ordersError, refetch: refetchOrders } = useQuery(GET_MY_ORDERS);
+
+    const { data: shopsData, loading: shopsLoading, error: shopsError, refetch: refetchShops } = useQuery(GET_SHOPS, {
+        variables: {
+            filterInput: {
+                radiusKm: 20,
+                latitude: userLocation?.[0],
+                longitude: userLocation?.[1],
+            }
+        },
+        skip: !userLocation
+    });
+
+    const isLoading = ordersLoading || shopsLoading || !userLocation;
+    const hasError = ordersError || shopsError;
+
+    const recentOrders = ordersData?.myOrders?.slice(0, 3) || [];
+    const nearbyShops = shopsData?.shops?.data?.slice(0, 4) || [];
+
+    // Calculate average speed from completed orders
+    const completedOrders = ordersData?.myOrders?.filter((o: any) => o.status === 'COMPLETED' && o.completedAt && o.createdAt) || [];
+    const avgSpeed = completedOrders.length > 0
+        ? Math.round(completedOrders.reduce((acc: number, curr: any) => {
+            const duration = (new Date(curr.completedAt).getTime() - new Date(curr.createdAt).getTime()) / (1000 * 60);
+            return acc + duration;
+        }, 0) / completedOrders.length)
+        : null;
+
+    const stats = {
+        avgSpeed: avgSpeed ? `${avgSpeed} mins` : "N/A",
+        nearbyCount: shopsData?.shops?.page?.totalElements || 0,
+        totalSpent: ordersData?.myOrders?.reduce((acc: number, curr: any) => acc + curr.totalPrice, 0) || 0,
+        recentStatus: ordersData?.myOrders?.[0]?.status || 'None'
+    };
+
+    if (hasError) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+                <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center">
+                    <AlertCircle className="h-8 w-8 text-red-600" />
+                </div>
+                <div>
+                    <p className="font-bold text-slate-900">Unable to load dashboard data</p>
+                    <p className="text-sm text-slate-500 mt-1">Please check your connection and try again.</p>
+                </div>
+                <Button
+                    onClick={() => { refetchOrders(); refetchShops(); }}
+                    className="mt-2"
+                >
+                    Retry
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 fade-in">
@@ -48,36 +127,61 @@ export const CustomerHome = () => {
 
             {/* Quick Stats / Info Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <QuickStat icon={Zap} label="Average Speed" value="12 mins" color="bg-amber-100 text-amber-600" />
-                <QuickStat icon={MapPin} label="Nearby Shops" value="14 active" color="bg-blue-100 text-blue-600" />
-                <QuickStat icon={TrendingUp} label="Total Saved" value="$42.50" color="bg-green-100 text-green-600" />
-                <QuickStat icon={Clock} label="Recent Job" value="Completed" color="bg-purple-100 text-purple-600" />
+                {isLoading ? (
+                    <>
+                        <StatSkeleton />
+                        <StatSkeleton />
+                        <StatSkeleton />
+                        <StatSkeleton />
+                    </>
+                ) : (
+                    <>
+                        <QuickStat icon={Zap} label="Average Speed" value={stats.avgSpeed} color="bg-amber-100 text-amber-600" />
+                        <QuickStat icon={MapPin} label="Nearby Shops" value={`${stats.nearbyCount} active`} color="bg-blue-100 text-blue-600" />
+                        <QuickStat 
+                            icon={TrendingUp} 
+                            label="Total Spent" 
+                            value={`$${Number(stats?.totalSpent || 0).toFixed(2)}`} 
+                            color="bg-green-100 text-green-600" 
+                        />
+                        <QuickStat icon={Clock} label="Recent Job" value={stats.recentStatus} color="bg-purple-100 text-purple-600" />
+                    </>
+                )}
             </div>
 
             {/* Section: Recent Orders */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center px-2">
                     <h3 className="text-xl font-bold text-slate-800">Recent Print Jobs</h3>
-                    <Button variant="ghost" size="sm" className="text-brand-600 font-bold">See all</Button>
+                    <Button variant="ghost" size="sm" className="text-brand-600 font-bold" onClick={() => navigate('/dashboard/customer/orders')}>See all</Button>
                 </div>
 
                 <div className="space-y-3">
-                    <RecentJobCard
-                        id="ORD-9281"
-                        shop="City Print Central"
-                        status="ready"
-                        time="12 min ago"
-                        price={4.50}
-                        files={2}
-                    />
-                    <RecentJobCard
-                        id="ORD-9275"
-                        shop="Elite Stationery"
-                        status="completed"
-                        time="Yesterday"
-                        price={12.80}
-                        files={5}
-                    />
+                    {isLoading ? (
+                        <>
+                            <JobCardSkeleton />
+                            <JobCardSkeleton />
+                        </>
+                    ) : recentOrders.length === 0 ? (
+                        <Card className="border-dashed border-2 border-slate-200 bg-slate-50/50">
+                            <CardContent className="p-8 text-center text-slate-500">
+                                <p className="font-bold">No recent orders yet</p>
+                                <p className="text-sm mt-1">Start your first print job today!</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        recentOrders.map((order: any) => (
+                            <RecentJobCard
+                                key={order.id}
+                                id={`ORD-${order.id.split('-')[0].toUpperCase()}`}
+                                shop={order.shop?.name}
+                                status={order.status.toLowerCase()}
+                                time={formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}
+                                price={order.totalPrice}
+                                files={order.items?.length || 0}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
 
@@ -85,9 +189,24 @@ export const CustomerHome = () => {
             <div className="space-y-4">
                 <h3 className="text-xl font-bold text-slate-800 px-2">Popular Nearby Stations</h3>
                 <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
-                    <RecommendedShop name="Main Street Prints" rating={4.9} distance="0.8km" />
-                    <RecommendedShop name="Campus Express" rating={4.7} distance="1.2km" />
-                    <RecommendedShop name="QuickCopy Ltd" rating={4.8} distance="2.4km" />
+                    {isLoading ? (
+                        <>
+                            <ShopSkeleton />
+                            <ShopSkeleton />
+                            <ShopSkeleton />
+                        </>
+                    ) : nearbyShops.length === 0 ? (
+                        <p className="text-slate-500 text-sm px-2">No shops found in your immediate area.</p>
+                    ) : (
+                        nearbyShops.map((shop: any) => (
+                            <RecommendedShop
+                                key={shop.id}
+                                name={shop.name}
+                                rating={shop.rating || 4.8}
+                                distance={`${Number(shop.distance || 0).toFixed(1)}km`}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         </div>
@@ -101,7 +220,7 @@ const QuickStat = ({ icon: Icon, label, value, color }: any) => (
                 <Icon className="h-5 w-5" />
             </div>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
-            <p className="text-sm font-black text-slate-900 mt-0.5">{value}</p>
+            <p className="text-sm font-black text-slate-900 mt-0.5 truncate w-full">{value}</p>
         </CardContent>
     </Card>
 );
@@ -111,17 +230,17 @@ const RecentJobCard = ({ id, shop, status, time, price, files }: any) => (
         <CardContent className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div className={cn(
-                    "h-12 w-12 rounded-2xl flex items-center justify-center shadow-lg",
-                    status === 'ready' ? "bg-green-500 rotate-12" : "bg-slate-200"
+                    "h-12 w-12 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:rotate-12",
+                    status === 'ready' || status === 'completed' ? "bg-green-500" : "bg-brand-500"
                 )}>
-                    {status === 'ready' ? <Clock className="h-6 w-6 text-white" /> : <TrendingUp className="h-6 w-6 text-slate-400" />}
+                    {status === 'ready' || status === 'pending' ? <Clock className="h-6 w-6 text-white" /> : <TrendingUp className="h-6 w-6 text-white" />}
                 </div>
                 <div>
                     <div className="flex items-center gap-2">
                         <span className="font-black text-slate-900">{id}</span>
                         <span className={cn(
                             "text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full",
-                            status === 'ready' ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
+                            status === 'ready' || status === 'completed' ? "bg-green-100 text-green-700" : "bg-brand-100 text-brand-700"
                         )}>
                             {status}
                         </span>
@@ -130,7 +249,7 @@ const RecentJobCard = ({ id, shop, status, time, price, files }: any) => (
                 </div>
             </div>
             <div className="text-right">
-                <p className="font-black text-slate-900">${price.toFixed(2)}</p>
+                <p className="font-black text-slate-900">${Number(price || 0).toFixed(2)}</p>
                 <p className="text-[10px] font-medium text-slate-400">{time}</p>
             </div>
         </CardContent>
@@ -152,6 +271,49 @@ const RecommendedShop = ({ name, rating, distance }: any) => (
             <div className="flex items-center gap-1 text-xs font-black text-brand-600">
                 View <ChevronRight className="h-3 w-3" />
             </div>
+        </div>
+    </div>
+);
+
+// Skeletons
+const StatSkeleton = () => (
+    <Card className="border-none shadow-md bg-white">
+        <CardContent className="p-4 flex flex-col items-center">
+            <Skeleton className="h-10 w-10 rounded-xl mb-2" />
+            <Skeleton className="h-3 w-16 mb-1" />
+            <Skeleton className="h-4 w-20" />
+        </CardContent>
+    </Card>
+);
+
+const JobCardSkeleton = () => (
+    <Card className="border-none shadow-sm bg-white">
+        <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+                <div className="space-y-2">
+                    <div className="flex gap-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-12 rounded-full" />
+                    </div>
+                    <Skeleton className="h-3 w-32" />
+                </div>
+            </div>
+            <div className="text-right space-y-2">
+                <Skeleton className="h-4 w-12 ml-auto" />
+                <Skeleton className="h-3 w-16 ml-auto" />
+            </div>
+        </CardContent>
+    </Card>
+);
+
+const ShopSkeleton = () => (
+    <div className="min-w-[200px] bg-white rounded-3xl p-5 shadow-lg border border-slate-100">
+        <Skeleton className="h-28 w-full rounded-2xl mb-4" />
+        <Skeleton className="h-5 w-3/4 mb-3" />
+        <div className="flex justify-between items-center">
+            <Skeleton className="h-3 w-12" />
+            <Skeleton className="h-3 w-8" />
         </div>
     </div>
 );

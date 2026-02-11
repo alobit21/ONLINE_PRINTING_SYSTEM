@@ -18,8 +18,11 @@ export interface UploadedFile {
     size: number;
     type: string;
     progress: number;
-    status: 'uploading' | 'completed' | 'error' | 'analyzing' | 'ready';
+    status: 'uploading' | 'completed' | 'error' | 'analyzing' | 'ready' | 'queued';
     metadata?: DocumentMetadata;
+    preview?: string;  // Add this line
+    error?: string;    // Also adding error as it's used in the code
+    queuedAt?: string; // And queuedAt is also used
 }
 
 interface CustomerState {

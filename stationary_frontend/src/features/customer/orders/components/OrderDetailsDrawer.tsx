@@ -1,18 +1,21 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Order, OrderStatus } from '../types';
-import { X, FileText, CheckCircle2, Download, RefreshCw, MessageSquare } from 'lucide-react';
+import { X, FileText, CheckCircle2, Download, RefreshCw, MessageSquare, Clock } from 'lucide-react';
 import { Badge } from './Badge';
 import { cn } from '../../../../lib/utils';
 import { Button } from '../../../../components/ui/Button';
+import { InvoiceDownloader } from './InvoiceDownloader';
 
 interface OrderDetailsDrawerProps {
     order: Order | null;
     onClose: () => void;
+    onViewTimeline?: (order: Order) => void;
+    onReorder?: (order: Order) => void;
 }
 
 const statusSteps: OrderStatus[] = ['UPLOADED', 'ACCEPTED', 'PRINTING', 'READY', 'COMPLETED'];
 
-export const OrderDetailsDrawer = ({ order, onClose }: OrderDetailsDrawerProps) => {
+export const OrderDetailsDrawer = ({ order, onClose, onViewTimeline, onReorder }: OrderDetailsDrawerProps) => {
     if (!order) return null;
 
     const currentStatusIndex = statusSteps.indexOf(order.status);
@@ -167,21 +170,42 @@ export const OrderDetailsDrawer = ({ order, onClose }: OrderDetailsDrawerProps) 
                             </div>
 
                             {/* Actions */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <Button variant="outline" className="h-14 rounded-2xl gap-2 border-slate-200">
-                                    <Download className="h-5 w-5" />
-                                    Invoice
-                                </Button>
-                                <Button className="h-14 rounded-2xl gap-2 gradient-brand shadow-lg">
-                                    <RefreshCw className="h-5 w-5" />
-                                    Reorder
+                            <div className="space-y-3">
+                                {/* View Timeline Button */}
+                                {!isCancelled && onViewTimeline && (
+                                    <Button
+                                        onClick={() => onViewTimeline(order)}
+                                        variant="outline"
+                                        className="w-full h-14 rounded-2xl gap-2 border-slate-200"
+                                    >
+                                        <Clock className="h-5 w-5" />
+                                        View Timeline
+                                    </Button>
+                                )}
+
+                                {/* Invoice & Reorder */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <InvoiceDownloader order={order} />
+                                    {onReorder && (
+                                        <Button
+                                            onClick={() => onReorder(order)}
+                                            className="h-14 rounded-2xl gap-2 gradient-brand shadow-lg"
+                                        >
+                                            <RefreshCw className="h-5 w-5" />
+                                            Reorder
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {/* Contact Support */}
+                                <Button
+                                    variant="outline"
+                                    className="w-full h-14 rounded-2xl gap-2 text-slate-500 hover:text-brand-600 transition-colors"
+                                >
+                                    <MessageSquare className="h-5 w-5" />
+                                    Contact Support
                                 </Button>
                             </div>
-
-                            <Button variant="outline" className="w-full h-14 rounded-2xl gap-2 text-slate-500 hover:text-brand-600 transition-colors">
-                                <MessageSquare className="h-5 w-5" />
-                                Contact Support
-                            </Button>
                         </div>
                     </motion.div>
                 </>

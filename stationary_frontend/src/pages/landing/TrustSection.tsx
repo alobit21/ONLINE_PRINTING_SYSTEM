@@ -1,101 +1,100 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Lock, Award, Star, Quote } from 'lucide-react';
+import { Shield, Lock, Star, Quote } from 'lucide-react';
 
 export const TrustSection = () => {
     const stats = [
-        { label: 'Documents Printed', value: '1.2M+' },
-        { label: 'Active Customers', value: '50k+' },
-        { label: 'Partner Shops', value: '850+' },
-        { label: 'Rating', value: '4.9/5' },
+        { label: 'Printed Items', value: '1.2M+' },
+        { label: 'Active Users', value: '50k+' },
+        { label: 'Global Shops', value: '850+' },
+        { label: 'Satisfaction', value: '4.9/5' },
     ];
 
     const testimonials = [
         {
-            text: "The cost optimization tool saved me $50 on my final semester project. It's a game changer for students.",
+            text: "The budget analysis tool is incredible. As a final year student, I was able to optimize my thesis printing and save significantly.",
             author: "Sarah Jenkins",
             role: "Medical Student",
-            image: "https://i.pravatar.cc/100?img=32"
+            image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
         },
         {
-            text: "Joining Sationary doubled our daily orders within the first month. The ordering system is much better than WhatsApp.",
+            text: "We digitalized our entire physical queue. Our shop throughput increased by 200% within the first two months.",
             author: "Michael Chen",
-            role: "Shop Owner at Campus Prints",
-            image: "https://i.pravatar.cc/100?img=12"
+            role: "Owner, Campus Prints",
+            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
         }
     ];
 
     return (
-        <section className="py-24 bg-white overflow-hidden">
-            <div className="container mx-auto px-4 md:px-6">
-                {/* Stats Grid */}
-                <div className="bg-brand-600 rounded-[3rem] p-12 mb-24 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+        <section className="section-padding bg-white overflow-hidden text-center">
+            <div className="section-container">
+                {/* Giant Stats Card */}
+                <div className="bg-brand-600 rounded-[4rem] p-16 lg:p-24 mb-32 relative overflow-hidden shadow-[0_48px_96px_-16px_rgba(99,102,241,0.3)]">
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px] pointer-events-none" />
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
                         {stats.map((stat, i) => (
                             <motion.div
                                 key={i}
-                                initial={{ opacity: 0, scale: 0.5 }}
+                                initial={{ opacity: 0, scale: 0.8 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="text-center"
+                                className="flex flex-col gap-2"
                             >
-                                <div className="text-4xl md:text-5xl font-black text-white mb-2">{stat.value}</div>
-                                <div className="text-brand-100 text-sm font-bold uppercase tracking-widest">{stat.label}</div>
+                                <div className="text-5xl lg:text-7xl font-black text-white leading-none tracking-tighter">{stat.value}</div>
+                                <div className="text-brand-100 text-xs lg:text-sm font-black uppercase tracking-[0.2em]">{stat.label}</div>
                             </motion.div>
                         ))}
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-20 items-center">
+                <div className="flex flex-col lg:flex-row gap-20 lg:gap-32 items-center text-left">
                     <div className="flex-1">
-                        <h2 className="text-brand-600 font-bold tracking-wider uppercase text-sm mb-4">Trusted by Thousands</h2>
-                        <h3 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8 leading-tight">
-                            Safety and security comes first.
+                        <h2 className="text-brand-600 font-black tracking-widest uppercase text-xs mb-4">Trust Infrastructure</h2>
+                        <h3 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 leading-tight">
+                            Safety and security<br />baked into the core.
                         </h3>
 
-                        <div className="space-y-8">
-                            <div className="flex gap-6">
-                                <div className="bg-slate-100 p-4 rounded-2xl h-fit">
-                                    <Shield className="text-brand-600" />
+                        <div className="space-y-10 mt-12">
+                            <div className="flex gap-8 group">
+                                <div className="bg-slate-50 p-5 rounded-3xl h-fit border border-slate-100 group-hover:bg-brand-50 group-hover:border-brand-100 transition-colors">
+                                    <Shield className="text-brand-600" size={28} />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-bold text-slate-900 mb-2">Military-grade Encryption</h4>
-                                    <p className="text-slate-600">All your documents are encrypted during transit and automatically deleted after successful printing.</p>
+                                    <h4 className="text-xl font-black text-slate-900 mb-2">Vault-grade Encryption</h4>
+                                    <p className="text-slate-500 font-semibold leading-relaxed">Your documents are encrypted end-to-end and purged immediately after professional printing is confirmed.</p>
                                 </div>
                             </div>
-                            <div className="flex gap-6">
-                                <div className="bg-slate-100 p-4 rounded-2xl h-fit">
-                                    <Lock className="text-brand-600" />
+                            <div className="flex gap-8 group">
+                                <div className="bg-slate-50 p-5 rounded-3xl h-fit border border-slate-100 group-hover:bg-brand-50 group-hover:border-brand-100 transition-colors">
+                                    <Lock className="text-brand-600" size={28} />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-bold text-slate-900 mb-2">Secure Payments</h4>
-                                    <p className="text-slate-600">We partner with leading payment providers to ensure your financial information is never stored on our servers.</p>
+                                    <h4 className="text-xl font-black text-slate-900 mb-2">Authenticated Transactions</h4>
+                                    <p className="text-slate-500 font-semibold leading-relaxed">We utilize industry-leading payment gateways ensuring your financial credentials never touch our perimeter.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex-1 grid grid-cols-1 gap-6">
+                    <div className="flex-1 grid grid-cols-1 gap-10 w-full">
                         {testimonials.map((t, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, x: 20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 relative"
+                                className="bg-slate-50 p-10 rounded-[3rem] border border-slate-100 relative hover:bg-white hover:shadow-2xl transition-all duration-500"
                             >
-                                <Quote className="absolute top-8 right-8 text-slate-200" size={48} />
-                                <div className="flex items-center gap-1 text-warning mb-6">
+                                <Quote className="absolute top-10 right-10 text-slate-200" size={56} strokeWidth={1.5} />
+                                <div className="flex items-center gap-1.5 text-warning mb-8">
                                     {[1, 2, 3, 4, 5].map(star => <Star key={star} size={16} fill="currentColor" />)}
                                 </div>
-                                <p className="text-slate-700 text-lg italic mb-8 relative z-10 leading-relaxed">"{t.text}"</p>
-                                <div className="flex items-center gap-4">
-                                    <img src={t.image} alt={t.author} className="w-12 h-12 rounded-full ring-4 ring-white" />
+                                <p className="text-slate-700 text-xl font-bold tracking-tight mb-10 relative z-10 italic leading-relaxed">"{t.text}"</p>
+                                <div className="flex items-center gap-5">
+                                    <img src={t.image} alt={t.author} className="w-16 h-16 rounded-2xl object-cover ring-4 ring-white shadow-lg" />
                                     <div>
-                                        <h5 className="font-bold text-slate-900">{t.author}</h5>
-                                        <p className="text-slate-500 text-xs font-medium">{t.role}</p>
+                                        <h5 className="font-black text-slate-900 text-lg leading-tight">{t.author}</h5>
+                                        <p className="text-slate-400 text-xs font-black uppercase tracking-wider mt-1">{t.role}</p>
                                     </div>
                                 </div>
                             </motion.div>

@@ -22,7 +22,7 @@ export const GET_MY_ORDERS = gql`
                 configSnapshot
                 document {
                     id
-                    name
+                    fileName
                 }
             }
         }
