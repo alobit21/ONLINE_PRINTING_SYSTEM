@@ -30,12 +30,29 @@ import { Loader2, Store } from 'lucide-react';
 
 interface MyShopsData {
     myShops: {
+        response: {
+            status: string;
+            message: string;
+        };
         data: Array<{
             id: string;
             name: string;
             address: string;
             isAcceptingOrders: boolean;
         }>;
+    };
+}
+
+interface CreateShopData {
+    createShop: {
+        response: {
+            status: string;
+            message: string;
+        };
+        shop: {
+            id: string;
+            name: string;
+        };
     };
 }
 
@@ -103,6 +120,14 @@ export const ShopDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
+    const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+
+    // Role check
+    useEffect(() => {
+        if (user && user.role !== 'SHOP_OWNER' && user.role !== 'ADMIN') {
+            navigate('/dashboard/customer');
+        }
+    }, [user, navigate]);
 
     const getActiveTab = () => {
         const path = location.pathname;
@@ -120,7 +145,9 @@ export const ShopDashboard = () => {
     };
 
     // Fetch Shop Data
-    const { data: myShopsData, loading: shopsLoading, error: shopsError, refetch: refetchShops } = useQuery<MyShopsData>(GET_MY_SHOPS);
+    const { data: myShopsData, loading: shopsLoading, error: shopsError, refetch: refetchShops } = useQuery<MyShopsData>(GET_MY_SHOPS, {
+        fetchPolicy: 'network-only',
+    });
 
     useEffect(() => {
         if (shopsError) console.error("Error fetching shops:", shopsError);
@@ -128,11 +155,13 @@ export const ShopDashboard = () => {
     }, [shopsError, myShopsData]);
 
     const shopId = myShopsData?.myShops?.data?.[0]?.id;
+    const myShopsStatus = myShopsData?.myShops?.response?.status;
+    const myShopsMessage = myShopsData?.myShops?.response?.message;
 
-    const [createShop, { loading: creatingShop, error: createError }] = useMutation(CREATE_SHOP, {
+    const [createShop, { loading: creatingShop, error: createError }] = useMutation<CreateShopData>(CREATE_SHOP, {
         onCompleted: (data) => {
             console.log("Shop created:", data);
-            if (data?.createShop?.response?.status === 'SUCCESS') {
+            if (data?.createShop?.response?.status) {
                 refetchShops();
             } else {
                 console.error("Shop creation failed:", data?.createShop?.response?.message);
@@ -153,7 +182,7 @@ export const ShopDashboard = () => {
                 address: "Dodoma, Tanzania",
                 latitude: -6.1630,
                 longitude: 35.7516,
-                description: "Simulated shop created from dashboard."
+                description: "Professional printing services for students and businesses."
             }
         });
     };
@@ -180,22 +209,51 @@ export const ShopDashboard = () => {
         customerCount: new Set(shopOrders.map((o: any) => o.customer?.id)).size
     };
 
-    // ... (rest of logic)
 
-    // Render "Create Shop" state if no shop exists
-    if (!shopsLoading && !shopId) {
-        if (shopsError) {
+
+    // Loading State
+    if (shopsLoading) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <Loader2 className="h-12 w-12 text-brand-600 animate-spin mx-auto" />
+                    <p className="text-slate-500 font-medium animate-pulse">Loading your dashboard...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Render "Create Shop" state if no shop exists or there's an API-level error
+    if (!shopId) {
+        const isAuthError = myShopsStatus === false && myShopsMessage?.toLowerCase().includes('auth');
+
+        if (shopsError || myShopsStatus === false) {
             return (
-                <div className="min-h-screen flex items-center justify-center p-4">
-                    <Card className="max-w-md w-full bg-red-50 border-red-200">
+                <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+                    <Card className="max-w-md w-full shadow-2xl border-none overflow-hidden">
+                        <div className="h-2 bg-red-500" />
                         <CardHeader>
-                            <CardTitle className="text-red-700">Error Loading Shop</CardTitle>
+                            <CardTitle className="text-red-700 flex items-center gap-2">
+                                <AlertCircle className="h-5 w-5" />
+                                {isAuthError ? 'Session Expired' : 'Connection Error'}
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-red-600 mb-4">{shopsError.message}</p>
-                            <Button onClick={() => refetchShops()} variant="outline" className="border-red-200 hover:bg-red-100 text-red-700">
-                                Retry
-                            </Button>
+                        <CardContent className="space-y-4">
+                            <p className="text-slate-600 text-sm">
+                                {isAuthError
+                                    ? "Your session has expired. Please log in again to manage your shops."
+                                    : (shopsError?.message || myShopsMessage || "We couldn't fetch your shop details.")}
+                            </p>
+                            <div className="flex gap-3">
+                                <Button onClick={() => isAuthError ? navigate('/login') : refetchShops()} className="flex-1 gradient-brand">
+                                    {isAuthError ? 'Go to Login' : 'Retry Connection'}
+                                </Button>
+                                {!isAuthError && (
+                                    <Button variant="outline" onClick={() => navigate('/login')} className="flex-1">
+                                        Back to Login
+                                    </Button>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -211,10 +269,21 @@ export const ShopDashboard = () => {
                     <div>
                         <h1 className="text-2xl font-bold text-slate-900">Welcome to PrintSync!</h1>
                         <p className="text-slate-500 mt-2">To start accepting orders, you need to set up your shop profile first.</p>
-                        <div className="mt-4 p-3 bg-slate-50 rounded text-xs text-slate-400 font-mono">
-                            User: {user?.email} ({user?.role})<br />
-                            Shops Found: {myShopsData?.myShops?.data?.length || 0}<br />
-                            Token in Storage: {localStorage.getItem('token') ? 'Yes' : 'No'} ({localStorage.getItem('token')?.substring(0, 10)}...)
+
+                        <div className="mt-6 p-4 bg-slate-50 rounded-2xl text-left space-y-2 border border-slate-100">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Account Context</p>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs text-slate-600">Logged in as:</span>
+                                <span className="text-xs font-bold text-slate-900">{user?.email}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs text-slate-600">Role:</span>
+                                <span className="text-xs font-bold text-brand-600">{user?.role}</span>
+                            </div>
+                            <div className="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
+                                <span className="text-xs text-slate-600">Shops Found:</span>
+                                <span className="text-xs font-bold text-slate-900">0</span>
+                            </div>
                         </div>
                     </div>
                     <Button
@@ -286,8 +355,6 @@ export const ShopDashboard = () => {
                             <StatCard
                                 title="Total Orders"
                                 value={stats.totalOrders}
-                                change="+0%" // Mock change for now
-                                trend="up"
                                 icon={Package}
                             />
                             <StatCard
@@ -298,15 +365,11 @@ export const ShopDashboard = () => {
                             <StatCard
                                 title="Revenue"
                                 value={`TZS ${stats.revenue.toLocaleString()}`}
-                                change="+0%" // Mock change
-                                trend="up"
                                 icon={DollarSign}
                             />
                             <StatCard
                                 title="Customers"
                                 value={stats.customerCount}
-                                change="+0%" // Mock change
-                                trend="up"
                                 icon={Users}
                             />
                         </div>
@@ -342,7 +405,7 @@ export const ShopDashboard = () => {
                                     <CardTitle className="text-xl">Recent Orders</CardTitle>
                                     <CardDescription>Latest customer orders</CardDescription>
                                 </div>
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" size="sm" onClick={() => setActiveTab('orders')}>
                                     View All
                                 </Button>
                             </CardHeader>
@@ -353,27 +416,41 @@ export const ShopDashboard = () => {
                                             <p className="text-center text-slate-500 py-4">No recent orders</p>
                                         ) : (
                                             shopOrders.slice(0, 5).map((order: any) => (
-                                                <div
-                                                    key={order.id}
-                                                    className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-brand-300 hover:bg-brand-50/50 transition-all cursor-pointer slide-in-right"
-                                                >
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg">
-                                                            {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
+                                                <div key={order.id} className="flex flex-col p-4 rounded-lg border border-slate-200 hover:border-brand-300 hover:bg-brand-50/50 transition-all slide-in-right">
+                                                    <div
+                                                        className="flex items-center justify-between cursor-pointer"
+                                                        onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                                                    >
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg">
+                                                                {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-semibold text-slate-900">
+                                                                    {order.customer?.firstName ? `${order.customer.firstName} ${order.customer.lastName}` : order.customer?.email}
+                                                                </p>
+                                                                <p className="text-sm text-slate-600">{order.items.length} items • {new Date(order.createdAt).toLocaleDateString()}</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <p className="font-semibold text-slate-900">
-                                                                {order.customer?.firstName ? `${order.customer.firstName} ${order.customer.lastName}` : order.customer?.email}
-                                                            </p>
-                                                            <p className="text-sm text-slate-600">{order.items.length} items • {new Date(order.createdAt).toLocaleDateString()}</p>
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="text-right">
+                                                                <p className="font-bold text-slate-900">TZS {Number(order.totalPrice).toLocaleString()}</p>
+                                                                <OrderStatusBadge status={order.status} />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-right">
-                                                            <p className="font-bold text-slate-900">TZS {Number(order.totalPrice).toLocaleString()}</p>
-                                                            <OrderStatusBadge status={order.status} />
+
+                                                    {/* Expanded items in overview */}
+                                                    {expandedOrder === order.id && (
+                                                        <div className="mt-4 pt-4 border-t border-slate-100 animate-fade-in space-y-2">
+                                                            {order.items.map((item: any) => (
+                                                                <div key={item.id} className="flex justify-between text-xs bg-white p-2 rounded border border-slate-100">
+                                                                    <span>{item.document?.name || 'Document'} ({item.pageCount} pgs)</span>
+                                                                    <span className="font-bold">TZS {Number(item.price).toLocaleString()}</span>
+                                                                </div>
+                                                            ))}
                                                         </div>
-                                                    </div>
+                                                    )}
                                                 </div>
                                             ))
                                         )}
@@ -439,6 +516,14 @@ export const ShopDashboard = () => {
                                                             <span>•</span>
                                                             <span>{new Date(order.createdAt).toLocaleDateString()}</span>
                                                         </div>
+                                                        <Button
+                                                            variant="link"
+                                                            size="sm"
+                                                            className="p-0 h-auto text-brand-600 font-bold mt-1"
+                                                            onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                                                        >
+                                                            {expandedOrder === order.id ? 'Hide Details' : 'View Details'}
+                                                        </Button>
                                                     </div>
                                                 </div>
 
@@ -466,6 +551,35 @@ export const ShopDashboard = () => {
                                                         </Button>
                                                     )}
                                                 </div>
+
+                                                {/* Expanded Details */}
+                                                {expandedOrder === order.id && (
+                                                    <div className="mt-4 pt-4 border-t border-slate-100 animate-fade-in">
+                                                        <h4 className="text-sm font-bold text-slate-900 mb-3">Order Items</h4>
+                                                        <div className="grid grid-cols-1 gap-3">
+                                                            {order.items.map((item: any) => (
+                                                                <div key={item.id} className="bg-slate-50 p-3 rounded-lg flex items-center justify-between">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <div className="h-10 w-10 bg-white rounded flex items-center justify-center text-slate-400">
+                                                                            <FileText className="h-6 w-6" />
+                                                                        </div>
+                                                                        <div>
+                                                                            <p className="text-sm font-bold text-slate-900">{item.document?.name || 'Document'}</p>
+                                                                            <p className="text-xs text-slate-600">
+                                                                                {item.pageCount} Pages • {item.configSnapshot?.is_color ? 'Color' : 'Grayscale'} • {item.configSnapshot?.paper_size || 'A4'}
+                                                                            </p>
+                                                                            {item.configSnapshot?.binding && <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded mr-1">Binding</span>}
+                                                                            {item.configSnapshot?.lamination && <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Lamination</span>}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="text-right">
+                                                                        <p className="text-sm font-bold text-slate-900">TZS {Number(item.price).toLocaleString()}</p>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))
                                     )}
@@ -533,6 +647,6 @@ export const ShopDashboard = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 };

@@ -60,7 +60,7 @@ def calculate_item_price(shop, item_input, user=None):
         base_rate = pricing_rule.base_price
         modifiers = pricing_rule.modifiers
     except ShopPricing.DoesNotExist:
-        base_rate = Decimal("0.10") if not is_color else Decimal("0.50")
+        base_rate = Decimal("100.00") if not is_color else Decimal("500.00")
         modifiers = {}
 
     size_mod = Decimal(str(modifiers.get(size, "1.0")))
@@ -93,14 +93,14 @@ def calculate_item_price(shop, item_input, user=None):
             b_rule = ShopPricing.objects.get(shop=shop, service_type=ServiceType.BINDING)
             extras_cost += b_rule.base_price
         except:
-             extras_cost += Decimal("2.00")
+             extras_cost += Decimal("1000.00")
              
     if item_input.is_lamination:
         try:
              l_rule = ShopPricing.objects.get(shop=shop, service_type=ServiceType.LAMINATION)
              extras_cost += l_rule.base_price
         except:
-             extras_cost += Decimal("1.00")
+             extras_cost += Decimal("1000.00")
 
     # 4. Customer Subscription Discount
     if user:

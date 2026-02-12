@@ -8,11 +8,27 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-    const token = localStorage.getItem('token');
+    // 1. Try direct token key
+    let token = localStorage.getItem('token');
+
+    // 2. Fallback to Zustand persisted storage if direct key is missing
+    if (!token || token === 'null' || token === 'undefined') {
+        const authData = localStorage.getItem('auth-storage');
+        if (authData) {
+            try {
+                const parsed = JSON.parse(authData);
+                token = parsed.state?.token;
+            } catch (e) {
+                console.error("Error parsing auth-storage", e);
+            }
+        }
+    }
+
     // Only send the header if we actually have a token
     if (!token || token === 'null' || token === 'undefined') {
         return { headers };
     }
+
     return {
         headers: {
             ...headers,

@@ -9,6 +9,7 @@ import type { GetShopDetailsData } from '../../../shops/types';
 import type { CreateOrderData, OrderItemInput } from '../../orders/types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../../../stores/authStore';
 
 export const CheckoutAction = () => {
     const navigate = useNavigate();
@@ -29,32 +30,56 @@ export const CheckoutAction = () => {
         skip: !selectedShopId
     });
 
+    const [error, setError] = useState<string | null>(null);
     const [createOrder, { loading: isProcessing }] = useMutation<CreateOrderData, { shopId: string; items: OrderItemInput[] }>(CREATE_ORDER, {
         onCompleted: (data) => {
             if (data.createOrder.response.status) {
                 setIsSuccess(true);
+            } else {
+                setError(data.createOrder.response.message);
             }
+        },
+        onError: (err) => {
+            setError(err.message);
         }
     });
 
     const shop = shopData?.shopDetails?.data;
+    const { user } = useAuthStore();
+    if (user) console.log("Preparing checkout for:", user.email);
 
-    // Price Calculation
-    const subtotal = readyFiles.reduce((acc, f) => acc + (f.metadata?.pageCount || 0) * (f.metadata?.isColor ? 0.50 : 0.10), 0);
-    const serviceFee = 2.00;
-    const laminationFee = 5.00;
-    const discount = 1.50;
+    // Price Calculation (Matching realism for Tanzania TZS)
+    const subtotal = readyFiles.reduce((acc, f) => {
+        const baseRate = f.metadata?.isColor ? 500 : 100;
+        let itemCost = (f.metadata?.pageCount || 0) * baseRate;
+
+        // Add extras if selected
+        if (f.metadata?.isBinding) itemCost += 1000;
+        if (f.metadata?.isLamination) itemCost += 1000;
+
+        return acc + itemCost;
+    }, 0);
+
+    // Dynamic fees (can be added later)
+    const serviceFee = 0;
+    const laminationFee = 0;
+
+    // Potential discount
+    const discountRate = 0;
+    const discount = subtotal * discountRate;
+
     const total = subtotal + serviceFee + laminationFee - discount;
 
     const handleCheckout = async () => {
         if (!selectedShopId) return;
+        setError(null);
 
         const items = readyFiles.map(file => ({
             documentId: file.id,
             pageCount: file.metadata?.pageCount || 1,
             isColor: file.metadata?.isColor || false,
-            isBinding: true, // Example
-            isLamination: false,
+            isBinding: file.metadata?.isBinding || false,
+            isLamination: file.metadata?.isLamination || false,
             paperSize: file.metadata?.paperSize || "A4"
         }));
 
@@ -65,8 +90,9 @@ export const CheckoutAction = () => {
                     items
                 }
             });
-        } catch (err) {
+        } catch (err: any) {
             console.error("Order creation failed:", err);
+            setError(err.message || "Failed to place order. Please try again.");
         }
     };
 
@@ -127,7 +153,7 @@ export const CheckoutAction = () => {
                                             </div>
                                         </div>
                                         <p className="font-bold text-slate-900">
-                                            TZS {((file.metadata?.pageCount || 0) * (file.metadata?.isColor ? 0.50 : 0.10)).toLocaleString()}
+                                            TZS {((file.metadata?.pageCount || 0) * (file.metadata?.isColor ? 500 : 100)).toLocaleString()}
                                         </p>
                                     </li>
                                 ))}
@@ -182,6 +208,13 @@ export const CheckoutAction = () => {
                                     <span className="text-lg font-bold text-slate-900">Total</span>
                                     <span className="text-3xl font-black text-brand-700">TZS {total.toLocaleString()}</span>
                                 </div>
+
+                                {error && (
+                                    <div className="flex gap-2 p-3 bg-red-50 rounded-xl text-red-700 text-[10px] mb-4 items-start border border-red-100 animate-in fade-in slide-in-from-top-1">
+                                        <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                                        <span>{error}</span>
+                                    </div>
+                                )}
 
                                 {!selectedShopId && (
                                     <div className="flex gap-2 p-3 bg-amber-50 rounded-xl text-amber-700 text-[10px] mb-4 items-start">

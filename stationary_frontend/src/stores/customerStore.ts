@@ -10,6 +10,8 @@ export interface DocumentMetadata {
     orientation: 'portrait' | 'landscape';
     estimatedPrintTime: number;
     complexityScore: number;
+    isBinding: boolean;
+    isLamination: boolean;
 }
 
 export interface UploadedFile {

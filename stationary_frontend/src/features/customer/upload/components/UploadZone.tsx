@@ -18,8 +18,6 @@ const SUPPORTED_FORMATS = [
 export const UploadZone = () => {
   const { addFiles, files, removeFile, updateFile } = useCustomerStore();
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadQueue, setUploadQueue] = useState<string[]>([]);
-  const [showFormatGuide, setShowFormatGuide] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +63,7 @@ export const UploadZone = () => {
           status: 'analyzing'
         });
 
+
         // Simulate AI analysis
         setTimeout(() => {
           const pageCount = Math.floor(Math.random() * 20) + 1;
@@ -77,41 +76,38 @@ export const UploadZone = () => {
               paperSize: 'A4',
               orientation: 'portrait',
               estimatedPrintTime: pageCount * 5,
-              complexityScore: Math.random() * 5 + 3
+              complexityScore: Math.random() * 5 + 3,
+              isBinding: false,
+              isLamination: false
             }
           });
-
-          // Remove from upload queue
-          setUploadQueue(prev => prev.filter(id => id !== tempId && id !== backendId));
         }, 1500);
       } else {
         updateFile(tempId, { status: 'error', error: 'Upload failed' });
-        setUploadQueue(prev => prev.filter(id => id !== tempId));
       }
     } catch (err) {
       console.error("Upload failed:", err);
-      updateFile(tempId, { 
-        status: 'error', 
-        error: err instanceof Error ? err.message : 'Upload failed' 
+      updateFile(tempId, {
+        status: 'error',
+        error: err instanceof Error ? err.message : 'Upload failed'
       });
-      setUploadQueue(prev => prev.filter(id => id !== tempId));
     }
   };
 
   const validateFile = (file: File): { valid: boolean; error?: string } => {
     const allowedTypes = SUPPORTED_FORMATS.map(f => f.type);
     const maxSize = 50 * 1024 * 1024; // 50MB
-    
+
     if (!allowedTypes.includes(file.type)) {
-      return { 
-        valid: false, 
-        error: `Unsupported file format. Please upload ${SUPPORTED_FORMATS.map(f => f.ext).join(', ')}` 
+      return {
+        valid: false,
+        error: `Unsupported file format. Please upload ${SUPPORTED_FORMATS.map(f => f.ext).join(', ')}`
       };
     }
     if (file.size > maxSize) {
-      return { 
-        valid: false, 
-        error: `File size exceeds 50MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB` 
+      return {
+        valid: false,
+        error: `File size exceeds 50MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`
       };
     }
     return { valid: true };
@@ -135,17 +131,15 @@ export const UploadZone = () => {
       }
 
       const tempId = 'temp_' + Math.random().toString(36).substr(2, 9);
-      
-      // Add to queue
-      setUploadQueue(prev => [...prev, tempId]);
-      
+
+
       // Add file to store with optimistic update
-      addFiles([{ 
-        id: tempId, 
-        name: file.name, 
-        size: file.size, 
-        type: file.type, 
-        progress: 0, 
+      addFiles([{
+        id: tempId,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        progress: 0,
         status: 'queued' as const,
         queuedAt: new Date().toISOString()
       }]);
@@ -203,7 +197,7 @@ export const UploadZone = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'ready': return 'bg-green-100 text-green-700 border-green-200';
       case 'analyzing': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'uploading': return 'bg-brand-100 text-brand-700 border-brand-200';
@@ -214,7 +208,7 @@ export const UploadZone = () => {
   };
 
   const getStatusIcon = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'ready': return <CheckCircle2 className="h-4 w-4 text-green-600" />;
       case 'analyzing': return <Loader2 className="h-4 w-4 animate-spin text-blue-600" />;
       case 'uploading': return <Loader2 className="h-4 w-4 animate-spin text-brand-600" />;
@@ -249,7 +243,7 @@ export const UploadZone = () => {
             Fast and secure printing with smart document analysis
           </p>
         </div>
-        
+
         {files.length > 0 && (
           <div className="flex items-center gap-3">
             {readyCount > 0 && (
@@ -303,14 +297,14 @@ export const UploadZone = () => {
         {/* Upload icon with animated background */}
         <div className={cn(
           "h-24 w-24 rounded-3xl flex items-center justify-center transition-all duration-300",
-          isDragging 
-            ? "bg-brand-200 scale-110" 
+          isDragging
+            ? "bg-brand-200 scale-110"
             : "bg-brand-100 group-hover:bg-brand-200 group-hover:scale-105"
         )}>
           <Upload className={cn(
             "h-12 w-12 transition-all duration-300",
-            isDragging 
-              ? "text-brand-700 scale-110" 
+            isDragging
+              ? "text-brand-700 scale-110"
               : "text-brand-600 group-hover:text-brand-700"
           )} />
         </div>
@@ -399,10 +393,10 @@ export const UploadZone = () => {
           {files.map((file, index) => {
             const format = SUPPORTED_FORMATS.find(f => f.type === file.type);
             const isImage = file.type?.startsWith('image/');
-            
+
             return (
-              <Card 
-                key={file.id} 
+              <Card
+                key={file.id}
                 className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all duration-200
                          slide-in-right group"
                 style={{ animationDelay: `${index * 50}ms` }}
@@ -414,7 +408,7 @@ export const UploadZone = () => {
                       "h-14 w-14 rounded-xl flex items-center justify-center flex-shrink-0",
                       "border-2 transition-all duration-200",
                       file.status === 'ready' ? "border-green-200" :
-                      file.status === 'error' ? "border-red-200" : "border-slate-200",
+                        file.status === 'error' ? "border-red-200" : "border-slate-200",
                       isImage && file.preview ? "overflow-hidden p-0" : format?.color
                     )}>
                       {isImage && file.preview ? (
@@ -445,11 +439,11 @@ export const UploadZone = () => {
                               getStatusColor(file.status)
                             )}>
                               {getStatusIcon(file.status)}
-                              {file.status === 'analyzing' ? 'AI Analyzing' : 
-                               file.status === 'queued' ? 'Queued' :
-                               file.status === 'ready' ? 'Ready' : 
-                               file.status === 'uploading' ? 'Uploading' : 
-                               file.status}
+                              {file.status === 'analyzing' ? 'AI Analyzing' :
+                                file.status === 'queued' ? 'Queued' :
+                                  file.status === 'ready' ? 'Ready' :
+                                    file.status === 'uploading' ? 'Uploading' :
+                                      file.status}
                             </span>
                             {file.metadata?.pageCount && (
                               <>
@@ -466,7 +460,7 @@ export const UploadZone = () => {
                         <div className="flex items-center gap-2">
                           {file.status === 'ready' && (
                             <button
-                              onClick={() => {/* Navigate to next step */}}
+                              onClick={() => {/* Navigate to next step */ }}
                               className="p-2 text-brand-600 hover:text-brand-700 hover:bg-brand-50 rounded-xl transition-all"
                             >
                               <ChevronRight className="h-5 w-5" />
@@ -531,24 +525,24 @@ export const UploadZone = () => {
                       )}
 
                       {/* Error state */}
-                     {/* Error state */}
-{file.status === 'error' && (
-  <div className="mt-3 flex items-center gap-2 text-xs text-red-600 bg-red-50 p-2 rounded-lg">
-    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-    <span>{file.error || 'Upload failed'}</span>
-    <button
-      onClick={() => {
-        removeFile(file.id);
-        // Note: Retry requires the user to re-select the file
-        alert('Please re-upload the file from your device');
-        fileInputRef.current?.click();
-      }}
-      className="ml-auto text-xs font-medium text-red-700 hover:text-red-800 underline"
-    >
-      Retry
-    </button>
-  </div>
-)}
+                      {/* Error state */}
+                      {file.status === 'error' && (
+                        <div className="mt-3 flex items-center gap-2 text-xs text-red-600 bg-red-50 p-2 rounded-lg">
+                          <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{file.error || 'Upload failed'}</span>
+                          <button
+                            onClick={() => {
+                              removeFile(file.id);
+                              // Note: Retry requires the user to re-select the file
+                              alert('Please re-upload the file from your device');
+                              fileInputRef.current?.click();
+                            }}
+                            className="ml-auto text-xs font-medium text-red-700 hover:text-red-800 underline"
+                          >
+                            Retry
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>

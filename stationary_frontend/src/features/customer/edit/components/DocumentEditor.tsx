@@ -1,7 +1,6 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { Card, CardContent } from '../../../../components/ui/Card';
 import { Settings2, Scissors, Layers, Check, Info } from 'lucide-react';
-import { Button } from '../../../../components/ui/Button';
 import { cn } from '../../../../lib/utils';
 import { useState } from 'react';
 
@@ -103,13 +102,19 @@ export const DocumentEditor = () => {
                                             title="Professional Binding"
                                             description="Spiral or Glue binding for a premium look."
                                             icon={<Check className="h-4 w-4" />}
-                                            active={true}
+                                            active={activeFile.metadata?.isBinding}
+                                            onClick={() => updateFile(activeFile.id, {
+                                                metadata: { ...activeFile.metadata!, isBinding: !activeFile.metadata?.isBinding }
+                                            })}
                                         />
                                         <ServiceToggle
                                             title="Lamination"
                                             description="Protect your pages with high-quality laminate."
                                             icon={<Check className="h-4 w-4" />}
-                                            active={false}
+                                            active={activeFile.metadata?.isLamination}
+                                            onClick={() => updateFile(activeFile.id, {
+                                                metadata: { ...activeFile.metadata!, isLamination: !activeFile.metadata?.isLamination }
+                                            })}
                                         />
                                     </div>
                                 </div>
@@ -137,11 +142,13 @@ export const DocumentEditor = () => {
     );
 };
 
-const ServiceToggle = ({ title, description, icon, active }: any) => (
-    <button className={cn(
-        "flex items-start gap-4 p-4 rounded-2xl border-2 transition-all text-left group",
-        active ? "border-brand-500 bg-brand-50/50" : "border-slate-100 hover:border-brand-200"
-    )}>
+const ServiceToggle = ({ title, description, icon, active, onClick }: any) => (
+    <button
+        onClick={onClick}
+        className={cn(
+            "flex items-start gap-4 p-4 rounded-2xl border-2 transition-all text-left group w-full",
+            active ? "border-brand-500 bg-brand-50/50" : "border-slate-100 hover:border-brand-200"
+        )}>
         <div className={cn(
             "h-6 w-6 rounded-full flex items-center justify-center transition-all",
             active ? "bg-brand-600 text-white" : "bg-slate-200 text-transparent group-hover:bg-slate-300"
