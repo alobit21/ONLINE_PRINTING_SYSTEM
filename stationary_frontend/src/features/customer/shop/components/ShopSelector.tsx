@@ -56,16 +56,28 @@ export const ShopSelector = () => {
         }
     }, []);
 
-    const { data, loading } = useQuery<GetShopsData>(GET_SHOPS, {
+    const { data, loading, error } = useQuery<GetShopsData>(GET_SHOPS, {
         variables: {
             filterInput: {
-                radiusKm: 50, // Increased radius to ensure we get results
-                latitude: userLocation?.[0],
-                longitude: userLocation?.[1],
-                searchTerm: searchTerm || undefined
+                radiusKm: userLocation ? 50 : null,
+                latitude: userLocation?.[0] ?? null,
+                longitude: userLocation?.[1] ?? null,
+                searchTerm: searchTerm || null
             }
         },
-        skip: !userLocation // Don't query until we have location
+        fetchPolicy: 'network-only', // Always fetch fresh data
+        onCompleted: (data) => {
+            console.log('[SHOP SELECTOR] Query completed:', data);
+            console.log('[SHOP SELECTOR] Filter params:', {
+                radiusKm: userLocation ? 50 : null,
+                latitude: userLocation?.[0] ?? null,
+                longitude: userLocation?.[1] ?? null,
+                searchTerm: searchTerm || null
+            });
+        },
+        onError: (error) => {
+            console.error('[SHOP SELECTOR] Query error:', error);
+        }
     });
 
 
@@ -104,6 +116,17 @@ export const ShopSelector = () => {
                 </div>
             )}
 
+            {/* Error Display */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                        <p className="text-sm font-bold text-red-900">Failed to load shops</p>
+                        <p className="text-xs text-red-700 mt-1">{error.message}</p>
+                    </div>
+                </div>
+            )}
+
             <div className="flex gap-3">
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
@@ -123,7 +146,7 @@ export const ShopSelector = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[600px]">
                 {/* Shop List */}
                 <div className="overflow-y-auto space-y-4 pr-2 scrollbar-thin">
-                    {isGettingLocation || loading ? (
+                    {loading ? (
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
                             <Loader2 className="h-8 w-8 text-brand-600 animate-spin" />
                             <span className="flex items-center gap-2 text-brand-600 font-bold">

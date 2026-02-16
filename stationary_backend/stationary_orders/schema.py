@@ -169,7 +169,7 @@ class CreateOrderMutation(graphene.Mutation):
                 order = Order.objects.create(
                     customer=user,
                     shop=shop,
-                    status=Order.Status.UPLOADED,
+                    status=Order.Status.UPLOADED.value,
                     total_price=total_order_price,
                     commission_fee=commission
                 )
