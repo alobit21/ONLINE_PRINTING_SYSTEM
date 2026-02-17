@@ -202,11 +202,18 @@ class CreateOrderMutation(graphene.Mutation):
 class Query(graphene.ObjectType):
     my_orders = graphene.List(OrderType)
     shop_orders = graphene.List(OrderType, shop_id=graphene.UUID(required=True))
+    all_my_shop_orders = graphene.List(OrderType)
 
     def resolve_my_orders(self, info):
         user = info.context.user
         if not user.is_authenticated: return []
         return Order.objects.filter(customer=user)
+
+    def resolve_all_my_shop_orders(self, info):
+        user = info.context.user
+        if not user.is_authenticated: return []
+        # Return all orders for all shops owned by this user
+        return Order.objects.filter(shop__owner=user)
 
     def resolve_shop_orders(self, info, shop_id):
         user = info.context.user

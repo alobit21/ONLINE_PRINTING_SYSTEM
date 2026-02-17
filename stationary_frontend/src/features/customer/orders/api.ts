@@ -69,7 +69,7 @@ export const GET_SHOP_ORDERS = gql`
                 configSnapshot
                 document {
                     id
-                    name
+                    fileName
                     fileType
                 }
             }
@@ -88,6 +88,39 @@ export const UPDATE_ORDER_STATUS = gql`
                 id
                 status
                 completedAt
+            }
+        }
+    }
+`;
+export const GET_ALL_MY_SHOP_ORDERS = gql`
+    query GetAllMyShopOrders {
+        allMyShopOrders {
+            id
+            status
+            totalPrice
+            createdAt
+            estimatedCompletionTime
+            completedAt
+            shop {
+                id
+                name
+            }
+            customer {
+                id
+                email
+                firstName
+                lastName
+            }
+            items {
+                id
+                pageCount
+                price
+                configSnapshot
+                document {
+                    id
+                    fileName
+                    fileType
+                }
             }
         }
     }

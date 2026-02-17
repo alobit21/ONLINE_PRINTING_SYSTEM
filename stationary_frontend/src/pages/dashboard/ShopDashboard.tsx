@@ -25,7 +25,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { useAuthStore } from '../../stores/authStore';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_MY_SHOPS, CREATE_SHOP } from '../../features/shops/api';
-import { GET_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
+import { GET_ALL_MY_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
 import { Loader2, Store } from 'lucide-react';
 
 interface MyShopsData {
@@ -187,17 +187,14 @@ export const ShopDashboard = () => {
         });
     };
 
-    // Fetch Orders
-    const { data: ordersData, refetch: refetchOrders } = useQuery(GET_SHOP_ORDERS, {
-        variables: { shopId },
-        skip: !shopId,
-    });
+    // Fetch Orders - Using ALL MY SHOP ORDERS to get everything across all owner's shops
+    const { data: ordersData, refetch: refetchOrders } = useQuery(GET_ALL_MY_SHOP_ORDERS);
 
     const [updateStatus] = useMutation(UPDATE_ORDER_STATUS, {
         onCompleted: () => refetchOrders()
     });
 
-    const shopOrders = (ordersData as any)?.shopOrders || [];
+    const shopOrders = (ordersData as any)?.allMyShopOrders || [];
     const pendingOrdersCount = shopOrders.filter((o: any) => o.status === 'UPLOADED' || o.status === 'ACCEPTED').length;
 
     // Override mock stats
@@ -445,7 +442,7 @@ export const ShopDashboard = () => {
                                                         <div className="mt-4 pt-4 border-t border-slate-100 animate-fade-in space-y-2">
                                                             {order.items.map((item: any) => (
                                                                 <div key={item.id} className="flex justify-between text-xs bg-white p-2 rounded border border-slate-100">
-                                                                    <span>{item.document?.name || 'Document'} ({item.pageCount} pgs)</span>
+                                                                    <span>{item.document?.fileName || 'Document'} ({item.pageCount} pgs)</span>
                                                                     <span className="font-bold">TZS {Number(item.price).toLocaleString()}</span>
                                                                 </div>
                                                             ))}
@@ -564,7 +561,7 @@ export const ShopDashboard = () => {
                                                                             <FileText className="h-6 w-6" />
                                                                         </div>
                                                                         <div>
-                                                                            <p className="text-sm font-bold text-slate-900">{item.document?.name || 'Document'}</p>
+                                                                            <p className="text-sm font-bold text-slate-900">{item.document?.fileName || 'Document'}</p>
                                                                             <p className="text-xs text-slate-600">
                                                                                 {item.pageCount} Pages • {item.configSnapshot?.is_color ? 'Color' : 'Grayscale'} • {item.configSnapshot?.paper_size || 'A4'}
                                                                             </p>

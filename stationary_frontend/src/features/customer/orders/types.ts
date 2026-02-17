@@ -4,8 +4,8 @@ export interface OrderItem {
     id: string;
     document: {
         id: string;
-        name: string;
-        file: string;
+        fileName: string;
+        fileType: string;
     };
     pageCount: number;
     price: number;
@@ -63,4 +63,11 @@ export interface CreateOrderData {
             status: OrderStatus;
         };
     };
+}
+export interface GetShopOrdersData {
+    shopOrders: Order[];
+}
+
+export interface GetAllMyShopOrdersData {
+    allMyShopOrders: Order[];
 }
