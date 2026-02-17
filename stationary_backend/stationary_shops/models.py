@@ -24,7 +24,7 @@ class Shop(BaseModel):
     subscription_tier = models.CharField(
         max_length=20, 
         choices=Subscription.choices, 
-        default=Subscription.STARTER
+        default=Subscription.STARTER.value
     )
     rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
     

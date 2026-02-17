@@ -61,7 +61,7 @@ class RegisterUserMutation(graphene.Mutation):
 
     def mutate(self, info, email, password, role, phone_number=None):
         # Validate Role
-        if role not in [User.Role.CUSTOMER, User.Role.SHOP_OWNER]:
+        if role not in [User.Role.CUSTOMER.value, User.Role.SHOP_OWNER.value]:
             return RegisterUserMutation(response=build_error("Invalid role specified."))
         
         try:

@@ -15,7 +15,7 @@ class Order(BaseModel):
 
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='orders')
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.UPLOADED)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.UPLOADED.value)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Final calculated price")
     commission_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     
