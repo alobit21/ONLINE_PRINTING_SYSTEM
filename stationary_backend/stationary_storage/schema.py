@@ -10,15 +10,26 @@ from tarxemo_django_graphene_utils import (
 import uuid
 
 class DocumentType(DjangoObjectType):
-    upload_url = graphene.String() # Mocked presigned URL
+    upload_url = graphene.String() # Real file serving URL
+    download_url = graphene.String() # Download URL with attachment disposition
     
     class Meta:
         model = Document
         fields = "__all__"
 
     def resolve_upload_url(self, info):
-        # Mock logic: checking for cloud storage signatures would happen here
-        return f"https://mock-storage.com/upload/{self.id}"
+        """Return URL for inline preview using REST API"""
+        request = info.context
+        if request and hasattr(request, 'build_absolute_uri'):
+            return f"{request.build_absolute_uri('/api/storage/files/')}{self.id}/"
+        return f"/api/storage/files/{self.id}/"
+    
+    def resolve_download_url(self, info):
+        """Return URL for forced download using REST API"""
+        request = info.context
+        if request and hasattr(request, 'build_absolute_uri'):
+            return f"{request.build_absolute_uri('/api/storage/files/')}{self.id}/?download=1"
+        return f"/api/storage/files/{self.id}/?download=1"
 
 class CreateDocumentMutation(graphene.Mutation):
     class Arguments:
