@@ -32,9 +32,17 @@ def haversine(lat1, lon1, lat2, lon2):
 # ------------------------------
 
 class ShopPricingType(DjangoObjectType):
+    base_price = graphene.Float()
+
     class Meta:
         model = ShopPricing
         fields = "__all__"
+
+    def resolve_base_price(self, info):
+        """Serialize Decimal to float for GraphQL compatibility."""
+        if self.base_price is None:
+            return None
+        return float(self.base_price)
 
 class PageRangeDiscountType(DjangoObjectType):
     class Meta:
@@ -43,16 +51,20 @@ class PageRangeDiscountType(DjangoObjectType):
 
 class ShopType(DjangoObjectType):
     distance = graphene.Float() # Annotated field
-    
+    pricing_rules = graphene.List(ShopPricingType)
+
     class Meta:
         model = Shop
         fields = "__all__"
-    
+
     def resolve_distance(self, info):
         # Allow dynamic distance calculation if not annotated
         if hasattr(self, 'distance'):
             return self.distance
         return None
+
+    def resolve_pricing_rules(self, info):
+        return self.pricing_rules.all()
 
 class ShopFilterInput(graphene.InputObjectType):
     page_number = graphene.Int()
