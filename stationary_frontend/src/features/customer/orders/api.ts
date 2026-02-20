@@ -23,6 +23,11 @@ export const GET_MY_ORDERS = gql`
                 document {
                     id
                     fileName
+                    fileType
+                    fileSize
+                    uploadUrl
+                    downloadUrl
+                    createdAt
                 }
             }
         }
@@ -71,6 +76,10 @@ export const GET_SHOP_ORDERS = gql`
                     id
                     fileName
                     fileType
+                    fileSize
+                    uploadUrl
+                    downloadUrl
+                    createdAt
                 }
             }
         }
@@ -122,6 +131,10 @@ export const GET_ALL_MY_SHOP_ORDERS = gql`
                     id
                     fileName
                     fileType
+                    fileSize
+                    uploadUrl
+                    downloadUrl
+                    createdAt
                 }
             }
         }

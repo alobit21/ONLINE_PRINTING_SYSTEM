@@ -1,10 +1,9 @@
-import { ApolloClient, InMemoryCache, createHttpLink, split } from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { getMainDefinition } from '@apollo/client/utilities';
 
 const httpLink = createHttpLink({
     // Use env var or default for dev local backend
-    uri: 'http://localhost:8000/graphql/',
+    uri: 'http://localhost:8001/graphql/',
 });
 
 const authLink = setContext((_, { headers }) => {

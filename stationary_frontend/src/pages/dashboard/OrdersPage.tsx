@@ -5,15 +5,14 @@ import {
     Loader2,
     Package,
     AlertCircle,
-    FileText,
     Eye,
     Copy,
     Mail,
-    X,
     CheckCircle2,
+    Paperclip,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Card, CardContent } from '../../components/ui/Card';
 import {
     Dialog,
     DialogContent,
@@ -23,6 +22,7 @@ import {
     DialogFooter,
 } from '../../components/ui/dialog';
 import { Select } from '../../components/ui/Select';
+import { FilePreview, FileAttachmentCard, type FileAttachment } from '../../components/ui/FilePreview';
 import { GET_ALL_MY_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
 import type { GetAllMyShopOrdersData, Order, OrderStatus } from '../../features/customer/orders/types';
 import { cn } from '../../lib/utils';
@@ -71,6 +71,8 @@ function OrderDetailsDialog({
 }) {
     const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(order?.status || 'UPLOADED');
     const [isUpdating, setIsUpdating] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<FileAttachment | null>(null);
+    const [isFilePreviewOpen, setIsFilePreviewOpen] = useState(false);
 
     useEffect(() => {
         if (order) {
@@ -107,202 +109,248 @@ function OrderDetailsDialog({
     const commissionFee = order.commissionFee ? Number(order.commissionFee) : 0;
     const total = Number(order.totalPrice);
 
+    // Extract unique file attachments from order items
+    const fileAttachments: FileAttachment[] = order.items.map((item) => ({
+        id: item.document?.id || '',
+        fileName: item.document?.fileName || 'Unknown File',
+        fileType: item.document?.fileType || 'application/octet-stream',
+        fileSize: item.document?.fileSize || 0,
+        uploadUrl: item.document?.uploadUrl || undefined,
+        downloadUrl: item.document?.downloadUrl || undefined,
+        createdAt: item.document?.createdAt,
+    }));
+
+    const handleFilePreview = (file: FileAttachment) => {
+        setSelectedFile(file);
+        setIsFilePreviewOpen(true);
+    };
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle>Order Details</DialogTitle>
-                    <DialogDescription>
-                        Order ID: {order.id.slice(0, 8).toUpperCase()}
-                    </DialogDescription>
-                </DialogHeader>
+        <>
+            <Dialog open={open} onOpenChange={onOpenChange}>
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Order Details</DialogTitle>
+                        <DialogDescription>
+                            Order ID: {order.id.slice(0, 8).toUpperCase()}
+                        </DialogDescription>
+                    </DialogHeader>
 
-                <div className="space-y-6 py-4">
-                    {/* Customer Information */}
-                    <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Customer Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Full Name</p>
-                                <p className="text-sm font-medium text-slate-900">{customerName}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Email</p>
-                                <p className="text-sm font-medium text-slate-900">{order.customer?.email || 'N/A'}</p>
+                    <div className="space-y-6 py-4">
+                        {/* Customer Information */}
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Customer Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+                                <div>
+                                    <p className="text-xs text-slate-500 mb-1">Full Name</p>
+                                    <p className="text-sm font-medium text-slate-900">{customerName}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 mb-1">Email</p>
+                                    <p className="text-sm font-medium text-slate-900">{order.customer?.email || 'N/A'}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Order Information */}
-                    <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Order Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Order ID</p>
-                                <p className="text-sm font-mono font-medium text-slate-900">{order.id.slice(0, 8).toUpperCase()}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Date Created</p>
-                                <p className="text-sm font-medium text-slate-900">
-                                    {format(new Date(order.createdAt), 'MMM d, yyyy h:mm a')}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Current Status</p>
-                                <OrderStatusBadge status={order.status} />
-                            </div>
-                            {order.completedAt && (
+                        {/* Order Information */}
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Order Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Completed At</p>
+                                    <p className="text-xs text-slate-500 mb-1">Order ID</p>
+                                    <p className="text-sm font-mono font-medium text-slate-900">{order.id.slice(0, 8).toUpperCase()}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 mb-1">Date Created</p>
                                     <p className="text-sm font-medium text-slate-900">
-                                        {format(new Date(order.completedAt), 'MMM d, yyyy h:mm a')}
+                                        {format(new Date(order.createdAt), 'MMM d, yyyy h:mm a')}
                                     </p>
                                 </div>
-                            )}
-                            {order.estimatedCompletionTime && (
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Estimated Completion</p>
-                                    <p className="text-sm font-medium text-slate-900">
-                                        {format(new Date(order.estimatedCompletionTime), 'MMM d, yyyy h:mm a')}
-                                    </p>
+                                    <p className="text-xs text-slate-500 mb-1">Current Status</p>
+                                    <OrderStatusBadge status={order.status} />
                                 </div>
-                            )}
-                            <div>
-                                <p className="text-xs text-slate-500 mb-1">Shop</p>
-                                <p className="text-sm font-medium text-slate-900">{order.shop?.name || 'N/A'}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Items List */}
-                    <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Order Items</h3>
-                        <div className="border border-slate-200 rounded-lg overflow-hidden">
-                            <table className="w-full text-sm">
-                                <thead className="bg-slate-50 border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Item</th>
-                                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Pages</th>
-                                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Configuration</th>
-                                        <th className="px-4 py-3 text-right text-xs font-semibold text-slate-700 uppercase">Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {order.items.map((item) => {
-                                        const config = item.configSnapshot || {};
-                                        const configParts = [
-                                            config.is_color ? 'Color' : 'B&W',
-                                            config.paper_size || 'A4',
-                                            config.binding ? 'Binding' : '',
-                                            config.lamination ? 'Lamination' : '',
-                                        ].filter(Boolean);
-
-                                        return (
-                                            <tr key={item.id} className="border-b border-slate-100 last:border-0">
-                                                <td className="px-4 py-3">
-                                                    <p className="font-medium text-slate-900">{item.document?.fileName || 'Document'}</p>
-                                                    <p className="text-xs text-slate-500">{item.document?.fileType || 'N/A'}</p>
-                                                </td>
-                                                <td className="px-4 py-3 text-slate-600">{item.pageCount}</td>
-                                                <td className="px-4 py-3">
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {configParts.map((part, idx) => (
-                                                            <span key={idx} className="text-xs text-slate-600">{part}</span>
-                                                        ))}
-                                                    </div>
-                                                </td>
-                                                <td className="px-4 py-3 text-right font-medium text-slate-900">
-                                                    TZS {Number(item.price).toLocaleString()}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    {/* Totals Section */}
-                    <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Totals</h3>
-                        <div className="space-y-2 p-4 bg-slate-50 rounded-lg">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-slate-600">Subtotal:</span>
-                                <span className="font-medium text-slate-900">TZS {subtotal.toLocaleString()}</span>
-                            </div>
-                            {commissionFee > 0 && (
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-slate-600">Commission Fee:</span>
-                                    <span className="font-medium text-slate-900">TZS {commissionFee.toLocaleString()}</span>
-                                </div>
-                            )}
-                            <div className="pt-2 border-t border-slate-200 flex justify-between">
-                                <span className="font-semibold text-slate-900">Total:</span>
-                                <span className="font-bold text-lg text-slate-900">TZS {total.toLocaleString()}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Status Update Section */}
-                    <div className="space-y-3 pt-4 border-t border-slate-200">
-                        <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Update Status</h3>
-                        <div className="flex gap-3 items-end">
-                            <div className="flex-1">
-                                <Select
-                                    label="Order Status"
-                                    options={statusOptions}
-                                    value={selectedStatus}
-                                    onChange={(e) => setSelectedStatus(e.target.value as OrderStatus)}
-                                />
-                            </div>
-                            <Button
-                                onClick={handleStatusUpdate}
-                                disabled={selectedStatus === order.status || isUpdating}
-                                className="bg-brand-600 text-white hover:bg-brand-700"
-                            >
-                                {isUpdating ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Updating...
-                                    </>
-                                ) : (
-                                    'Update Status'
+                                {order.completedAt && (
+                                    <div>
+                                        <p className="text-xs text-slate-500 mb-1">Completed At</p>
+                                        <p className="text-sm font-medium text-slate-900">
+                                            {format(new Date(order.completedAt), 'MMM d, yyyy h:mm a')}
+                                        </p>
+                                    </div>
                                 )}
-                            </Button>
+                                {order.estimatedCompletionTime && (
+                                    <div>
+                                        <p className="text-xs text-slate-500 mb-1">Estimated Completion</p>
+                                        <p className="text-sm font-medium text-slate-900">
+                                            {format(new Date(order.estimatedCompletionTime), 'MMM d, yyyy h:mm a')}
+                                        </p>
+                                    </div>
+                                )}
+                                <div>
+                                    <p className="text-xs text-slate-500 mb-1">Shop</p>
+                                    <p className="text-sm font-medium text-slate-900">{order.shop?.name || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Items List */}
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Order Items</h3>
+                            <div className="border border-slate-200 rounded-lg overflow-hidden">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-slate-50 border-b border-slate-200">
+                                        <tr>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Item</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Pages</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Configuration</th>
+                                            <th className="px-4 py-3 text-right text-xs font-semibold text-slate-700 uppercase">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {order.items.map((item) => {
+                                            const config = item.configSnapshot || {};
+                                            const configParts = [
+                                                config.is_color ? 'Color' : 'B&W',
+                                                config.paper_size || 'A4',
+                                                config.binding ? 'Binding' : '',
+                                                config.lamination ? 'Lamination' : '',
+                                            ].filter(Boolean);
+
+                                            return (
+                                                <tr key={item.id} className="border-b border-slate-100 last:border-0">
+                                                    <td className="px-4 py-3">
+                                                        <p className="font-medium text-slate-900">{item.document?.fileName || 'Document'}</p>
+                                                        <p className="text-xs text-slate-500">{item.document?.fileType || 'N/A'}</p>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-slate-600">{item.pageCount}</td>
+                                                    <td className="px-4 py-3">
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {configParts.map((part, idx) => (
+                                                                <span key={idx} className="text-xs text-slate-600">{part}</span>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right font-medium text-slate-900">
+                                                        TZS {Number(item.price).toLocaleString()}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Totals Section */}
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Totals</h3>
+                            <div className="space-y-2 p-4 bg-slate-50 rounded-lg">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-slate-600">Subtotal:</span>
+                                    <span className="font-medium text-slate-900">TZS {subtotal.toLocaleString()}</span>
+                                </div>
+                                {commissionFee > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-slate-600">Commission Fee:</span>
+                                        <span className="font-medium text-slate-900">TZS {commissionFee.toLocaleString()}</span>
+                                    </div>
+                                )}
+                                <div className="pt-2 border-t border-slate-200 flex justify-between">
+                                    <span className="font-semibold text-slate-900">Total:</span>
+                                    <span className="font-bold text-lg text-slate-900">TZS {total.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Attachments Section */}
+                        {fileAttachments.length > 0 && (
+                            <div className="space-y-3">
+                                <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                                    <Paperclip className="h-4 w-4" />
+                                    Attachments ({fileAttachments.length})
+                                </h3>
+                                <div className="space-y-2">
+                                    {fileAttachments.map((file) => (
+                                        <FileAttachmentCard
+                                            key={file.id}
+                                            file={file}
+                                            onPreview={handleFilePreview}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Status Update Section */}
+                        <div className="space-y-3 pt-4 border-t border-slate-200">
+                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Update Status</h3>
+                            <div className="flex gap-3 items-end">
+                                <div className="flex-1">
+                                    <Select
+                                        label="Order Status"
+                                        options={statusOptions}
+                                        value={selectedStatus}
+                                        onChange={(e) => setSelectedStatus(e.target.value as OrderStatus)}
+                                    />
+                                </div>
+                                <Button
+                                    onClick={handleStatusUpdate}
+                                    disabled={selectedStatus === order.status || isUpdating}
+                                    className="bg-brand-600 text-white hover:bg-brand-700"
+                                >
+                                    {isUpdating ? (
+                                        <>
+                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                            Updating...
+                                        </>
+                                    ) : (
+                                        'Update Status'
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <DialogFooter className="flex-row justify-between sm:justify-between">
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onCopyOrderId(order.id)}
-                        >
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copy Order ID
-                        </Button>
-                        {order.customer?.email && (
+                    <DialogFooter className="flex-row justify-between sm:justify-between">
+                        <div className="flex gap-2">
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => window.open(`mailto:${order.customer?.email}`, '_blank')}
+                                onClick={() => onCopyOrderId(order.id)}
                             >
-                                <Mail className="h-4 w-4 mr-2" />
-                                Contact Customer
+                                <Copy className="h-4 w-4 mr-2" />
+                                Copy Order ID
                             </Button>
-                        )}
-                    </div>
-                    <Button
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                    >
-                        Close
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                            {order.customer?.email && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => window.open(`mailto:${order.customer?.email}`, '_blank')}
+                                >
+                                    <Mail className="h-4 w-4 mr-2" />
+                                    Contact Customer
+                                </Button>
+                            )}
+                        </div>
+                        <Button
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
+                            Close
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* File Preview Modal */}
+            {selectedFile && (
+                <FilePreview
+                    file={selectedFile}
+                    open={isFilePreviewOpen}
+                    onOpenChange={setIsFilePreviewOpen}
+                />
+            )}
+        </>
     );
 }
 

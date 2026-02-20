@@ -6,6 +6,10 @@ export interface OrderItem {
         id: string;
         fileName: string;
         fileType: string;
+        fileSize?: number;
+        uploadUrl?: string;
+        downloadUrl?: string;
+        createdAt?: string;
     };
     pageCount: number;
     price: number;
