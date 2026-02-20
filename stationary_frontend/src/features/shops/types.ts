@@ -35,9 +35,34 @@ export interface ShopFilterInput {
     longitude?: number;
     searchTerm?: string;
 }
+export interface ShopPricingRule {
+    id: string;
+    serviceType: string;
+    basePrice: number;
+    modifiers?: Record<string, unknown>;
+}
+
+export interface ShopWithPricing extends Shop {
+    pricingRules?: ShopPricingRule[];
+}
+
 export interface GetShopDetailsData {
     shopDetails: {
         response: Response;
         data: Shop;
+    };
+}
+
+export interface GetShopDetailsWithPricingData {
+    shopDetails: {
+        response: Response;
+        data: ShopWithPricing | null;
+    };
+}
+
+export interface UpdatePricingData {
+    updatePricing: {
+        response: Response;
+        pricing: ShopPricingRule | null;
     };
 }

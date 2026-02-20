@@ -98,12 +98,14 @@ export const GET_ALL_MY_SHOP_ORDERS = gql`
             id
             status
             totalPrice
+            commissionFee
             createdAt
             estimatedCompletionTime
             completedAt
             shop {
                 id
                 name
+                address
             }
             customer {
                 id

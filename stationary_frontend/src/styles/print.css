@@ -1,0 +1,102 @@
+/* Print-specific styles for Orders Page */
+
+@media print {
+    /* Hide all non-printable elements */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Show only print content */
+    .print-content,
+    .print-content * {
+        visibility: visible;
+    }
+
+    .print-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    /* Hide navigation, buttons, sidebars */
+    nav,
+    .no-print,
+    button,
+    .print-button,
+    header,
+    aside,
+    footer:not(.print-footer) {
+        display: none !important;
+    }
+
+    /* Page break controls */
+    .order-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .order-section + .order-section {
+        page-break-before: auto;
+    }
+
+    /* Ensure clean backgrounds */
+    * {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+
+    /* Remove borders that might cause issues */
+    .border,
+    .border-t,
+    .border-b {
+        border-color: #ddd !important;
+    }
+
+    /* Font adjustments */
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+
+    /* Table handling */
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+    /* Prevent orphaned content */
+    p, li {
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* Margins for printer */
+    @page {
+        margin: 15mm;
+        size: A4;
+    }
+
+    /* Avoid page breaks in critical sections */
+    .order-header,
+    .order-total {
+        page-break-inside: avoid;
+    }
+}

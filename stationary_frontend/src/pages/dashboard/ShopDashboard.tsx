@@ -27,6 +27,9 @@ import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_MY_SHOPS, CREATE_SHOP } from '../../features/shops/api';
 import { GET_ALL_MY_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
 import { Loader2, Store } from 'lucide-react';
+import { ProductsPage } from './ProductsPage';
+import { OrdersPage } from './OrdersPage';
+import { ShopDashboardPage } from './ShopDashboardPage';
 
 interface MyShopsData {
     myShops: {
@@ -346,243 +349,14 @@ export const ShopDashboard = () => {
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {activeTab === 'overview' && (
-                    <div className="space-y-8 fade-in">
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <StatCard
-                                title="Total Orders"
-                                value={stats.totalOrders}
-                                icon={Package}
-                            />
-                            <StatCard
-                                title="Pending Orders"
-                                value={stats.pendingOrders}
-                                icon={Clock}
-                            />
-                            <StatCard
-                                title="Revenue"
-                                value={`TZS ${stats.revenue.toLocaleString()}`}
-                                icon={DollarSign}
-                            />
-                            <StatCard
-                                title="Customers"
-                                value={stats.customerCount}
-                                icon={Users}
-                            />
-                        </div>
-
-                        {/* Quick Actions */}
-                        <Card className="glass border-0 shadow-lg">
-                            <CardHeader>
-                                <CardTitle className="text-xl">Quick Actions</CardTitle>
-                                <CardDescription>Manage your shop efficiently</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Button className="h-auto py-4 flex-col gap-2 gradient-brand text-white hover:opacity-90">
-                                        <Plus className="h-6 w-6" />
-                                        <span>New Order</span>
-                                    </Button>
-                                    <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-2 hover:border-brand-500 hover:bg-brand-50">
-                                        <BarChart3 className="h-6 w-6" />
-                                        <span>View Analytics</span>
-                                    </Button>
-                                    <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-2 hover:border-brand-500 hover:bg-brand-50">
-                                        <Download className="h-6 w-6" />
-                                        <span>Export Data</span>
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Recent Orders */}
-                        <Card className="glass border-0 shadow-lg">
-                            <CardHeader className="flex flex-row items-center justify-between">
-                                <div>
-                                    <CardTitle className="text-xl">Recent Orders</CardTitle>
-                                    <CardDescription>Latest customer orders</CardDescription>
-                                </div>
-                                <Button variant="ghost" size="sm" onClick={() => setActiveTab('orders')}>
-                                    View All
-                                </Button>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="space-y-4">
-                                        {shopOrders.length === 0 ? (
-                                            <p className="text-center text-slate-500 py-4">No recent orders</p>
-                                        ) : (
-                                            shopOrders.slice(0, 5).map((order: any) => (
-                                                <div key={order.id} className="flex flex-col p-4 rounded-lg border border-slate-200 hover:border-brand-300 hover:bg-brand-50/50 transition-all slide-in-right">
-                                                    <div
-                                                        className="flex items-center justify-between cursor-pointer"
-                                                        onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
-                                                    >
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg">
-                                                                {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
-                                                            </div>
-                                                            <div>
-                                                                <p className="font-semibold text-slate-900">
-                                                                    {order.customer?.firstName ? `${order.customer.firstName} ${order.customer.lastName}` : order.customer?.email}
-                                                                </p>
-                                                                <p className="text-sm text-slate-600">{order.items.length} items • {new Date(order.createdAt).toLocaleDateString()}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="text-right">
-                                                                <p className="font-bold text-slate-900">TZS {Number(order.totalPrice).toLocaleString()}</p>
-                                                                <OrderStatusBadge status={order.status} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Expanded items in overview */}
-                                                    {expandedOrder === order.id && (
-                                                        <div className="mt-4 pt-4 border-t border-slate-100 animate-fade-in space-y-2">
-                                                            {order.items.map((item: any) => (
-                                                                <div key={item.id} className="flex justify-between text-xs bg-white p-2 rounded border border-slate-100">
-                                                                    <span>{item.document?.fileName || 'Document'} ({item.pageCount} pgs)</span>
-                                                                    <span className="font-bold">TZS {Number(item.price).toLocaleString()}</span>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                    <div className="fade-in">
+                        <ShopDashboardPage />
                     </div>
                 )}
 
                 {activeTab === 'orders' && (
-                    <div className="space-y-6 fade-in">
-                        {/* Search and Filter */}
-                        <Card className="glass border-0 shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex gap-4">
-                                    <div className="flex-1 relative">
-                                        <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
-                                        <Input
-                                            placeholder="Search orders..."
-                                            className="pl-10"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
-                                    <Button variant="outline" className="gap-2">
-                                        <Filter className="h-4 w-4" />
-                                        Filter
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Orders List */}
-                        <Card className="glass border-0 shadow-lg">
-                            <CardHeader>
-                                <CardTitle>All Orders</CardTitle>
-                                <CardDescription>Manage and track all your orders</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {shopOrders.length === 0 ? (
-                                        <div className="text-center py-12 text-slate-500">
-                                            <Package className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                                            <p className="text-lg font-medium">No orders yet</p>
-                                            <p className="text-sm">Wait for customers to place orders.</p>
-                                        </div>
-                                    ) : (
-                                        shopOrders.map((order: any) => (
-                                            <div key={order.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:shadow-md">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-12 w-12 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold flex-shrink-0">
-                                                        {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-slate-900">
-                                                            {order.customer?.firstName ? `${order.customer.firstName} ${order.customer.lastName}` : order.customer?.email}
-                                                        </p>
-                                                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                                                            <span>{order.items.length} items</span>
-                                                            <span>•</span>
-                                                            <span className="font-medium text-slate-700">TZS {Number(order.totalPrice).toLocaleString()}</span>
-                                                            <span>•</span>
-                                                            <span>{new Date(order.createdAt).toLocaleDateString()}</span>
-                                                        </div>
-                                                        <Button
-                                                            variant="link"
-                                                            size="sm"
-                                                            className="p-0 h-auto text-brand-600 font-bold mt-1"
-                                                            onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
-                                                        >
-                                                            {expandedOrder === order.id ? 'Hide Details' : 'View Details'}
-                                                        </Button>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-center gap-3 self-end md:self-auto">
-                                                    <OrderStatusBadge status={order.status} />
-
-                                                    {order.status === 'UPLOADED' && (
-                                                        <Button size="sm" onClick={() => updateStatus({ variables: { orderId: order.id, status: 'ACCEPTED' } })}>
-                                                            Accept Job
-                                                        </Button>
-                                                    )}
-                                                    {order.status === 'ACCEPTED' && (
-                                                        <Button size="sm" onClick={() => updateStatus({ variables: { orderId: order.id, status: 'PRINTING' } })}>
-                                                            Start Printing
-                                                        </Button>
-                                                    )}
-                                                    {order.status === 'PRINTING' && (
-                                                        <Button size="sm" onClick={() => updateStatus({ variables: { orderId: order.id, status: 'READY' } })}>
-                                                            Mark Ready
-                                                        </Button>
-                                                    )}
-                                                    {order.status === 'READY' && (
-                                                        <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => updateStatus({ variables: { orderId: order.id, status: 'COMPLETED' } })}>
-                                                            Complete
-                                                        </Button>
-                                                    )}
-                                                </div>
-
-                                                {/* Expanded Details */}
-                                                {expandedOrder === order.id && (
-                                                    <div className="mt-4 pt-4 border-t border-slate-100 animate-fade-in">
-                                                        <h4 className="text-sm font-bold text-slate-900 mb-3">Order Items</h4>
-                                                        <div className="grid grid-cols-1 gap-3">
-                                                            {order.items.map((item: any) => (
-                                                                <div key={item.id} className="bg-slate-50 p-3 rounded-lg flex items-center justify-between">
-                                                                    <div className="flex items-center gap-3">
-                                                                        <div className="h-10 w-10 bg-white rounded flex items-center justify-center text-slate-400">
-                                                                            <FileText className="h-6 w-6" />
-                                                                        </div>
-                                                                        <div>
-                                                                            <p className="text-sm font-bold text-slate-900">{item.document?.fileName || 'Document'}</p>
-                                                                            <p className="text-xs text-slate-600">
-                                                                                {item.pageCount} Pages • {item.configSnapshot?.is_color ? 'Color' : 'Grayscale'} • {item.configSnapshot?.paper_size || 'A4'}
-                                                                            </p>
-                                                                            {item.configSnapshot?.binding && <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded mr-1">Binding</span>}
-                                                                            {item.configSnapshot?.lamination && <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Lamination</span>}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="text-right">
-                                                                        <p className="text-sm font-bold text-slate-900">TZS {Number(item.price).toLocaleString()}</p>
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
+                    <div className="fade-in">
+                        <OrdersPage />
                     </div>
                 )}
 
@@ -605,24 +379,8 @@ export const ShopDashboard = () => {
                 )}
 
                 {activeTab === 'products' && (
-                    <div className="space-y-6 fade-in">
-                        <Card className="glass border-0 shadow-lg">
-                            <CardHeader>
-                                <CardTitle>Products & Services</CardTitle>
-                                <CardDescription>Manage your printing services and pricing</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-center py-12 text-slate-500">
-                                    <LayoutGrid className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                                    <p className="text-lg font-medium">Product Management</p>
-                                    <p className="text-sm">Add and edit your service offerings here.</p>
-                                    <Button className="mt-4 gradient-brand text-white">
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Add Service
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
+                    <div className="fade-in">
+                        <ProductsPage />
                     </div>
                 )}
 

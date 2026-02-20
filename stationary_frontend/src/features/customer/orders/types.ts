@@ -21,6 +21,7 @@ export interface Order {
     id: string;
     status: OrderStatus;
     totalPrice: number;
+    commissionFee?: number;
     createdAt: string;
     estimatedCompletionTime?: string;
     completedAt?: string;

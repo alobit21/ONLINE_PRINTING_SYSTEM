@@ -42,6 +42,46 @@ export const GET_SHOP_DETAILS = gql`
         }
     }
 `;
+
+export const GET_SHOP_DETAILS_WITH_PRICING = gql`
+    query GetShopDetailsWithPricing($id: UUID!) {
+        shopDetails(id: $id) {
+            response {
+                status
+                message
+            }
+            data {
+                id
+                name
+                address
+                banner
+                pricingRules {
+                    id
+                    serviceType
+                    basePrice
+                    modifiers
+                }
+            }
+        }
+    }
+`;
+
+export const UPDATE_PRICING = gql`
+    mutation UpdatePricing($shopId: UUID!, $serviceType: String!, $basePrice: Float!, $modifiers: JSONString) {
+        updatePricing(shopId: $shopId, serviceType: $serviceType, basePrice: $basePrice, modifiers: $modifiers) {
+            response {
+                status
+                message
+            }
+            pricing {
+                id
+                serviceType
+                basePrice
+                modifiers
+            }
+        }
+    }
+`;
 export const GET_MY_SHOPS = gql`
     query GetMyShops {
         myShops {
