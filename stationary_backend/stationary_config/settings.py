@@ -126,6 +126,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Media files (uploads, documents)
+# https://docs.djangoproject.com/en/4.2/topics/files/
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -144,6 +149,11 @@ AUTHENTICATION_BACKENDS = [
     "graphql_jwt.backends.JSONWebTokenBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+# Login URLs for @login_required decorator
+LOGIN_URL = '/api/login/'
+LOGIN_REDIRECT_URL = '/api/'
+LOGOUT_REDIRECT_URL = '/api/'
 
 GRAPHQL_JWT = {
     "JWT_VERIFY_EXPIRATION": True,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -73,130 +73,252 @@ const getFileTypeColor = (category: string) => {
 
 export function FilePreview({ file, open, onOpenChange }: FilePreviewProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [imageError, setImageError] = useState(false);
+    const [previewError, setPreviewError] = useState(false);
     const [imageBlobUrl, setImageBlobUrl] = useState<string | null>(null);
+    const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+    const [videoBlobUrl, setVideoBlobUrl] = useState<string | null>(null);
+    const blobUrlRef = useRef<string | null>(null);
     const category = getFileCategory(file.fileType);
     const Icon = getFileIcon(file.fileType);
 
-    // Load authenticated content for images
+    // FIX 1: imageBlobUrl removed from deps to prevent infinite re-render loop.
+    // A ref is used for cleanup so the latest blob URL is always accessible
+    // in the cleanup function without triggering re-runs.
     useEffect(() => {
-        console.log('FilePreview useEffect:', { category, fileId: file.id, open });
-        
-        if (category === 'image' && open) {
-            const loadImage = async () => {
-                try {
-                    const previewUrl = mediaAPI.getPreviewUrl(file.id);
-                    console.log('Loading image from:', previewUrl);
-                    
-                    const headers = mediaAPI.isDevEndpoint(previewUrl) ? {} : 
-                        (mediaAPI as any).getAuthHeaders();
-                    console.log('Using headers:', headers);
-                    
-                    const response = await fetch(previewUrl, { headers });
-                    
-                    console.log('Image response status:', response.status);
-                    
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const blobUrl = URL.createObjectURL(blob);
-                        setImageBlobUrl(blobUrl);
-                        setImageError(false);
-                        console.log('Image loaded successfully');
-                    } else {
-                        const errorText = await response.text();
-                        console.error('Image load failed:', response.status, errorText);
-                        setImageError(true);
-                    }
-                } catch (error) {
+        if (category !== 'image' || !open) return;
+
+        let cancelled = false;
+        setPreviewError(false);
+        setImageBlobUrl(null);
+
+        const loadImage = async () => {
+            try {
+                const previewUrl = mediaAPI.getPreviewUrl(file.id);
+                const headers = mediaAPI.getAuthHeaders();
+
+                const response = await fetch(previewUrl, { headers });
+
+                if (cancelled) return;
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    blobUrlRef.current = blobUrl;
+                    setImageBlobUrl(blobUrl);
+                    setPreviewError(false);
+                } else {
+                    console.error('Image load failed:', response.status, await response.text());
+                    setPreviewError(true);
+                }
+            } catch (error) {
+                if (!cancelled) {
                     console.error('Failed to load image:', error);
-                    setImageError(true);
+                    setPreviewError(true);
                 }
-            };
-            
-            loadImage();
-            
-            // Cleanup blob URL when dialog closes
-            return () => {
-                if (imageBlobUrl) {
-                    URL.revokeObjectURL(imageBlobUrl);
-                    setImageBlobUrl(null);
+            }
+        };
+
+        loadImage();
+
+        return () => {
+            cancelled = true;
+            if (blobUrlRef.current) {
+                URL.revokeObjectURL(blobUrlRef.current);
+                blobUrlRef.current = null;
+                setImageBlobUrl(null);
+            }
+        };
+    }, [category, file.id, open]); // ✅ No imageBlobUrl dependency
+
+    // Load PDF with authentication
+    useEffect(() => {
+        if (category !== 'pdf' || !open) return;
+
+        let cancelled = false;
+        setPreviewError(false);
+        setPdfBlobUrl(null);
+
+        const loadPdf = async () => {
+            try {
+                const previewUrl = mediaAPI.getPreviewUrl(file.id);
+                const response = await fetch(previewUrl, {
+                    headers: mediaAPI.getAuthHeaders()
+                });
+
+                if (cancelled) return;
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    blobUrlRef.current = blobUrl;
+                    setPdfBlobUrl(blobUrl);
+                    setPreviewError(false);
+                } else {
+                    console.error('PDF load failed:', response.status, await response.text());
+                    setPreviewError(true);
                 }
-            };
-        }
-    }, [category, file.id, open, imageBlobUrl]);
+            } catch (error) {
+                if (!cancelled) {
+                    console.error('Failed to load PDF:', error);
+                    setPreviewError(true);
+                }
+            }
+        };
+
+        loadPdf();
+
+        return () => {
+            cancelled = true;
+            if (blobUrlRef.current) {
+                URL.revokeObjectURL(blobUrlRef.current);
+                blobUrlRef.current = null;
+                setPdfBlobUrl(null);
+            }
+        };
+    }, [category, file.id, open]);
+
+    // Load video with authentication
+    useEffect(() => {
+        if (category !== 'video' || !open) return;
+
+        let cancelled = false;
+        setPreviewError(false);
+        setVideoBlobUrl(null);
+
+        const loadVideo = async () => {
+            try {
+                const previewUrl = mediaAPI.getPreviewUrl(file.id);
+                const response = await fetch(previewUrl, {
+                    headers: mediaAPI.getAuthHeaders()
+                });
+
+                if (cancelled) return;
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    blobUrlRef.current = blobUrl;
+                    setVideoBlobUrl(blobUrl);
+                    setPreviewError(false);
+                } else {
+                    console.error('Video load failed:', response.status, await response.text());
+                    setPreviewError(true);
+                }
+            } catch (error) {
+                if (!cancelled) {
+                    console.error('Failed to load video:', error);
+                    setPreviewError(true);
+                }
+            }
+        };
+
+        loadVideo();
+
+        return () => {
+            cancelled = true;
+            if (blobUrlRef.current) {
+                URL.revokeObjectURL(blobUrlRef.current);
+                blobUrlRef.current = null;
+                setVideoBlobUrl(null);
+            }
+        };
+    }, [category, file.id, open]);
+
+    // Reset error state when file changes
+    useEffect(() => {
+        setPreviewError(false);
+    }, [file.id]);
 
     const handleDownload = async () => {
         const downloadUrl = mediaAPI.getDownloadUrl(file.id);
-        console.log('Starting download from:', downloadUrl);
-        
         setIsLoading(true);
-        
+
         try {
-            // First check if the file exists
-            const exists = await mediaAPI.checkFileExists(file.id);
-            if (!exists) {
-                throw new Error('File not found on server');
+            const response = await fetch(downloadUrl, {
+                headers: mediaAPI.getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
             }
-            
-            // Create a direct download link
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            // Extract filename from Content-Disposition header if available
+            let filename = file.fileName;
+            const contentDisposition = response.headers.get('Content-Disposition');
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="?([^";]+)"?/);
+                if (filenameMatch) {
+                    filename = filenameMatch[1];
+                }
+            }
+
+            // Create and trigger download
             const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = file.fileName;
-            a.target = '_blank';
-            
+            a.href = url;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
-            console.log('Download link clicked');
-            
-            // Set a timeout to hide loading state
-            setTimeout(() => {
-                setIsLoading(false);
-                console.log('Download loading state cleared');
-            }, 2000);
+            URL.revokeObjectURL(url);
             
         } catch (error: any) {
             console.error('Download failed:', error);
             alert(error.message || 'Download failed. Please try again later.');
+        } finally {
             setIsLoading(false);
         }
     };
 
     const handleOpenInNewTab = async () => {
-        const previewUrl = mediaAPI.getPreviewUrl(file.id);
+        const viewUrl = mediaAPI.getPreviewUrl(file.id);
         
         try {
-            // Check if file exists before opening
-            const exists = await mediaAPI.checkFileExists(file.id);
-            if (!exists) {
-                throw new Error('File not found on server');
+            const response = await fetch(viewUrl, {
+                headers: mediaAPI.getAuthHeaders()
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to open file: ${response.status} ${response.statusText}`);
             }
             
-            window.open(previewUrl, '_blank', 'noopener,noreferrer');
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            
+            // Open in new tab
+            window.open(objectUrl, '_blank', 'noopener,noreferrer');
+            
+            // Clean up object URL after a short delay
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            
         } catch (error: any) {
-            console.error('Failed to open file:', error);
+            console.error('Open failed:', error);
             alert(error.message || 'Failed to open file. Please try again later.');
         }
     };
 
     const renderPreviewContent = () => {
-        const previewUrl = mediaAPI.getPreviewUrl(file.id);
-        
+
         if (category === 'image') {
             return (
                 <div className="flex justify-center">
-                    <img
-                        src={imageBlobUrl || ''}
-                        alt={file.fileName}
-                        className="max-w-full max-h-96 rounded-lg shadow-lg"
-                        onError={(e) => {
-                            setImageError(true);
-                            e.currentTarget.style.display = 'none';
-                        }}
-                        onLoad={() => setImageError(false)}
-                    />
-                    {imageError && (
+                    {!previewError && imageBlobUrl && (
+                        <img
+                            src={imageBlobUrl}
+                            alt={file.fileName}
+                            className="max-w-full max-h-96 rounded-lg shadow-lg"
+                            onError={() => setPreviewError(true)}
+                        />
+                    )}
+                    {!previewError && !imageBlobUrl && (
+                        <div className="flex flex-col items-center justify-center py-12 text-center">
+                            <Loader2 className="h-10 w-10 text-gray-400 mb-4 animate-spin" />
+                            <p className="text-gray-500">Loading preview...</p>
+                        </div>
+                    )}
+                    {previewError && (
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <Icon className="h-16 w-16 text-gray-400 mb-4" />
                             <p className="text-gray-500 mb-2">Image failed to load</p>
@@ -210,23 +332,24 @@ export function FilePreview({ file, open, onOpenChange }: FilePreviewProps) {
         if (category === 'pdf') {
             return (
                 <div className="w-full h-96">
-                    <iframe
-                        src={previewUrl}
-                        className="w-full h-full rounded-lg border"
-                        title={file.fileName}
-                        onLoad={() => {
-                            // PDFs may need authentication headers, so try open in new tab if this fails
-                        }}
-                        onError={() => {
-                            setImageError(true);
-                        }}
-                    />
-                    {imageError && (
+                    {previewError ? (
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <Icon className="h-16 w-16 text-gray-400 mb-4" />
                             <p className="text-gray-500 mb-2">PDF preview failed</p>
                             <p className="text-sm text-gray-400">Try opening in a new tab</p>
                         </div>
+                    ) : !pdfBlobUrl ? (
+                        <div className="flex flex-col items-center justify-center py-12 text-center">
+                            <Loader2 className="h-10 w-10 text-gray-400 mb-4 animate-spin" />
+                            <p className="text-gray-500">Loading PDF...</p>
+                        </div>
+                    ) : (
+                        <iframe
+                            src={pdfBlobUrl}
+                            className="w-full h-full rounded-lg border"
+                            title={file.fileName}
+                            onError={() => setPreviewError(true)}
+                        />
                     )}
                 </div>
             );
@@ -235,17 +358,21 @@ export function FilePreview({ file, open, onOpenChange }: FilePreviewProps) {
         if (category === 'video') {
             return (
                 <div className="flex justify-center">
-                    <video
-                        src={previewUrl}
-                        controls
-                        className="max-w-full max-h-96 rounded-lg shadow-lg"
-                        onError={() => {
-                            setImageError(true);
-                        }}
-                    >
-                        Your browser does not support the video tag.
-                    </video>
-                    {imageError && (
+                    {!previewError && !videoBlobUrl ? (
+                        <div className="flex flex-col items-center justify-center py-12 text-center">
+                            <Loader2 className="h-10 w-10 text-gray-400 mb-4 animate-spin" />
+                            <p className="text-gray-500">Loading video...</p>
+                        </div>
+                    ) : !previewError && videoBlobUrl ? (
+                        <video
+                            src={videoBlobUrl}
+                            controls
+                            className="max-w-full max-h-96 rounded-lg shadow-lg"
+                            onError={() => setPreviewError(true)}
+                        >
+                            Your browser does not support the video tag.
+                        </video>
+                    ) : (
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <Icon className="h-16 w-16 text-gray-400 mb-4" />
                             <p className="text-gray-500 mb-2">Video failed to load</p>
@@ -256,7 +383,7 @@ export function FilePreview({ file, open, onOpenChange }: FilePreviewProps) {
             );
         }
 
-        // Default file preview
+        // Default: no preview available
         return (
             <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Icon className="h-16 w-16 text-gray-400 mb-4" />
@@ -300,32 +427,30 @@ export function FilePreview({ file, open, onOpenChange }: FilePreviewProps) {
                 </DialogHeader>
 
                 <ScrollArea className="flex-1">
-                    <div 
-                        className="cursor-pointer"
-                        onClick={category === 'image' ? handleOpenInNewTab : undefined}
+                    <div
+                        className={cn(category === 'image' && !previewError && imageBlobUrl ? 'cursor-pointer' : '')}
+                        onClick={category === 'image' && !previewError && imageBlobUrl ? handleOpenInNewTab : undefined}
                     >
                         {renderPreviewContent()}
                     </div>
                 </ScrollArea>
 
-                {file.uploadUrl && (
-                    <div className="flex justify-end gap-2 pt-4 border-t">
-                        {category !== 'image' && (
-                            <Button onClick={handleOpenInNewTab} variant="outline" size="sm">
-                                <ExternalLink className="h-4 w-4 mr-2" />
-                                Open
-                            </Button>
-                        )}
-                        <Button onClick={handleDownload} variant="outline" size="sm" disabled={isLoading}>
-                            {isLoading ? (
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            ) : (
-                                <Download className="h-4 w-4 mr-2" />
-                            )}
-                            Download
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                    {category !== 'image' && (
+                        <Button onClick={handleOpenInNewTab} variant="outline" size="sm">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Open
                         </Button>
-                    </div>
-                )}
+                    )}
+                    <Button onClick={handleDownload} variant="outline" size="sm" disabled={isLoading}>
+                        {isLoading ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                            <Download className="h-4 w-4 mr-2" />
+                        )}
+                        Download
+                    </Button>
+                </div>
             </DialogContent>
         </Dialog>
     );
@@ -344,69 +469,84 @@ export function FileAttachmentCard({ file, onPreview }: FileAttachmentCardProps)
     const handleDownload = async (e: React.MouseEvent) => {
         e.stopPropagation();
         const downloadUrl = mediaAPI.getDownloadUrl(file.id);
-        console.log('Starting download from:', downloadUrl);
-        
         setIsLoading(true);
-        
+
         try {
-            // First check if the file exists
-            const exists = await mediaAPI.checkFileExists(file.id);
-            if (!exists) {
-                throw new Error('File not found on server');
+            const response = await fetch(downloadUrl, {
+                headers: mediaAPI.getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
             }
-            
-            // Create a direct download link
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            // Extract filename from Content-Disposition header if available
+            let filename = file.fileName;
+            const contentDisposition = response.headers.get('Content-Disposition');
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="?([^";]+)"?/);
+                if (filenameMatch) {
+                    filename = filenameMatch[1];
+                }
+            }
+
+            // Create and trigger download
             const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = file.fileName;
-            a.target = '_blank';
-            
+            a.href = url;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
-            console.log('Download link clicked');
-            
-            // Set a timeout to hide loading state
-            setTimeout(() => {
-                setIsLoading(false);
-                console.log('Download loading state cleared');
-            }, 2000);
+            URL.revokeObjectURL(url);
             
         } catch (error: any) {
             console.error('Download failed:', error);
             alert(error.message || 'Download failed. Please try again later.');
+        } finally {
             setIsLoading(false);
         }
     };
 
     const handleOpenInNewTab = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        const previewUrl = mediaAPI.getPreviewUrl(file.id);
+        const viewUrl = mediaAPI.getPreviewUrl(file.id);
         
         try {
-            // Check if file exists before opening
-            const exists = await mediaAPI.checkFileExists(file.id);
-            if (!exists) {
-                throw new Error('File not found on server');
+            const response = await fetch(viewUrl, {
+                headers: mediaAPI.getAuthHeaders()
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to open file: ${response.status} ${response.statusText}`);
             }
             
-            window.open(previewUrl, '_blank', 'noopener,noreferrer');
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            
+            // Open in new tab
+            window.open(objectUrl, '_blank', 'noopener,noreferrer');
+            
+            // Clean up object URL after a short delay
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            
         } catch (error: any) {
-            console.error('Failed to open file:', error);
+            console.error('Open failed:', error);
             alert(error.message || 'Failed to open file. Please try again later.');
         }
     };
 
     return (
-        <div 
+        <div
             className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
             onClick={() => onPreview(file)}
         >
             <div className="flex-shrink-0">
                 <Icon className="h-8 w-8 text-gray-400" />
             </div>
-            
+
             <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                     {file.fileName}
@@ -426,7 +566,6 @@ export function FileAttachmentCard({ file, onPreview }: FileAttachmentCardProps)
                     variant="ghost"
                     size="sm"
                     onClick={handleOpenInNewTab}
-                    disabled={!file.uploadUrl}
                     className="h-8 w-8 p-0"
                     title="Open in new tab"
                 >
@@ -436,7 +575,7 @@ export function FileAttachmentCard({ file, onPreview }: FileAttachmentCardProps)
                     variant="ghost"
                     size="sm"
                     onClick={handleDownload}
-                    disabled={!file.uploadUrl || isLoading}
+                    disabled={isLoading}
                     className="h-8 w-8 p-0"
                     title="Download file"
                 >

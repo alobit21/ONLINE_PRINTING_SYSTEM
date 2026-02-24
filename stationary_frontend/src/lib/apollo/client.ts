@@ -3,7 +3,7 @@ import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
     // Use env var or default for dev local backend
-    uri: 'http://localhost:8001/graphql/',
+    uri: 'http://localhost:8000/graphql/',
 });
 
 const authLink = setContext((_, { headers }) => {

@@ -400,113 +400,118 @@ const PrintOrder = ({ order }: { order: Order }) => {
                         font-weight: bold;
                         margin-bottom: 5px;
                     }
+                        font-size: 11pt;
+                        line-height: 1.5;
+                        color: #000;
+                        background: #fff;
+                        padding: 15mm;
+                    }
+                    .header {
+                        border-bottom: 3px solid #000;
+                        padding-bottom: 15px;
+                        margin-bottom: 25px;
+                    }
+                    .header h1 {
+                        font-size: 22pt;
+                        font-weight: bold;
+                        margin-bottom: 5px;
+                    }
                     .header p {
                         font-size: 10pt;
                         color: #666;
                     }
                     .order-info {
+                        margin-bottom: 20px;
+                    }
+                    .order-info h2 {
+                        font-size: 16pt;
+                        margin-bottom: 10px;
+                    }
+                    .info-grid {
                         display: grid;
                         grid-template-columns: 1fr 1fr;
-                        gap: 20px;
-                        margin-bottom: 25px;
+                        gap: 10px;
+                        margin-bottom: 20px;
                     }
-                    .info-section h3 {
-                        font-size: 11pt;
+                    .info-item {
+                        margin-bottom: 5px;
+                    }
+                    .info-item strong {
                         font-weight: bold;
-                        margin-bottom: 8px;
-                        text-transform: uppercase;
-                        color: #333;
-                    }
-                    .info-section p {
-                        font-size: 10pt;
-                        margin: 3px 0;
                     }
                     table {
                         width: 100%;
                         border-collapse: collapse;
                         margin-bottom: 20px;
                     }
-                    thead {
-                        background: #f5f5f5;
-                    }
                     th, td {
-                        padding: 10px;
+                        border: 1px solid #ddd;
+                        padding: 8px;
                         text-align: left;
-                        border-bottom: 1px solid #ddd;
                     }
                     th {
+                        background-color: #f5f5f5;
                         font-weight: bold;
-                        font-size: 10pt;
-                        text-transform: uppercase;
-                    }
-                    td {
-                        font-size: 10pt;
                     }
                     .total-section {
-                        margin-top: 20px;
-                        padding-top: 15px;
                         border-top: 2px solid #000;
+                        padding-top: 15px;
                     }
                     .total-row {
                         display: flex;
                         justify-content: space-between;
-                        margin: 8px 0;
-                        font-size: 11pt;
+                        margin-bottom: 5px;
                     }
                     .total-row.final {
                         font-weight: bold;
                         font-size: 14pt;
-                        margin-top: 10px;
-                        padding-top: 10px;
                         border-top: 1px solid #ddd;
+                        padding-top: 5px;
                     }
                     .footer {
                         margin-top: 30px;
                         padding-top: 15px;
                         border-top: 1px solid #ddd;
-                        font-size: 9pt;
+                        font-size: 10pt;
                         color: #666;
-                        text-align: center;
                     }
                     @media print {
-                        body { padding: 15mm; }
-                        .no-print { display: none; }
+                        body { padding: 10mm; }
                     }
                 </style>
             </head>
             <body>
                 <div class="header">
-                    <h1>ORDER RECEIPT</h1>
+                    <h1>ORDER INVOICE</h1>
                     <p>Order ID: ${order.id.slice(0, 8).toUpperCase()}</p>
+                    <p>${orderDate}</p>
                 </div>
-                
+
                 <div class="order-info">
-                    <div class="info-section">
-                        <h3>Customer Information</h3>
-                        <p><strong>Name:</strong> ${customerName}</p>
-                        <p><strong>Email:</strong> ${order.customer?.email || 'N/A'}</p>
-                    </div>
-                    <div class="info-section">
-                        <h3>Order Details</h3>
-                        <p><strong>Date:</strong> ${orderDate}</p>
-                        <p><strong>Status:</strong> ${order.status.charAt(0) + order.status.slice(1).toLowerCase().replace(/_/g, ' ')}</p>
-                        <p><strong>Shop:</strong> ${order.shop?.name || 'N/A'}</p>
+                    <h2>Customer Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item"><strong>Name:</strong> ${customerName}</div>
+                        <div class="info-item"><strong>Email:</strong> ${order.customer?.email || 'N/A'}</div>
+                        <div class="info-item"><strong>Phone:</strong> ${order.customer?.phone || 'N/A'}</div>
+                        <div class="info-item"><strong>Status:</strong> ${order.status}</div>
                     </div>
                 </div>
 
+                <h2>Order Details</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>Item</th>
+                            <th>Document</th>
                             <th>Pages</th>
                             <th>Configuration</th>
-                            <th style="text-align: right;">Price</th>
+                            <th>Price</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${order.items.map((item) => {
-                            const config = item.configSnapshot || {};
+                        ${order.items.map(item => {
+                            const config = item.printConfig || {};
                             const configParts = [
+                                config.copies > 1 ? `${config.copies} copies` : '',
                                 config.is_color ? 'Color' : 'B&W',
                                 config.paper_size || 'A4',
                                 config.binding ? 'Binding' : '',
@@ -517,7 +522,7 @@ const PrintOrder = ({ order }: { order: Order }) => {
                                     <td>${item.document?.fileName || 'Document'}</td>
                                     <td>${item.pageCount}</td>
                                     <td>${configParts.join(', ')}</td>
-                                    <td style="text-align: right;">TZS ${Number(item.price).toLocaleString()}</td>
+                                    <td>TZS ${Number(item.price).toLocaleString()}</td>
                                 </tr>
                             `;
                         }).join('')}
@@ -545,10 +550,21 @@ const PrintOrder = ({ order }: { order: Order }) => {
 
         printWindow.document.close();
         printWindow.focus();
+        
+        // Wait for content to load before printing
         setTimeout(() => {
             printWindow.print();
-            printWindow.close();
-        }, 250);
+            // Close the window after print dialog is handled (either printed or cancelled)
+            printWindow.onafterprint = () => {
+                printWindow.close();
+            };
+            // Fallback for browsers that don't support onafterprint
+            setTimeout(() => {
+                if (!printWindow.closed) {
+                    printWindow.close();
+                }
+            }, 1000);
+        }, 500);
     };
 
     return (
@@ -797,10 +813,21 @@ const PrintAllOrders = ({ orders }: { orders: Order[] }) => {
 
         printWindow.document.close();
         printWindow.focus();
+        
+        // Wait for content to load before printing
         setTimeout(() => {
             printWindow.print();
-            printWindow.close();
-        }, 250);
+            // Close the window after print dialog is handled (either printed or cancelled)
+            printWindow.onafterprint = () => {
+                printWindow.close();
+            };
+            // Fallback for browsers that don't support onafterprint
+            setTimeout(() => {
+                if (!printWindow.closed) {
+                    printWindow.close();
+                }
+            }, 1000);
+        }, 500);
     };
 
     return (
@@ -825,7 +852,19 @@ export function OrdersPage() {
         fetchPolicy: 'network-only',
     });
 
-    const [updateStatusMutation] = useMutation(UPDATE_ORDER_STATUS);
+    const [updateStatusMutation] = useMutation<{
+        updateOrderStatus: {
+            response: {
+                status: boolean;
+                message: string;
+            };
+            order: {
+                id: string;
+                status: string;
+                completedAt: string | null;
+            };
+        };
+    }>(UPDATE_ORDER_STATUS);
 
     const orders = data?.allMyShopOrders || [];
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);

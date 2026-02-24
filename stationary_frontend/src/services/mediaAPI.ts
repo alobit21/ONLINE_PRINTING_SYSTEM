@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // Create axios instance with auth
 const apiClient = () => {
@@ -48,6 +48,17 @@ export interface PresignedUploadResponse {
 }
 
 class MediaAPI {
+    /**
+     * Get authentication headers for API requests
+     * @returns HeadersInit object with Authorization header if token exists
+     */
+    getAuthHeaders(): Record<string, string> {
+        const token = localStorage.getItem('token') || 
+                     JSON.parse(localStorage.getItem('auth-storage') || '{}')?.state?.token;
+        
+        return token ? { 'Authorization': `JWT ${token}` } : {};
+    }
+
     /**
      * Upload a file using REST API
      * @param file - File object to upload
@@ -144,44 +155,13 @@ class MediaAPI {
     }
 
     /**
-     * Check if file exists
-     * @param documentId - Document ID
-     * @returns Promise<boolean>
-     */
-    async checkFileExists(documentId: string): Promise<boolean> {
-        try {
-            // Try dev endpoint first (no auth required)
-            const response = await axios.get(`${API_BASE_URL}/api/storage/files/dev/${documentId}/`, {
-                responseType: 'blob' // Don't download the whole file, just check if it exists
-            });
-            return response.status === 200;
-        } catch (error) {
-            try {
-                // Fallback to authenticated endpoint
-                const token = localStorage.getItem('token') || 
-                             JSON.parse(localStorage.getItem('auth-storage') || '{}')?.state?.token;
-                
-                const response = await axios.get(`${API_BASE_URL}/api/storage/files/${documentId}/`, {
-                    headers: {
-                        ...(token && { 'Authorization': `JWT ${token}` })
-                    },
-                    responseType: 'blob'
-                });
-                
-                return response.status === 200;
-            } catch (authError) {
-                return false;
-            }
-        }
-    }
-
-    /**
      * Get download URL for a file
      * @param documentId - Document ID
      * @returns string
      */
     getDownloadUrl(documentId: string): string {
-        return `${API_BASE_URL}/api/storage/files/dev/${documentId}/?download=1`;
+        // TODO: Implement clean download URL
+        return `${API_BASE_URL}/api/documents/${documentId}/download/`;
     }
 
     /**
@@ -190,16 +170,8 @@ class MediaAPI {
      * @returns string
      */
     getPreviewUrl(documentId: string): string {
-        return `${API_BASE_URL}/api/storage/files/dev/${documentId}/`;
-    }
-
-    /**
-     * Check if URL is a development endpoint (no auth required)
-     * @param url - URL to check
-     * @returns boolean
-     */
-    public isDevEndpoint(url: string): boolean {
-        return url.includes('/dev/');
+        // TODO: Implement clean preview URL
+        return `${API_BASE_URL}/api/documents/${documentId}/view/`;
     }
 }
 
