@@ -126,9 +126,8 @@ export const GET_ALL_ORDERS = gql`
       }
       data {
         id
-        orderNumber
         status
-        totalAmount
+        totalPrice
         createdAt
         customer {
           firstName
@@ -137,8 +136,14 @@ export const GET_ALL_ORDERS = gql`
         }
         shop {
           name
-          owner
+          owner {
+            firstName
+            lastName
+            email
+          }
         }
+        estimatedCompletionTime
+        completedAt
       }
     }
   }
@@ -153,14 +158,16 @@ export const GET_ALL_DOCUMENTS = gql`
       }
       data {
         id
-        filename
-        originalName
-        mimeType
+        fileName
+        fileType
         fileSize
-        isPublic
-        downloadCount
-        uploadedAt
-        uploadedBy {
+        isScanned
+        virusDetected
+        createdAt
+        updatedAt
+        uploadUrl
+        downloadUrl
+        owner {
           firstName
           lastName
           email

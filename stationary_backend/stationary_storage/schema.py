@@ -1,6 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from stationary_storage.models import Document
+from stationary_accounts.models import User
 from tarxemo_django_graphene_utils import (
     BaseResponseDTO,
     ResponseObject,
@@ -30,6 +31,9 @@ class DocumentType(DjangoObjectType):
         if request and hasattr(request, 'build_absolute_uri'):
             return f"{request.build_absolute_uri('/api/storage/files/')}{self.id}/?download=1"
         return f"/api/storage/files/{self.id}/?download=1"
+
+class DocumentResponseDTO(BaseResponseDTO):
+    data = graphene.List(DocumentType)
 
 class CreateDocumentMutation(graphene.Mutation):
     class Arguments:
@@ -68,12 +72,31 @@ class CreateDocumentMutation(graphene.Mutation):
 
 class Query(graphene.ObjectType):
     my_documents = graphene.List(DocumentType)
+    documents = graphene.Field(DocumentResponseDTO)
     
     def resolve_my_documents(self, info):
         user = info.context.user
         if user.is_authenticated:
             return Document.objects.filter(owner=user)
         return []
+
+    def resolve_documents(self, info):
+        # Admin query to get all documents
+        user = info.context.user
+        if not user.is_authenticated or user.role != User.Role.ADMIN:
+            return {"response": build_error("Permission denied"), "data": []}
+        
+        try:
+            documents = Document.objects.all()
+            return {
+                "response": build_success_response("Documents retrieved successfully"),
+                "data": documents
+            }
+        except Exception as e:
+            return {
+                "response": build_error(str(e)),
+                "data": []
+            }
 
 class Mutation(graphene.ObjectType):
     create_document = CreateDocumentMutation.Field()

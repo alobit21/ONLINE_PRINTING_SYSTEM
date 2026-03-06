@@ -214,6 +214,7 @@ class Query(graphene.ObjectType):
     my_orders = graphene.List(OrderType)
     shop_orders = graphene.List(OrderType, shop_id=graphene.UUID(required=True))
     all_my_shop_orders = graphene.List(OrderType)
+    orders = graphene.Field(OrderResponseDTO)
 
     def resolve_my_orders(self, info):
         user = info.context.user
@@ -239,11 +240,29 @@ class Query(graphene.ObjectType):
         user = info.context.user
         if not user.is_authenticated: return []
         try:
-             shop = Shop.objects.get(id=shop_id)
-             if shop.owner != user: return []
-             return Order.objects.filter(shop=shop)
-        except:
-             return []
+            shop = Shop.objects.get(id=shop_id)
+            if shop.owner != user: return []
+            return Order.objects.filter(shop=shop)
+        except Shop.DoesNotExist:
+            return []
+
+    def resolve_orders(self, info):
+        # Admin query to get all orders
+        user = info.context.user
+        if not user.is_authenticated or user.role != User.Role.ADMIN:
+            return {"response": build_error("Permission denied"), "data": []}
+        
+        try:
+            orders = Order.objects.all()
+            return {
+                "response": build_success_response("Orders retrieved successfully"),
+                "data": orders
+            }
+        except Exception as e:
+            return {
+                "response": build_error(str(e)),
+                "data": []
+            }
 
 class UpdateOrderStatusMutation(graphene.Mutation):
     class Arguments:
