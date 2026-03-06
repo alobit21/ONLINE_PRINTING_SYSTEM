@@ -108,28 +108,6 @@ export default function AdminUsersPage() {
     );
   }
 
-  // Check for permission denied response (only for complex query)
-  const responseStatus = data?.users?.response?.status;
-  const responseMessage = data?.users?.response?.message;
-  
-  if (responseStatus === false && responseMessage === "Permission denied") {
-    return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Backend Permission Denied</p>
-        <p className="text-sm">The backend rejected your admin access.</p>
-        
-        {/* Debug Info */}
-        <div className="mt-4 p-4 bg-gray-800 rounded text-left text-sm">
-          <p className="text-yellow-400 font-bold">Debug Info:</p>
-          <p>Current User: {currentUser.email}</p>
-          <p>Current Role: {currentUser.role}</p>
-          <p>Is Authenticated: {currentUser ? 'Yes' : 'No'}</p>
-          <p>Backend Response: {responseMessage}</p>
-        </div>
-      </div>
-    );
-  }
-  
   // For simple query, users are directly in data.usersSimple
   const users = data?.usersSimple || [];
 

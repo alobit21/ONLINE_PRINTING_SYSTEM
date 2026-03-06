@@ -9,7 +9,8 @@ from tarxemo_django_graphene_utils import (
     build_success_response,
     build_error,
     get_paginated_and_non_paginated_data,
-    UserFilterInput
+    UserFilterInput,
+    build_paged_list
 )
 
 User = get_user_model()
@@ -120,6 +121,7 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     users = graphene.Field(AdminUserResponseDTO, filter_input=UserFilterInput())
     users_simple = graphene.List(UserType)
+    users_simple_response = graphene.Field(AdminUserResponseDTO, page_number=graphene.Int(), items_per_page=graphene.Int())
     me = graphene.Field(UserType)
 
     def resolve_users_simple(self, info):
@@ -129,6 +131,88 @@ class Query(graphene.ObjectType):
              return []
         
         return User.objects.all()
+
+    def resolve_users_simple_response(self, info, page_number=1, items_per_page=20):
+        # Simple query that returns proper response structure with manual pagination
+        user = info.context.user
+        if not user.is_authenticated or user.role != User.Role.ADMIN:
+             return {"response": build_error("Permission denied"), "data": [], "page": None}
+        
+        try:
+            # Manual pagination to avoid the problematic utility function
+            users = User.objects.all()
+            print(f"DEBUG: Total users found: {users.count()}")
+            
+            # Create paginator
+            from django.core.paginator import Paginator
+            paginator = Paginator(users, items_per_page)
+            print(f"DEBUG: Paginator created with {paginator.num_pages} pages")
+            
+            # Get the requested page
+            try:
+                page_obj = paginator.page(page_number)
+                print(f"DEBUG: Page {page_number} has {len(page_obj.object_list)} users")
+            except Exception as e:
+                # If page number is invalid, return first page
+                print(f"DEBUG: Invalid page {page_number}, using page 1: {e}")
+                page_obj = paginator.page(1)
+                print(f"DEBUG: Page 1 has {len(page_obj.object_list)} users")
+            
+            # Build page info
+            page_info = {
+                "number": page_obj.number,
+                "hasNextPage": page_obj.has_next(),
+                "hasPreviousPage": page_obj.has_previous(),
+                "currentPageNumber": page_number,
+                "nextPageNumber": page_obj.next_page_number() if page_obj.has_next() else None,
+                "previousPageNumber": page_obj.previous_page_number() if page_obj.has_previous() else None,
+                "numberOfPages": paginator.num_pages,
+                "totalElements": paginator.count,
+                "pagesNumberArray": list(range(1, paginator.num_pages + 1)),
+            }
+            print(f"DEBUG: Page info: {page_info}")
+            
+            # Simplified approach: return raw user data as dictionaries
+            user_data = []
+            for i, user_obj in enumerate(page_obj.object_list):
+                try:
+                    user_dict = {
+                        'id': str(user_obj.id),
+                        'email': user_obj.email,
+                        'role': user_obj.role,
+                        'isActive': user_obj.is_active,
+                        'firstName': getattr(user_obj, 'first_name', ''),
+                        'lastName': getattr(user_obj, 'last_name', ''),
+                        'isVerified': getattr(user_obj, 'is_verified', False),
+                        'phoneNumber': getattr(user_obj, 'phone_number', ''),
+                        'subscriptionTier': getattr(user_obj, 'subscription_tier', 'FREE'),
+                        'createdAt': str(user_obj.created_at) if user_obj.created_at else '',
+                        'updatedAt': str(user_obj.updated_at) if user_obj.updated_at else '',
+                        'dateJoined': str(user_obj.date_joined) if user_obj.date_joined else '',
+                        'lastLogin': str(user_obj.last_login) if user_obj.last_login else '',
+                    }
+                    print(f"DEBUG: Processing user {i}: {user_dict}")
+                    user_data.append(user_dict)
+                except Exception as e:
+                    print(f"ERROR creating user dict for user {user_obj.id}: {e}")
+                    continue
+            
+            print(f"DEBUG: Final user_data length: {len(user_data)}")
+            
+            return {
+                "response": build_success_response("Users retrieved successfully"),
+                "page": page_info,
+                "data": user_data
+            }
+        except Exception as e:
+            print(f"ERROR in resolve_users_simple_response: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "response": build_error(str(e)),
+                "data": [],
+                "page": None
+            }
 
     def resolve_users(self, info, filter_input=None):
         # RBAC: Only admin should see all users?

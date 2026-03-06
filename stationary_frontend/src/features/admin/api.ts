@@ -63,6 +63,34 @@ export const GET_ALL_USERS_SIMPLE = gql`
   }
 `;
 
+export const GET_ALL_USERS_SIMPLE_RESPONSE = gql`
+  query GetAllUsersSimpleResponse($pageNumber: Int, $itemsPerPage: Int) {
+    usersSimpleResponse(pageNumber: $pageNumber, itemsPerPage: $itemsPerPage) {
+      response {
+        status
+        message
+      }
+      page {
+        number
+        hasNextPage
+        hasPreviousPage
+        currentPageNumber
+        nextPageNumber
+        previousPageNumber
+        numberOfPages
+        totalElements
+        pagesNumberArray
+      }
+      data {
+        id
+        email
+        role
+        isActive
+      }
+    }
+  }
+`;
+
 export const GET_ALL_SHOPS = gql`
   query GetAllShops {
     shops {
