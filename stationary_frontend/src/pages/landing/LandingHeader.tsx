@@ -24,7 +24,7 @@ export const LandingHeader = () => {
 
     return (
         <header
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'glass py-3 shadow-md' : 'bg-white/0 py-5'
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'glass py-3 shadow-md' : 'bg-gray-900/0 py-5'
                 }`}
         >
             <div className="section-container">
@@ -33,8 +33,8 @@ export const LandingHeader = () => {
                         <div className="bg-brand-600 p-2 rounded-xl text-white group-hover:scale-110 transition-transform">
                             <Printer size={24} />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-slate-900 uppercase">
-                            Sationary<span className="text-brand-600">.</span>
+                        <span className="text-xl font-bold tracking-tight text-white uppercase">
+                            Sationary<span className="text-brand-400">.</span>
                         </span>
                     </Link>
 
@@ -44,7 +44,7 @@ export const LandingHeader = () => {
                             <a
                                 key={link.name}
                                 href={link.href}
-                                className="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"
+                                className="text-sm font-semibold text-gray-300 hover:text-brand-400 transition-colors"
                             >
                                 {link.name}
                             </a>
@@ -54,7 +54,7 @@ export const LandingHeader = () => {
                     <div className="hidden md:flex items-center gap-4">
                         <Link
                             to="/login"
-                            className="text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors"
+                            className="text-sm font-semibold text-gray-300 hover:text-brand-400 transition-colors"
                         >
                             Sign In
                         </Link>
@@ -69,7 +69,7 @@ export const LandingHeader = () => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="md:hidden p-2 text-slate-600"
+                        className="md:hidden p-2 text-gray-300"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -84,7 +84,7 @@ export const LandingHeader = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-white border-t border-slate-100 overflow-hidden shadow-xl"
+                        className="md:hidden bg-gray-800 border-t border-gray-700 overflow-hidden shadow-xl"
                     >
                         <div className="section-container py-8 flex flex-col gap-5">
                             {navLinks.map((link) => (
@@ -92,7 +92,7 @@ export const LandingHeader = () => {
                                     key={link.name}
                                     href={link.href}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-lg font-bold text-slate-800 py-2 border-b border-slate-50 last:border-0"
+                                    className="text-lg font-bold text-white py-2 border-b border-gray-700 last:border-0"
                                 >
                                     {link.name}
                                 </a>
@@ -100,7 +100,7 @@ export const LandingHeader = () => {
                             <div className="flex flex-col gap-3 pt-4">
                                 <Link
                                     to="/login"
-                                    className="text-center py-4 bg-slate-50 rounded-2xl text-slate-900 font-bold"
+                                    className="text-center py-4 bg-gray-700 rounded-2xl text-white font-bold"
                                 >
                                     Sign In
                                 </Link>

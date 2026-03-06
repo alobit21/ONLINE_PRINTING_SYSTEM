@@ -6,9 +6,6 @@ import { SolutionSection } from './SolutionSection';
 import { HowItWorks } from './HowItWorks';
 import { FeaturesSection } from './FeaturesSection';
 import { BenefitsSection } from './BenefitsSection';
-import { UseCases } from './UseCases';
-import { PricingPreview } from './PricingPreview';
-import { TrustSection } from './TrustSection';
 import { CallToAction } from './CallToAction';
 import { Footer } from './Footer';
 
@@ -29,7 +26,7 @@ export const LandingPage = () => {
     }, []);
 
     return (
-        <div className="flex flex-col min-h-screen bg-white">
+        <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
             <LandingHeader />
             <main className="flex-grow">
                 <HeroSection />
@@ -38,9 +35,6 @@ export const LandingPage = () => {
                 <HowItWorks />
                 <FeaturesSection />
                 <BenefitsSection />
-                <UseCases />
-                <PricingPreview />
-                <TrustSection />
                 <CallToAction />
             </main>
             <Footer />
