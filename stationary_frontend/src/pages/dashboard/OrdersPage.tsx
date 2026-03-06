@@ -509,9 +509,8 @@ const PrintOrder = ({ order }: { order: Order }) => {
                     </thead>
                     <tbody>
                         ${order.items.map(item => {
-                            const config = item.printConfig || {};
+                            const config = item.configSnapshot || {};
                             const configParts = [
-                                config.copies > 1 ? `${config.copies} copies` : '',
                                 config.is_color ? 'Color' : 'B&W',
                                 config.paper_size || 'A4',
                                 config.binding ? 'Binding' : '',

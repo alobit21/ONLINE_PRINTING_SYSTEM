@@ -40,6 +40,7 @@ export interface Order {
         email: string;
         firstName?: string;
         lastName?: string;
+        phone?: string;
     };
     items: OrderItem[];
 }

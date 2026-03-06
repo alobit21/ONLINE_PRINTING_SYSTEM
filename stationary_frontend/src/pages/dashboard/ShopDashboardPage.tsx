@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { useQuery } from '@apollo/client/react';
 import {
     DollarSign,
@@ -208,9 +209,12 @@ function KPICard({
 }
 
 // Chart tooltip label formatter
-const formatChartDate = (label: string) => {
+const formatChartDate = (label: ReactNode, payload?: readonly any[]) => {
     try {
-        return format(parseISO(label), 'MMM d');
+        if (typeof label === 'string') {
+            return format(parseISO(label), 'MMM d');
+        }
+        return label;
     } catch {
         return label;
     }
@@ -431,7 +435,7 @@ export function ShopDashboardPage() {
                                         <XAxis dataKey="label" tick={{ fontSize: 11 }} />
                                         <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                                         <Tooltip
-                                            formatter={(value: number) => [`TZS ${Number(value).toLocaleString()}`, 'Revenue']}
+                                            formatter={(value: number | undefined) => value !== undefined ? [`TZS ${Number(value).toLocaleString()}`, 'Revenue'] : ['TZS 0', 'Revenue']}
                                             labelFormatter={formatChartDate}
                                         />
                                         <Line type="monotone" dataKey="revenue" stroke="#0ea5e9" strokeWidth={2} dot={false} name="Revenue" />
@@ -494,13 +498,13 @@ export function ShopDashboardPage() {
                                             paddingAngle={2}
                                             dataKey="value"
                                             nameKey="name"
-                                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                            label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
                                         >
                                             {statusDistribution.map((entry, i) => (
                                                 <Cell key={i} fill={entry.color} />
                                             ))}
                                         </Pie>
-                                        <Tooltip formatter={(value: number) => [value, 'Orders']} />
+                                        <Tooltip formatter={(value: number | undefined) => value !== undefined ? [value, 'Orders'] : [0, 'Orders']} />
                                     </PieChart>
                                 </ResponsiveContainer>
                             ) : (
@@ -525,7 +529,7 @@ export function ShopDashboardPage() {
                                         <CartesianGrid strokeDasharray="3 3" className="stroke-gray-600" />
                                         <XAxis type="number" tickFormatter={(v) => `TZS ${(v / 1000).toFixed(0)}k`} />
                                         <YAxis type="category" dataKey="name" width={55} tick={{ fontSize: 11 }} />
-                                        <Tooltip formatter={(value: number) => [`TZS ${Number(value).toLocaleString()}`, 'Revenue']} />
+                                        <Tooltip formatter={(value: number | undefined) => value !== undefined ? [`TZS ${Number(value).toLocaleString()}`, 'Revenue'] : ['', 'Revenue']} />
                                         <Bar dataKey="value" fill="#0ea5e9" radius={[0, 4, 4, 0]} name="Revenue" />
                                     </BarChart>
                                 </ResponsiveContainer>

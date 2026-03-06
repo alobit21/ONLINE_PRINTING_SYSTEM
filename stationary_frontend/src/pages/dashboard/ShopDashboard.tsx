@@ -224,9 +224,9 @@ export const ShopDashboard = () => {
 
     // Render "Create Shop" state if no shop exists or there's an API-level error
     if (!shopId) {
-        const isAuthError = myShopsStatus === false && myShopsMessage?.toLowerCase().includes('auth');
+        const isAuthError = myShopsStatus === 'false' && myShopsMessage?.toLowerCase().includes('auth');
 
-        if (shopsError || myShopsStatus === false) {
+        if (shopsError || myShopsStatus === 'false') {
             return (
                 <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
                     <Card className="max-w-md w-full shadow-2xl bg-gray-800 border-gray-700 overflow-hidden">
