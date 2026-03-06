@@ -21,10 +21,18 @@ from django.conf import settings
 from django.conf.urls.static import static
 from graphene_django.views import GraphQLView
 from stationary_storage import document_urls
+from stationary_config.schema import schema
+from stationary_core.middleware import SafeJSONWebTokenMiddleware
+
+# Create a custom GraphQL view with JWT middleware
+class JWTGraphQLView(GraphQLView):
+    def __init__(self, **kwargs):
+        super().__init__(schema=schema, **kwargs)
+        self.middleware = [SafeJSONWebTokenMiddleware()]
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path("graphql/", csrf_exempt(JWTGraphQLView.as_view(graphiql=True))),
     path("api/storage/", include('stationary_storage.urls')),
     path("api/documents/", include(document_urls)),
 ]

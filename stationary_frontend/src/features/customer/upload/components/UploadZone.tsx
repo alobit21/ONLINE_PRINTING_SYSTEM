@@ -3,8 +3,8 @@ import { Upload, X, FileText, CheckCircle2, Loader2, AlertCircle, Image as Image
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { cn } from '../../../../lib/utils';
 import { Card, CardContent } from '../../../../components/ui/Card';
-import { useMutation } from '@apollo/client/react';
-import { CREATE_DOCUMENT, type CreateDocumentData, type CreateDocumentVariables } from '../api';
+import { mediaAPI } from '../../../../services/mediaAPI';
+import type { UploadedFile } from '../../../../stores/customerStore';
 
 // Supported formats with their icons and colors
 const SUPPORTED_FORMATS = [
@@ -16,12 +16,10 @@ const SUPPORTED_FORMATS = [
 ];
 
 export const UploadZone = () => {
-  const { addFiles, files, removeFile, updateFile } = useCustomerStore();
+  const { addFiles, files, removeFile, updateFile, deleteDocumentFromServer, resetWorkflow } = useCustomerStore();
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
-
-  const [createDocument] = useMutation<CreateDocumentData, CreateDocumentVariables>(CREATE_DOCUMENT);
 
   // Cleanup object URLs on unmount
   useEffect(() => {
@@ -35,6 +33,8 @@ export const UploadZone = () => {
   }, []);
 
   const performUpload = async (tempId: string, file: File) => {
+    let backendId: string | null = null;
+    
     try {
       // Create preview for images
       let preview = null;
@@ -45,27 +45,33 @@ export const UploadZone = () => {
         updateFile(tempId, { progress: 20, status: 'uploading' });
       }
 
-      const { data } = await createDocument({
-        variables: {
-          fileName: file.name,
-          fileSize: file.size,
-          fileType: file.type || 'application/pdf'
-        }
-      });
-
-      if (data?.createDocument.response.status) {
-        const backendId = data.createDocument.document.id;
-
-        // Swap temp ID for real Backend UUID
-        updateFile(tempId, {
-          id: backendId,
-          progress: 80,
-          status: 'analyzing'
+      // Upload the file directly via REST API (it creates the document record)
+      try {
+        updateFile(tempId, { progress: 40 });
+        
+        const uploadResponse = await mediaAPI.uploadFile(file);
+        console.log('File uploaded successfully:', uploadResponse);
+        
+        // Update with the real document ID from the upload response
+        backendId = uploadResponse.id;
+        updateFile(tempId, { 
+          id: backendId, 
+          progress: 80, 
+          status: 'analyzing' 
         });
+        
+      } catch (uploadError: any) {
+        console.error('File upload failed:', uploadError);
+        updateFile(tempId, { 
+          status: 'error', 
+          error: uploadError.message || 'File upload failed' 
+        });
+        return;
+      }
 
-
-        // Simulate AI analysis
-        setTimeout(() => {
+      // Simulate AI analysis
+      setTimeout(() => {
+        if (backendId) {
           const pageCount = Math.floor(Math.random() * 20) + 1;
           updateFile(backendId, {
             status: 'ready',
@@ -81,16 +87,34 @@ export const UploadZone = () => {
               isLamination: false
             }
           });
-        }, 1500);
-      } else {
-        updateFile(tempId, { status: 'error', error: 'Upload failed' });
-      }
+        }
+      }, 1500);
+
     } catch (err) {
       console.error("Upload failed:", err);
       updateFile(tempId, {
         status: 'error',
         error: err instanceof Error ? err.message : 'Upload failed'
       });
+    }
+  };
+
+  const handleDeleteDocument = async (file: UploadedFile) => {
+    try {
+      if (file.status === 'ready' && file.id) {
+        // For uploaded documents, delete from server
+        await deleteDocumentFromServer(file.id);
+      } else {
+        // For local/temporary files, just remove from state
+        if (file.preview) URL.revokeObjectURL(file.preview);
+        removeFile(file.id);
+      }
+    } catch (error: any) {
+      console.error('Delete failed:', error);
+      // Don't show alert for 404 errors (document already gone from server)
+      if (!error.message?.includes('404') && !error.message?.includes('not found')) {
+        alert(`Failed to delete document: ${error.message || 'Unknown error'}`);
+      }
     }
   };
 
@@ -375,19 +399,35 @@ export const UploadZone = () => {
               <FileText className="h-4 w-4" />
               Uploaded Documents ({files.length})
             </h3>
-            <button
-              onClick={() => {
-                if (confirm('Remove all uploaded files?')) {
-                  files.forEach(file => {
-                    if (file.preview) URL.revokeObjectURL(file.preview);
-                    removeFile(file.id);
-                  });
-                }
-              }}
-              className="text-xs text-slate-500 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 transition"
-            >
-              Clear all
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={async () => {
+                  if (confirm('Remove all uploaded files?')) {
+                    // Handle each file deletion appropriately
+                    for (const file of files) {
+                      try {
+                        await handleDeleteDocument(file);
+                      } catch (error) {
+                        console.error(`Failed to delete ${file.name}:`, error);
+                      }
+                    }
+                  }
+                }}
+                className="text-xs text-slate-500 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 transition"
+              >
+                Clear all
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm('Reset all upload state? This will clear all local files.')) {
+                    resetWorkflow();
+                  }
+                }}
+                className="text-xs text-slate-500 hover:text-orange-600 px-2 py-1 rounded-lg hover:bg-orange-50 transition"
+              >
+                Reset state
+              </button>
+            </div>
           </div>
 
           {files.map((file, index) => {
@@ -467,11 +507,9 @@ export const UploadZone = () => {
                             </button>
                           )}
                           <button
-                            onClick={() => {
-                              if (file.preview) URL.revokeObjectURL(file.preview);
-                              removeFile(file.id);
-                            }}
+                            onClick={() => handleDeleteDocument(file)}
                             className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                            title={file.status === 'ready' ? 'Delete document from server' : 'Remove file'}
                           >
                             <X className="h-5 w-5" />
                           </button>
@@ -532,7 +570,7 @@ export const UploadZone = () => {
                           <span>{file.error || 'Upload failed'}</span>
                           <button
                             onClick={() => {
-                              removeFile(file.id);
+                              handleDeleteDocument(file);
                               // Note: Retry requires the user to re-select the file
                               alert('Please re-upload the file from your device');
                               fileInputRef.current?.click();
