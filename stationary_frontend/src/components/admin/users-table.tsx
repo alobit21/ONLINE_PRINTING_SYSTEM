@@ -29,7 +29,6 @@ interface User {
   role: 'CUSTOMER' | 'SHOP_OWNER' | 'ADMIN';
   subscriptionTier: 'FREE' | 'PREMIUM' | 'ENTERPRISE';
   isVerified: boolean;
-  isStaff: boolean;
   createdAt: string;
 }
 
@@ -160,8 +159,8 @@ export function UsersTable({ users, loading }: UsersTableProps) {
                 <TableCell>{getSubscriptionBadge(user.subscriptionTier)}</TableCell>
                 <TableCell>{getVerificationBadge(user.isVerified)}</TableCell>
                 <TableCell>
-                  <Badge className={user.isStaff ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}>
-                    {user.isStaff ? 'Staff' : 'User'}
+                  <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+                    {user.role}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">

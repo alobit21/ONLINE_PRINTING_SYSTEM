@@ -1,77 +1,137 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client/react';
 import { Users } from 'lucide-react';
 import { UsersTable } from '../../../components/admin/users-table';
-
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: 'CUSTOMER' | 'SHOP_OWNER' | 'ADMIN';
-  subscriptionTier: 'FREE' | 'PREMIUM' | 'ENTERPRISE';
-  isVerified: boolean;
-  isStaff: boolean;
-  createdAt: string;
-}
+import { GET_ALL_USERS_SIMPLE, GET_ME } from '../../../features/admin/api';
+import { useAuthStore } from '../../../stores/authStore';
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user, token, isAuthenticated } = useAuthStore();
+  const { data: meData, loading: meLoading, error: meError } = useQuery(GET_ME);
+  const { data, loading, error } = useQuery(GET_ALL_USERS_SIMPLE, {
+    // Skip the users query if we're not authenticated or not admin
+    skip: !meData?.me || meData?.me?.role !== 'ADMIN'
+  });
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        // Replace with actual GraphQL query
-        const mockUsers: User[] = [
-          {
-            id: '1',
-            email: 'admin@printsync.com',
-            firstName: 'Admin',
-            lastName: 'User',
-            role: 'ADMIN',
-            subscriptionTier: 'PREMIUM',
-            isVerified: true,
-            isStaff: true,
-            createdAt: '2024-01-01T00:00:00Z',
-          },
-          {
-            id: '2',
-            email: 'john.doe@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            role: 'CUSTOMER',
-            subscriptionTier: 'FREE',
-            isVerified: true,
-            isStaff: false,
-            createdAt: '2024-01-02T00:00:00Z',
-          },
-          {
-            id: '3',
-            email: 'jane.smith@example.com',
-            firstName: 'Jane',
-            lastName: 'Smith',
-            role: 'SHOP_OWNER',
-            subscriptionTier: 'PREMIUM',
-            isVerified: false,
-            isStaff: false,
-            createdAt: '2024-01-03T00:00:00Z',
-          },
-        ];
+  // Debug authentication status
+  console.log('AuthStore User:', user);
+  console.log('AuthStore Token:', token ? token.substring(0, 20) + '...' : 'none');
+  console.log('AuthStore IsAuthenticated:', isAuthenticated);
+  
+  console.log('GraphQL ME Data:', meData);
+  console.log('GraphQL ME Loading:', meLoading);
+  console.log('GraphQL ME Error:', meError);
+  
+  console.log('GraphQL Users Data:', data);
+  console.log('GraphQL Users Loading:', loading);
+  console.log('GraphQL Users Error:', error);
+
+  if (meLoading) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg font-medium">Checking authentication...</p>
+      </div>
+    );
+  }
+
+  if (meError) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg font-medium">Authentication Error</p>
+        <p className="text-sm">{meError.message}</p>
+        <button 
+          onClick={() => window.location.href = '/login'}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Login Again
+        </button>
+      </div>
+    );
+  }
+
+  const currentUser = meData?.me;
+
+  if (!currentUser) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg font-medium">Not Authenticated</p>
+        <p className="text-sm">Please login to access this page.</p>
+        <button 
+          onClick={() => window.location.href = '/login'}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
+
+  if (currentUser.role !== 'ADMIN') {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg font-medium">Access Denied</p>
+        <p className="text-sm">You don't have admin permissions to view this page.</p>
+        <p className="text-sm">Your role: {currentUser.role}</p>
+        <button 
+          onClick={() => window.location.href = '/'}
+          className="mt-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+        >
+          Go Home
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-4 bg-gray-700 rounded w-1/3"></div>
+              <div className="h-6 bg-gray-700 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg font-medium">Error loading users</p>
+        <p className="text-sm">{error.message}</p>
+      </div>
+    );
+  }
+
+  // Check for permission denied response (only for complex query)
+  const responseStatus = data?.users?.response?.status;
+  const responseMessage = data?.users?.response?.message;
+  
+  if (responseStatus === false && responseMessage === "Permission denied") {
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <p className="text-lg font-medium">Backend Permission Denied</p>
+        <p className="text-sm">The backend rejected your admin access.</p>
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setUsers(mockUsers);
-      } catch (error) {
-        console.error('Failed to fetch users:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+        {/* Debug Info */}
+        <div className="mt-4 p-4 bg-gray-800 rounded text-left text-sm">
+          <p className="text-yellow-400 font-bold">Debug Info:</p>
+          <p>Current User: {currentUser.email}</p>
+          <p>Current Role: {currentUser.role}</p>
+          <p>Is Authenticated: {currentUser ? 'Yes' : 'No'}</p>
+          <p>Backend Response: {responseMessage}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // For simple query, users are directly in data.usersSimple
+  const users = data?.usersSimple || [];
 
   return (
     <div className="space-y-6">

@@ -23,17 +23,25 @@ const authLink = setContext((_, { headers }) => {
         }
     }
 
+    // Debug: Log what we found
+    console.log('Apollo Auth Link - Token found:', !!token);
+    console.log('Apollo Auth Link - Token value:', token ? token.substring(0, 20) + '...' : 'none');
+
     // Only send the header if we actually have a token
     if (!token || token === 'null' || token === 'undefined') {
+        console.log('Apollo Auth Link - No token, sending headers without auth');
         return { headers };
     }
 
-    return {
+    const authHeaders = {
         headers: {
             ...headers,
             authorization: `JWT ${token}`,
         }
-    }
+    };
+
+    console.log('Apollo Auth Link - Sending headers with auth');
+    return authHeaders;
 });
 
 export const client = new ApolloClient({

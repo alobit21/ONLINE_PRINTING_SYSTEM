@@ -119,7 +119,16 @@ class Mutation(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     users = graphene.Field(AdminUserResponseDTO, filter_input=UserFilterInput())
+    users_simple = graphene.List(UserType)
     me = graphene.Field(UserType)
+
+    def resolve_users_simple(self, info):
+        # Simple query without using the problematic utility function
+        user = info.context.user
+        if not user.is_authenticated or user.role != User.Role.ADMIN:
+             return []
+        
+        return User.objects.all()
 
     def resolve_users(self, info, filter_input=None):
         # RBAC: Only admin should see all users?

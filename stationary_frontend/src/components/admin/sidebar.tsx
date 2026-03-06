@@ -79,7 +79,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {sidebarItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPath.includes(item.href.split('/').pop() || '');
