@@ -14,8 +14,8 @@ export const DashboardLayout = () => {
         { label: 'Products', href: '/dashboard/shop/products', icon: Package },
         { label: 'Settings', href: '/dashboard/shop/settings', icon: Settings },
     ] : user?.role === 'ADMIN' ? [
-        { label: 'System Overview', href: '/dashboard/admin', icon: LayoutDashboard, exact: true },
-        { label: 'Platform Settings', href: '/dashboard/admin/settings', icon: Settings },
+        { label: 'System Overview', href: '/admin/dashboard', icon: LayoutDashboard, exact: true },
+        { label: 'Platform Settings', href: '/admin/settings', icon: Settings },
     ] : [
         { label: 'Home', href: '/dashboard/customer', icon: LayoutDashboard },
         { label: 'My Orders', href: '/dashboard/customer/orders', icon: ShoppingBag },
@@ -34,9 +34,6 @@ export const DashboardLayout = () => {
                 <nav className="flex-1 p-4 space-y-1">
                     {navItems.map((item: any) => {
                         const Icon = item.icon;
-                        const isActive = item.exact
-                            ? location.pathname === item.href
-                            : location.pathname.startsWith(item.href);
 
                         // Special case for Overview to not be active when in sub-routes if exact is true
                         // actually, /dashboard/shop is the prefix for all, so we need careful matching.

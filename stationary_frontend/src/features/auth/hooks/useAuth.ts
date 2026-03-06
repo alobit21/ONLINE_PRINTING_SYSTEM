@@ -33,7 +33,7 @@ export const useAuth = () => {
                 if (user.role === 'SHOP_OWNER') {
                     navigate('/dashboard/shop');
                 } else if (user.role === 'ADMIN') {
-                    navigate('/dashboard/admin');
+                    navigate('/admin/dashboard');
                 } else {
                     navigate('/dashboard/customer');
                 }

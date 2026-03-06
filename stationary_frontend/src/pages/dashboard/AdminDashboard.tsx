@@ -1,4 +1,4 @@
-import { Shield, Users, Store, FileText, LogOut, BarChart3, Loader2, AlertCircle } from 'lucide-react';
+import { Shield, Users, Store, FileText, BarChart3, AlertCircle } from 'lucide-react';
 import { useQuery } from '@apollo/client/react';
 import { GET_ADMIN_STATS, GET_PENDING_SHOPS } from '../../features/admin/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
@@ -12,8 +12,16 @@ export const AdminDashboard = () => {
 
     if (statsLoading || pendingLoading) {
         return (
-            <div className="h-[80vh] flex items-center justify-center">
-                <Loader2 className="h-12 w-12 animate-spin text-brand-600" />
+            <div className="space-y-4">
+                {[1, 2, 3].map(i => (
+                    <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                        <div className="animate-pulse space-y-4">
+                            <div className="h-4 bg-gray-700 rounded w-1/3"></div>
+                            <div className="h-6 bg-gray-700 rounded w-1/2"></div>
+                            <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                ))}
             </div>
         );
     }
