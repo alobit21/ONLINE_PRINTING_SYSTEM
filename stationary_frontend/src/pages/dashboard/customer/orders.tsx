@@ -70,6 +70,10 @@ interface Order {
   };
 }
 
+interface GetCustomerOrdersResponse {
+  my_orders: Order[];
+}
+
 const statusConfig = {
   PENDING: {
     label: 'Pending',
@@ -346,7 +350,7 @@ const ErrorState = ({ error, onRetry }: { error: any; onRetry: () => void }) => 
 );
 
 export default function CustomerOrdersPage() {
-  const { loading, error, data } = useQuery(GET_CUSTOMER_ORDERS, {
+  const { loading, error, data } = useQuery<GetCustomerOrdersResponse>(GET_CUSTOMER_ORDERS, {
     variables: {},
     context: {
       headers: {

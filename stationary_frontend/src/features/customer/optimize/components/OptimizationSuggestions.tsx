@@ -43,18 +43,18 @@ export const OptimizationSuggestions = () => {
     return (
         <div className="space-y-6 fade-in">
             <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold text-slate-900">Optimization</h2>
-                <p className="text-slate-500">Smart cost-saving recommendations for your documents.</p>
+                <h2 className="text-3xl font-bold text-slate-100">Optimization</h2>
+                <p className="text-slate-400">Smart cost-saving recommendations for your documents.</p>
             </div>
 
             <div className="space-y-4">
                 {readyFiles.map((file) => (
                     <div key={file.id} className="space-y-4">
                         <div className="flex items-center gap-2 px-2">
-                            <div className="h-5 w-5 bg-brand-100 rounded text-brand-600 flex items-center justify-center font-bold text-[10px]">
+                            <div className="h-5 w-5 bg-cyan-500/20 rounded text-cyan-400 flex items-center justify-center font-bold text-[10px] border border-cyan-400/30">
                                 {file.name.split('.').pop()?.toUpperCase()}
                             </div>
-                            <span className="text-sm font-bold text-slate-700 truncate">{file.name}</span>
+                            <span className="text-sm font-bold text-slate-300 truncate">{file.name}</span>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -65,38 +65,37 @@ export const OptimizationSuggestions = () => {
                                     <Card
                                         key={opt.id}
                                         className={cn(
-                                            "relative border-2 transition-all duration-300 overflow-hidden group",
-                                            isApplied ? "border-green-500 bg-green-50/30" : "border-slate-100 hover:border-brand-200"
+                                            "relative border-2 transition-all duration-300 overflow-hidden group bg-slate-800/50",
+                                            isApplied ? "border-green-400/50 bg-green-500/10" : "border-slate-600/50 hover:border-cyan-500/50"
                                         )}
                                     >
                                         <CardContent className="p-5 space-y-4">
                                             <div className="flex justify-between items-start">
                                                 <div className={cn(
-                                                    "h-10 w-10 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform",
-                                                    isApplied ? "bg-green-100 text-green-600" : "bg-brand-50 text-brand-600"
+                                                    "h-10 w-10 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform border",
+                                                    isApplied ? "bg-green-500/20 text-green-300 border-green-400/30" : "bg-cyan-500/20 text-cyan-400 border-cyan-400/30"
                                                 )}>
                                                     <opt.icon className="h-5 w-5" />
                                                 </div>
                                                 <div className={cn(
                                                     "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider",
-                                                    isApplied ? "bg-green-600 text-white" : "bg-slate-100 text-slate-500"
+                                                    isApplied ? "bg-green-500/20 text-green-300 border border-green-400/30" : "bg-slate-700/50 text-slate-400 border border-slate-600/50"
                                                 )}>
                                                     {opt.impact}
                                                 </div>
                                             </div>
 
                                             <div>
-                                                <p className="font-bold text-slate-900 group-hover:text-brand-700 transition-colors">{opt.title}</p>
-                                                <p className="text-xs text-slate-500 mt-1 leading-relaxed">{opt.description}</p>
+                                                <p className="font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">{opt.title}</p>
+                                                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{opt.description}</p>
                                             </div>
 
                                             <Button
-                                                variant={isApplied ? "primary" : "outline"}
-                                                fullWidth
+                                                variant={isApplied ? "default" : "outline"}
                                                 size="sm"
                                                 className={cn(
-                                                    "mt-2 gap-2",
-                                                    isApplied ? "bg-green-600 hover:bg-green-700 border-none" : "border-2"
+                                                    "mt-2 gap-2 w-full",
+                                                    isApplied ? "bg-green-600 hover:bg-green-700 border-none" : "border-2 border-slate-600 hover:border-cyan-500 bg-slate-800/50 text-slate-300 hover:text-cyan-400"
                                                 )}
                                                 onClick={() => opt.action(file.id)}
                                             >
@@ -113,9 +112,9 @@ export const OptimizationSuggestions = () => {
             </div>
 
             {/* Overall Savings Banner */}
-            <div className="mt-8 gradient-brand rounded-3xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-brand-500/20 overflow-hidden relative">
+            <div className="mt-8 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-cyan-500/20 overflow-hidden relative border border-cyan-400/30">
                 <div className="absolute top-0 right-0 h-32 w-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
-                <div className="absolute bottom-0 left-0 h-24 w-24 bg-brand-400/20 rounded-full -ml-12 -mb-12 blur-xl" />
+                <div className="absolute bottom-0 left-0 h-24 w-24 bg-cyan-400/20 rounded-full -ml-12 -mb-12 blur-xl" />
 
                 <div className="relative z-10 flex items-center gap-6">
                     <div className="h-16 w-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
@@ -123,7 +122,7 @@ export const OptimizationSuggestions = () => {
                     </div>
                     <div>
                         <h3 className="text-2xl font-bold">Smart Savings</h3>
-                        <p className="text-brand-100 text-sm mt-1">Optimization could save you up to $12.50 on this order.</p>
+                        <p className="text-cyan-100 text-sm mt-1">Optimization could save you up to $12.50 on this order.</p>
                     </div>
                 </div>
 

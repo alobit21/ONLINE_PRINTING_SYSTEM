@@ -260,10 +260,10 @@ export const UploadZone = () => {
       {/* Header with stats */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-3xl font-bold text-slate-100 tracking-tight">
             Upload Documents
           </h2>
-          <p className="text-slate-500">
+          <p className="text-slate-400">
             Fast and secure printing with smart document analysis
           </p>
         </div>
@@ -271,16 +271,16 @@ export const UploadZone = () => {
         {files.length > 0 && (
           <div className="flex items-center gap-3">
             {readyCount > 0 && (
-              <div className="px-3 py-1.5 bg-green-50 rounded-2xl border border-green-200">
-                <span className="text-sm font-medium text-green-700 flex items-center gap-1.5">
+              <div className="px-3 py-1.5 bg-green-500/20 rounded-2xl border border-green-400/30">
+                <span className="text-sm font-medium text-green-300 flex items-center gap-1.5">
                   <CheckCircle2 className="h-4 w-4" />
                   {readyCount} ready
                 </span>
               </div>
             )}
             {(queuedCount + analyzingCount) > 0 && (
-              <div className="px-3 py-1.5 bg-brand-50 rounded-2xl border border-brand-200">
-                <span className="text-sm font-medium text-brand-700 flex items-center gap-1.5">
+              <div className="px-3 py-1.5 bg-cyan-500/20 rounded-2xl border border-cyan-400/30">
+                <span className="text-sm font-medium text-cyan-300 flex items-center gap-1.5">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   {queuedCount + analyzingCount} processing
                 </span>
@@ -301,16 +301,16 @@ export const UploadZone = () => {
           "relative border-2 border-dashed rounded-3xl p-12 transition-all duration-300",
           "flex flex-col items-center gap-4 cursor-pointer group",
           isDragging
-            ? "border-brand-500 bg-brand-50/80 scale-[0.99] shadow-lg"
-            : "border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50/50 hover:shadow-md"
+            ? "border-cyan-400 bg-cyan-500/10 scale-[0.99] shadow-lg shadow-cyan-500/20"
+            : "border-slate-600 bg-slate-800/50 hover:border-cyan-500 hover:bg-slate-800/70 hover:shadow-md"
         )}
       >
         {/* Drag overlay */}
         {isDragging && (
-          <div className="absolute inset-0 bg-brand-500/10 backdrop-blur-[2px] rounded-3xl z-10 
+          <div className="absolute inset-0 bg-cyan-500/20 backdrop-blur-[2px] rounded-3xl z-10 
                         flex items-center justify-center animate-pulse">
-            <div className="bg-white/90 px-6 py-3 rounded-2xl shadow-xl">
-              <p className="text-brand-700 font-bold text-lg flex items-center gap-2">
+            <div className="bg-slate-800/90 px-6 py-3 rounded-2xl shadow-xl border border-cyan-400/30">
+              <p className="text-cyan-300 font-bold text-lg flex items-center gap-2">
                 <Upload className="h-5 w-5" />
                 Drop files to upload
               </p>
@@ -322,24 +322,24 @@ export const UploadZone = () => {
         <div className={cn(
           "h-24 w-24 rounded-3xl flex items-center justify-center transition-all duration-300",
           isDragging
-            ? "bg-brand-200 scale-110"
-            : "bg-brand-100 group-hover:bg-brand-200 group-hover:scale-105"
+            ? "bg-cyan-500/20 scale-110 border border-cyan-400/30"
+            : "bg-slate-700/50 group-hover:bg-cyan-500/20 group-hover:scale-105 border border-slate-600 group-hover:border-cyan-400/30"
         )}>
           <Upload className={cn(
             "h-12 w-12 transition-all duration-300",
             isDragging
-              ? "text-brand-700 scale-110"
-              : "text-brand-600 group-hover:text-brand-700"
+              ? "text-cyan-300 scale-110"
+              : "text-slate-400 group-hover:text-cyan-300"
           )} />
         </div>
 
         {/* Upload text */}
         <div className="text-center space-y-2">
-          <p className="text-xl font-bold text-slate-800">
+          <p className="text-xl font-bold text-slate-100">
             {isDragging ? 'Release to upload' : 'Drag & drop files here'}
           </p>
-          <p className="text-sm text-slate-500">
-            or <span className="text-brand-600 font-medium hover:text-brand-700">browse files</span> from your device
+          <p className="text-sm text-slate-400">
+            or <span className="text-cyan-400 font-medium hover:text-cyan-300">browse files</span> from your device
           </p>
         </div>
 
@@ -358,7 +358,7 @@ export const UploadZone = () => {
               {format.ext}
             </div>
           ))}
-          <div className="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-600">
+          <div className="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-700/50 text-slate-300 border border-slate-600">
             Max 50MB
           </div>
         </div>
@@ -380,10 +380,10 @@ export const UploadZone = () => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="group px-6 py-2.5 rounded-2xl bg-white border-2 border-brand-200 
-                     text-brand-700 font-semibold hover:bg-brand-50 
-                     hover:border-brand-300 transition-all duration-200
-                     flex items-center gap-2 shadow-sm hover:shadow"
+            className="group px-6 py-2.5 rounded-2xl bg-slate-800/50 border-2 border-slate-600 
+                     text-cyan-400 font-semibold hover:bg-cyan-500/10 
+                     hover:border-cyan-500 transition-all duration-200
+                     flex items-center gap-2 shadow-sm hover:shadow hover:shadow-cyan-500/10"
           >
             <Upload className="h-4 w-4 group-hover:scale-110 transition-transform" />
             Upload Another Document
@@ -395,7 +395,7 @@ export const UploadZone = () => {
       {files.length > 0 && (
         <div className="space-y-3 mt-8">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+            <h3 className="font-semibold text-slate-100 flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Uploaded Documents ({files.length})
             </h3>
@@ -413,7 +413,7 @@ export const UploadZone = () => {
                     }
                   }
                 }}
-                className="text-xs text-slate-500 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 transition"
+                className="text-xs text-slate-400 hover:text-red-400 px-2 py-1 rounded-lg hover:bg-red-500/10 transition"
               >
                 Clear all
               </button>
@@ -423,7 +423,7 @@ export const UploadZone = () => {
                     resetWorkflow();
                   }
                 }}
-                className="text-xs text-slate-500 hover:text-orange-600 px-2 py-1 rounded-lg hover:bg-orange-50 transition"
+                className="text-xs text-slate-400 hover:text-orange-400 px-2 py-1 rounded-lg hover:bg-orange-500/10 transition"
               >
                 Reset state
               </button>
@@ -437,8 +437,8 @@ export const UploadZone = () => {
             return (
               <Card
                 key={file.id}
-                className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all duration-200
-                         slide-in-right group"
+                className="overflow-hidden border-none shadow-sm hover:shadow-md hover:shadow-slate-900/20 transition-all duration-200
+                         slide-in-right group bg-slate-800/50 border border-slate-700/50"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <CardContent className="p-4">
@@ -466,14 +466,14 @@ export const UploadZone = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="space-y-1">
-                          <p className="font-medium text-slate-900 truncate pr-4 group-hover:text-brand-700 transition">
+                          <p className="font-medium text-slate-100 truncate pr-4 group-hover:text-cyan-400 transition">
                             {file.name}
                           </p>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs text-slate-500">
+                            <span className="text-xs text-slate-400">
                               {formatFileSize(file.size)}
                             </span>
-                            <span className="text-xs text-slate-300">•</span>
+                            <span className="text-xs text-slate-500">•</span>
                             <span className={cn(
                               "text-[10px] px-2 py-0.5 rounded-full font-medium border flex items-center gap-1",
                               getStatusColor(file.status)
@@ -488,7 +488,7 @@ export const UploadZone = () => {
                             {file.metadata?.pageCount && (
                               <>
                                 <span className="text-xs text-slate-300">•</span>
-                                <span className="text-xs font-medium text-brand-600">
+                                <span className="text-xs font-medium text-cyan-400">
                                   {file.metadata.pageCount} {file.metadata.pageCount === 1 ? 'page' : 'pages'}
                                 </span>
                               </>
@@ -501,14 +501,14 @@ export const UploadZone = () => {
                           {file.status === 'ready' && (
                             <button
                               onClick={() => {/* Navigate to next step */ }}
-                              className="p-2 text-brand-600 hover:text-brand-700 hover:bg-brand-50 rounded-xl transition-all"
+                              className="p-2 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 rounded-xl transition-all"
                             >
                               <ChevronRight className="h-5 w-5" />
                             </button>
                           )}
                           <button
                             onClick={() => handleDeleteDocument(file)}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                            className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
                             title={file.status === 'ready' ? 'Delete document from server' : 'Remove file'}
                           >
                             <X className="h-5 w-5" />
@@ -520,12 +520,12 @@ export const UploadZone = () => {
                       {file.status === 'uploading' && (
                         <div className="mt-3 space-y-1">
                           <div className="flex justify-between text-xs">
-                            <span className="text-brand-600 font-medium">Uploading...</span>
-                            <span className="text-slate-500">{file.progress}%</span>
+                            <span className="text-cyan-400 font-medium">Uploading...</span>
+                            <span className="text-slate-400">{file.progress}%</span>
                           </div>
-                          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-brand-600 transition-all duration-300 ease-out relative"
+                              className="h-full bg-cyan-500 transition-all duration-300 ease-out relative"
                               style={{ width: `${file.progress}%` }}
                             >
                               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20 animate-shimmer" />
@@ -537,25 +537,25 @@ export const UploadZone = () => {
                       {/* Analyzing state with animation */}
                       {file.status === 'analyzing' && (
                         <div className="mt-3 space-y-2">
-                          <div className="flex items-center gap-2 text-xs font-medium text-blue-600">
+                          <div className="flex items-center gap-2 text-xs font-medium text-cyan-400">
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
                             <span>AI analyzing document...</span>
                           </div>
-                          <div className="flex gap-2 text-[10px] text-slate-500">
-                            <span className="px-2 py-1 bg-slate-100 rounded-full">Detecting colors</span>
-                            <span className="px-2 py-1 bg-slate-100 rounded-full">Counting pages</span>
-                            <span className="px-2 py-1 bg-slate-100 rounded-full">Checking quality</span>
+                          <div className="flex gap-2 text-[10px] text-slate-400">
+                            <span className="px-2 py-1 bg-slate-700/50 rounded-full">Detecting colors</span>
+                            <span className="px-2 py-1 bg-slate-700/50 rounded-full">Counting pages</span>
+                            <span className="px-2 py-1 bg-slate-700/50 rounded-full">Checking quality</span>
                           </div>
                         </div>
                       )}
 
                       {/* Queued state */}
                       {file.status === 'queued' && (
-                        <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                        <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
                           <span>Waiting in queue...</span>
                           {file.queuedAt && (
-                            <span className="text-[10px] text-slate-400">
+                            <span className="text-[10px] text-slate-500">
                               {new Date(file.queuedAt).toLocaleTimeString()}
                             </span>
                           )}
@@ -565,7 +565,7 @@ export const UploadZone = () => {
                       {/* Error state */}
                       {/* Error state */}
                       {file.status === 'error' && (
-                        <div className="mt-3 flex items-center gap-2 text-xs text-red-600 bg-red-50 p-2 rounded-lg">
+                        <div className="mt-3 flex items-center gap-2 text-xs text-red-400 bg-red-500/10 p-2 rounded-lg border border-red-500/20">
                           <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
                           <span>{file.error || 'Upload failed'}</span>
                           <button
@@ -575,7 +575,7 @@ export const UploadZone = () => {
                               alert('Please re-upload the file from your device');
                               fileInputRef.current?.click();
                             }}
-                            className="ml-auto text-xs font-medium text-red-700 hover:text-red-800 underline"
+                            className="ml-auto text-xs font-medium text-red-300 hover:text-red-200 underline"
                           >
                             Retry
                           </button>
@@ -592,17 +592,17 @@ export const UploadZone = () => {
 
       {/* Empty state with helpful tips */}
       {files.length === 0 && (
-        <div className="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-200">
+        <div className="mt-8 p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50">
           <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
-              <FileText className="h-5 w-5 text-brand-600 bg-red-50" />
+            <div className="h-10 w-10 rounded-xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0 border border-cyan-400/30">
+              <FileText className="h-5 w-5 text-cyan-400" />
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium text-slate-900">Ready to start printing?</h4>
-              <p className="text-sm text-slate-600">
+              <h4 className="font-medium text-slate-100">Ready to start printing?</h4>
+              <p className="text-sm text-slate-400">
                 Upload your documents and our AI will automatically analyze them for:
               </p>
-              <ul className="text-xs text-slate-500 space-y-1 list-disc list-inside">
+              <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
                 <li>Page count and paper size detection</li>
                 <li>Color vs black & white page identification</li>
                 <li>Instant price calculation with 10% description fees</li>

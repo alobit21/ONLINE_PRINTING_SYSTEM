@@ -32,35 +32,15 @@ export const CustomerOrdersPage = () => {
     const [timelineOrder, setTimelineOrder] = useState<Order | null>(null);
     const [reorderOrder, setReorderOrder] = useState<Order | null>(null);
 
-    // Live tracking for active orders
     const { isTracking } = useOrderLiveTracking({
         onStatusChange: (newStatus: OrderStatus, order: Order) => {
-            // Send notification on status change
             const statusMessages: Record<OrderStatus, { title: string; message: string }> = {
-                UPLOADED: {
-                    title: 'Order Uploaded',
-                    message: `Your order has been uploaded to ${order.shop.name}`
-                },
-                ACCEPTED: {
-                    title: 'Order Accepted',
-                    message: `${order.shop.name} has accepted your order`
-                },
-                PRINTING: {
-                    title: 'Printing Started',
-                    message: `Your documents are now being printed`
-                },
-                READY: {
-                    title: 'Order Ready! 🎉',
-                    message: `Your order is ready for pickup at ${order.shop.name}`
-                },
-                COMPLETED: {
-                    title: 'Order Completed',
-                    message: `Thank you for using our service!`
-                },
-                CANCELLED: {
-                    title: 'Order Cancelled',
-                    message: `Your order has been cancelled`
-                }
+                UPLOADED: { title: 'Order Uploaded', message: `Your order has been uploaded to ${order.shop.name}` },
+                ACCEPTED: { title: 'Order Accepted', message: `${order.shop.name} has accepted your order` },
+                PRINTING: { title: 'Printing Started', message: `Your documents are now being printed` },
+                READY: { title: 'Order Ready! 🎉', message: `Your order is ready for pickup at ${order.shop.name}` },
+                COMPLETED: { title: 'Order Completed', message: `Thank you for using our service!` },
+                CANCELLED: { title: 'Order Cancelled', message: `Your order has been cancelled` }
             };
 
             const statusInfo = statusMessages[newStatus];
@@ -105,32 +85,29 @@ export const CustomerOrdersPage = () => {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/dashboard/customer')}
-                        className="p-2 hover:bg-white rounded-full transition-colors border border-transparent hover:border-slate-100"
+                        className="p-2 hover:bg-slate-700 rounded-full transition-colors border border-transparent hover:border-slate-600"
                     >
-                        <ArrowLeft className="h-6 w-6 text-slate-900" />
+                        <ArrowLeft className="h-6 w-6 text-slate-200" />
                     </button>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Your Orders</h1>
-                        <p className="text-slate-500 font-medium text-sm">Track and manage your print jobs</p>
+                        <h1 className="text-3xl font-black text-slate-100 tracking-tight">Your Orders</h1>
+                        <p className="text-slate-400 font-medium text-sm">Track and manage your print jobs</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    {/* Live tracking indicator */}
                     {isTracking && activeOrders.length > 0 && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-xl">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-green-900/30 border border-green-700 rounded-xl">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                            <span className="text-xs font-bold text-green-700">Live</span>
+                            <span className="text-xs font-bold text-green-300">Live</span>
                         </div>
                     )}
 
-                    {/* Notification Center */}
                     <NotificationCenter />
 
-                    {/* Refresh Button */}
                     <button
                         onClick={() => refetch()}
                         disabled={loading}
-                        className="p-2.5 bg-white border border-slate-100 rounded-2xl shadow-sm text-slate-400 hover:text-brand-600 transition-all hover:rotate-180 disabled:opacity-50"
+                        className="p-2.5 bg-slate-800 border border-slate-700 rounded-2xl shadow-sm text-slate-400 hover:text-cyan-400 transition-all hover:rotate-180 disabled:opacity-50"
                     >
                         <RotateCcw className={cn("h-5 w-5", loading && "animate-spin")} />
                     </button>
@@ -141,12 +118,13 @@ export const CustomerOrdersPage = () => {
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
                 counts={counts}
+                className="bg-slate-900 text-slate-200"
             />
 
             <div className="min-h-[400px]">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
-                        <Loader2 className="h-10 w-10 text-brand-600 animate-spin" />
+                        <Loader2 className="h-10 w-10 text-cyan-400 animate-spin" />
                         <span className="text-slate-400 font-bold uppercase tracking-widest text-xs">Syncing your orders...</span>
                     </div>
                 ) : currentOrders.length === 0 ? (
@@ -155,12 +133,12 @@ export const CustomerOrdersPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col items-center justify-center py-20 text-center space-y-4"
                     >
-                        <div className="w-24 h-24 rounded-[32px] bg-slate-50 flex items-center justify-center">
-                            <PackageSearch className="h-12 w-12 text-slate-300" />
+                        <div className="w-24 h-24 rounded-[32px] bg-slate-800 flex items-center justify-center">
+                            <PackageSearch className="h-12 w-12 text-slate-400" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900">No {activeTab} orders yet</h3>
-                            <p className="text-sm text-slate-500 mt-1 max-w-[240px] mx-auto">
+                            <h3 className="text-lg font-bold text-slate-100">No {activeTab} orders yet</h3>
+                            <p className="text-sm text-slate-400 mt-1 max-w-[240px] mx-auto">
                                 {activeTab === 'active'
                                     ? "Any orders you place will show up here for live tracking."
                                     : `You don't have any ${activeTab} orders at the moment.`}
@@ -169,7 +147,7 @@ export const CustomerOrdersPage = () => {
                         {activeTab === 'active' && (
                             <Button
                                 onClick={() => navigate('/dashboard/customer/upload')}
-                                className="mt-4 gradient-brand rounded-2xl px-8 h-12 shadow-lg shadow-brand-500/20"
+                                className="mt-4 bg-cyan-500 text-black rounded-2xl px-8 h-12 shadow-lg shadow-cyan-500/20"
                             >
                                 Start Printing
                             </Button>
@@ -198,7 +176,6 @@ export const CustomerOrdersPage = () => {
                 )}
             </div>
 
-            {/* Order Details Drawer */}
             <OrderDetailsDrawer
                 order={selectedOrder}
                 onClose={() => setSelectedOrder(null)}
@@ -212,13 +189,11 @@ export const CustomerOrdersPage = () => {
                 }}
             />
 
-            {/* Timeline Modal */}
             <OrderTimelineModal
                 order={timelineOrder}
                 onClose={() => setTimelineOrder(null)}
             />
 
-            {/* Reorder Flow */}
             <ReorderFlow
                 order={reorderOrder}
                 onClose={() => setReorderOrder(null)}
