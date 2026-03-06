@@ -28,8 +28,8 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
     return (
         <Card
             className={cn(
-                "cursor-pointer transition-all hover:shadow-md active:scale-[0.98] border-none shadow-sm overflow-hidden group",
-                isActive ? "ring-1 ring-brand-100" : ""
+                "cursor-pointer transition-all hover:shadow-md active:scale-[0.98] border-none shadow-sm overflow-hidden group bg-slate-800/50 border border-slate-700/50",
+                isActive ? "ring-1 ring-cyan-400/30" : ""
             )}
             onClick={() => onClick(order)}
         >
@@ -37,20 +37,20 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
                 <div className="p-4 space-y-4">
                     <div className="flex justify-between items-start">
                         <div className="flex gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden border border-slate-200">
+                            <div className="w-12 h-12 rounded-xl bg-slate-700/50 flex-shrink-0 overflow-hidden border border-slate-600/50">
                                 {order.shop.banner ? (
                                     <img src={order.shop.banner} alt={order.shop.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-brand-50 text-brand-600 font-bold uppercase text-lg">
+                                    <div className="w-full h-full flex items-center justify-center bg-cyan-500/20 text-cyan-400 font-bold uppercase text-lg border border-cyan-400/30">
                                         {order.shop.name.charAt(0)}
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors uppercase tracking-tight leading-tight">
+                                <h3 className="font-bold text-slate-100 group-hover:text-cyan-400 transition-colors uppercase tracking-tight leading-tight">
                                     {order.shop.name}
                                 </h3>
-                                <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                                <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
                                     <MapPin className="h-3 w-3" />
                                     {order.shop.address}
                                 </p>
@@ -61,7 +61,7 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
                                 {config.label}
                             </Badge>
                             {isActive && (
-                                <span className="text-[10px] font-bold text-brand-600 flex items-center gap-1 animate-pulse">
+                                <span className="text-[10px] font-bold text-cyan-400 flex items-center gap-1 animate-pulse">
                                     <Clock className="h-3 w-3" />
                                     ETA: 12 min
                                 </span>
@@ -75,31 +75,31 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
                                 <span>Progress</span>
                                 <span>{config.progress}%</span>
                             </div>
-                            <Progress value={config.progress} className="h-1.5 bg-slate-100" barClassName={config.color} />
+                            <Progress value={config.progress} className="h-1.5 bg-slate-700" barClassName={config.color} />
                         </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-50">
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-700/50">
                         <div className="flex gap-3 text-slate-400">
                             <div className="flex items-center gap-1">
                                 <FileText className="h-3.5 w-3.5" />
                                 <span className="text-xs font-bold">{order.items.length} Files</span>
                             </div>
-                            <div className="font-bold text-slate-900 text-xs">
+                            <div className="font-bold text-slate-100 text-xs">
                                 TZS {Number(order.totalPrice).toLocaleString()}
                             </div>
                         </div>
 
                         <div className="flex items-center gap-2">
                             {order.status === 'READY' && (
-                                <div className="p-1.5 bg-green-50 text-green-600 rounded-lg">
+                                <div className="p-1.5 bg-green-500/20 text-green-400 rounded-lg border border-green-400/30">
                                     <QrCode className="h-4 w-4" />
                                 </div>
                             )}
-                            <button className="p-1.5 hover:bg-slate-50 text-slate-400 rounded-lg transition-colors">
+                            <button className="p-1.5 hover:bg-slate-700/50 text-slate-400 rounded-lg transition-colors">
                                 <MessageCircle className="h-4 w-4" />
                             </button>
-                            <ChevronRight className="h-4 w-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
+                            <ChevronRight className="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>
                 </div>

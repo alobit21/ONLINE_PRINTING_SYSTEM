@@ -2,13 +2,66 @@ import { useNavigate } from 'react-router-dom';
 import { FileUp, Clock, MapPin, Zap, TrendingUp, ChevronRight, Star, AlertCircle } from 'lucide-react';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Skeleton } from '../../../components/ui/skeleton';
 import { cn } from '../../../lib/utils';
 import { useQuery } from '@apollo/client/react';
 import { GET_MY_ORDERS } from '../orders/api';
 import { GET_SHOPS } from '../../shops/api';
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+
+// Define TypeScript types for the GraphQL response
+interface OrderItem {
+    id: string;
+    pageCount: number;
+    price: number;
+    configSnapshot: any;
+    document: {
+        id: string;
+        fileName: string;
+        fileType: string;
+        fileSize: number;
+        uploadUrl: string;
+        downloadUrl: string;
+        createdAt: string;
+    };
+}
+
+interface Order {
+    id: string;
+    status: string;
+    totalPrice: number;
+    createdAt: string;
+    estimatedCompletionTime?: string;
+    completedAt?: string;
+    shop: {
+        id: string;
+        name: string;
+        address: string;
+        banner?: string;
+    };
+    items: OrderItem[];
+}
+
+interface MyOrdersResponse {
+    myOrders: Order[];
+}
+
+interface Shop {
+    id: string;
+    name: string;
+    rating?: number;
+    distance?: number;
+}
+
+interface ShopsResponse {
+    shops: {
+        data: Shop[];
+        page: {
+            totalElements: number;
+        };
+    };
+}
 
 export const CustomerHome = () => {
     const navigate = useNavigate();
@@ -31,9 +84,9 @@ export const CustomerHome = () => {
         }
     }, []);
 
-    const { data: ordersData, loading: ordersLoading, error: ordersError, refetch: refetchOrders } = useQuery(GET_MY_ORDERS);
+    const { data: ordersData, loading: ordersLoading, error: ordersError, refetch: refetchOrders } = useQuery<MyOrdersResponse>(GET_MY_ORDERS);
 
-    const { data: shopsData, loading: shopsLoading, error: shopsError, refetch: refetchShops } = useQuery(GET_SHOPS, {
+    const { data: shopsData, loading: shopsLoading, error: shopsError, refetch: refetchShops } = useQuery<ShopsResponse>(GET_SHOPS, {
         variables: {
             filterInput: {
                 radiusKm: 20,
@@ -51,10 +104,10 @@ export const CustomerHome = () => {
     const nearbyShops = shopsData?.shops?.data?.slice(0, 4) || [];
 
     // Calculate average speed from completed orders
-    const completedOrders = ordersData?.myOrders?.filter((o: any) => o.status === 'COMPLETED' && o.completedAt && o.createdAt) || [];
+    const completedOrders = ordersData?.myOrders?.filter((o: Order) => o.status === 'COMPLETED' && o.completedAt && o.createdAt) || [];
     const avgSpeed = completedOrders.length > 0
-        ? Math.round(completedOrders.reduce((acc: number, curr: any) => {
-            const duration = (new Date(curr.completedAt).getTime() - new Date(curr.createdAt).getTime()) / (1000 * 60);
+        ? Math.round(completedOrders.reduce((acc: number, curr: Order) => {
+            const duration = (new Date(curr.completedAt!).getTime() - new Date(curr.createdAt).getTime()) / (1000 * 60);
             return acc + duration;
         }, 0) / completedOrders.length)
         : null;
@@ -62,7 +115,7 @@ export const CustomerHome = () => {
     const stats = {
         avgSpeed: avgSpeed ? `${avgSpeed} mins` : "N/A",
         nearbyCount: shopsData?.shops?.page?.totalElements || 0,
-        totalSpent: ordersData?.myOrders?.reduce((acc: number, curr: any) => acc + curr.totalPrice, 0) || 0,
+        totalSpent: ordersData?.myOrders?.reduce((acc: number, curr: Order) => acc + curr.totalPrice, 0) || 0,
         recentStatus: ordersData?.myOrders?.[0]?.status || 'None'
     };
 
@@ -170,7 +223,7 @@ export const CustomerHome = () => {
                             </CardContent>
                         </Card>
                     ) : (
-                        recentOrders.map((order: any) => (
+                        recentOrders.map((order: Order) => (
                             <RecentJobCard
                                 key={order.id}
                                 id={`ORD-${order.id.split('-')[0].toUpperCase()}`}
@@ -198,7 +251,7 @@ export const CustomerHome = () => {
                     ) : nearbyShops.length === 0 ? (
                         <p className="text-slate-400 text-sm px-2">No shops found in your immediate area.</p>
                     ) : (
-                        nearbyShops.map((shop: any) => (
+                        nearbyShops.map((shop: Shop) => (
                             <RecommendedShop
                                 key={shop.id}
                                 name={shop.name}
@@ -213,7 +266,30 @@ export const CustomerHome = () => {
     );
 };
 
-const QuickStat = ({ icon: Icon, label, value, color }: any) => (
+// TypeScript types for component props
+interface QuickStatProps {
+    icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    value: string;
+    color: string;
+}
+
+interface RecentJobCardProps {
+    id: string;
+    shop: string;
+    status: string;
+    time: string;
+    price: number;
+    files: number;
+}
+
+interface RecommendedShopProps {
+    name: string;
+    rating: number;
+    distance: string;
+}
+
+const QuickStat = ({ icon: Icon, label, value, color }: QuickStatProps) => (
     <Card className="border border-slate-700/50 shadow-lg overflow-hidden bg-slate-800/50 backdrop-blur-sm group hover:scale-105 transition-all hover:bg-slate-800/70 hover:shadow-cyan-500/10">
         <CardContent className="p-4 flex flex-col items-center text-center">
             <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mb-2 shadow-sm", color)}>
@@ -225,7 +301,7 @@ const QuickStat = ({ icon: Icon, label, value, color }: any) => (
     </Card>
 );
 
-const RecentJobCard = ({ id, shop, status, time, price, files }: any) => (
+const RecentJobCard = ({ id, shop, status, time, price, files }: RecentJobCardProps) => (
     <Card className="border border-slate-700/50 shadow-lg hover:shadow-xl transition-all overflow-hidden bg-slate-800/50 backdrop-blur-sm group hover:bg-slate-800/70 hover:shadow-cyan-500/10">
         <CardContent className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -256,7 +332,7 @@ const RecentJobCard = ({ id, shop, status, time, price, files }: any) => (
     </Card>
 );
 
-const RecommendedShop = ({ name, rating, distance }: any) => (
+const RecommendedShop = ({ name, rating, distance }: RecommendedShopProps) => (
     <div className="min-w-[200px] bg-slate-800/50 backdrop-blur-sm rounded-3xl p-5 shadow-lg border border-slate-700/50 group cursor-pointer hover:border-cyan-500/50 transition-all hover:scale-[1.02] hover:bg-slate-800/70">
         <div className="h-28 w-full bg-slate-700 rounded-2xl mb-4 overflow-hidden relative">
             <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${name}`} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" alt={name} />
