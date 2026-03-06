@@ -113,18 +113,26 @@ export function UsersTable({ users, loading }: UsersTableProps) {
             className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
           />
         </div>
-        <Select value={roleFilter} onValueChange={setRoleFilter}>
-          <option value="all">All Roles</option>
-          <option value="ADMIN">Admin</option>
-          <option value="SHOP_OWNER">Shop Owner</option>
-          <option value="CUSTOMER">Customer</option>
-        </Select>
-        <Select value={subscriptionFilter} onValueChange={setSubscriptionFilter}>
-          <option value="all">All Subscriptions</option>
-          <option value="FREE">Free</option>
-          <option value="PREMIUM">Premium</option>
-          <option value="ENTERPRISE">Enterprise</option>
-        </Select>
+        <Select 
+          value={roleFilter} 
+          onValueChange={setRoleFilter}
+          options={[
+            { value: 'all', label: 'All Roles' },
+            { value: 'ADMIN', label: 'Admin' },
+            { value: 'SHOP_OWNER', label: 'Shop Owner' },
+            { value: 'CUSTOMER', label: 'Customer' }
+          ]}
+        />
+        <Select 
+          value={subscriptionFilter} 
+          onValueChange={setSubscriptionFilter}
+          options={[
+            { value: 'all', label: 'All Subscriptions' },
+            { value: 'FREE', label: 'Free' },
+            { value: 'PREMIUM', label: 'Premium' },
+            { value: 'ENTERPRISE', label: 'Enterprise' }
+          ]}
+        />
       </div>
 
       {/* Table */}

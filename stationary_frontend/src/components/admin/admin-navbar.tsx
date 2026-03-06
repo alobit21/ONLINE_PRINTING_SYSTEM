@@ -1,7 +1,7 @@
 import { Bell, Search, User, LogOut, Settings, Menu } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '../ui/sheet';
 import { AdminSidebar } from './sidebar';
 import { 
   DropdownMenu,
@@ -25,6 +25,10 @@ export function AdminNavbar() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64 bg-gray-800 border-gray-700">
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+            <SheetDescription className="sr-only">
+              Mobile navigation menu for admin panel
+            </SheetDescription>
             <AdminSidebar />
           </SheetContent>
         </Sheet>

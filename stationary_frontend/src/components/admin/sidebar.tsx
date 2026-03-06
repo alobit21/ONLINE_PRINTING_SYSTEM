@@ -1,4 +1,5 @@
 import { cn } from '../../lib/utils';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -59,7 +60,8 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ className }: AdminSidebarProps) {
-  const currentPath = window.location.pathname;
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const SidebarContent = () => (
     <div className={cn('flex flex-col h-full w-64 bg-gray-800 border-r border-gray-700', className)}>
@@ -83,9 +85,9 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
           const isActive = currentPath.includes(item.href.split('/').pop() || '');
           
           return (
-            <a
+            <Link
               key={item.href}
-              href={item.href}
+              to={item.href}
               className={cn(
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 isActive
@@ -100,7 +102,7 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
                   {item.badge}
                 </span>
               )}
-            </a>
+            </Link>
           );
         })}
       </nav>

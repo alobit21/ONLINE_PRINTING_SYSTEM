@@ -57,14 +57,14 @@ function App() {
 
             {/* Admin Routes */}
             <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
-              <Route element={<AdminLayout />}>
-                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-                <Route path="/admin/users" element={<AdminUsersPage />} />
-                <Route path="/admin/shops" element={<AdminShopsPage />} />
-                <Route path="/admin/orders" element={<AdminOrdersPage />} />
-                <Route path="/admin/documents" element={<AdminDocumentsPage />} />
-                <Route path="/admin/pricing" element={<AdminPricingPage />} />
-                <Route path="/admin/settings" element={<AdminSettingsPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboardPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="shops" element={<AdminShopsPage />} />
+                <Route path="orders" element={<AdminOrdersPage />} />
+                <Route path="documents" element={<AdminDocumentsPage />} />
+                <Route path="pricing" element={<AdminPricingPage />} />
+                <Route path="settings" element={<AdminSettingsPage />} />
               </Route>
             </Route>
 
