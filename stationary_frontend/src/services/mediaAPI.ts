@@ -157,7 +157,7 @@ class MediaAPI {
     async deleteDocument(documentId: string): Promise<void> {
         try {
             // Use dev endpoint for testing (no authentication required)
-            const response = await axios.delete(`${API_BASE_URL}/api/storage/media/dev/${documentId}/`);
+            await axios.delete(`${API_BASE_URL}/api/storage/media/dev/${documentId}/`);
             console.log('Document deleted successfully');
         } catch (error: any) {
             console.error('Delete document failed:', error);
