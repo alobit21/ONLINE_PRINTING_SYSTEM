@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
 import { useAuthStore } from '../../stores/authStore';
 import { useQuery, useMutation } from '@apollo/client/react';

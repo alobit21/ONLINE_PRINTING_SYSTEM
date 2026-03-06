@@ -217,8 +217,17 @@ class Query(graphene.ObjectType):
 
     def resolve_my_orders(self, info):
         user = info.context.user
-        if not user.is_authenticated: return []
-        return Order.objects.filter(customer=user)
+        print(f'Debug - my_orders resolver - user: {user}')
+        print(f'Debug - my_orders resolver - is_authenticated: {user.is_authenticated if user else "No user"}')
+        
+        if not user.is_authenticated: 
+            print('Debug - my_orders resolver: returning [] (not authenticated)')
+            return []
+        
+        orders = Order.objects.filter(customer=user)
+        print(f'Debug - my_orders resolver - found {orders.count()} orders for user')
+        
+        return orders
 
     def resolve_all_my_shop_orders(self, info):
         user = info.context.user
