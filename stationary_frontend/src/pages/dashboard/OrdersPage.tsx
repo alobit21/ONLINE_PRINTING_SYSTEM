@@ -31,12 +31,12 @@ import { format } from 'date-fns';
 // Order Status Badge Component
 const OrderStatusBadge = ({ status }: { status: string }) => {
     const styles: Record<string, string> = {
-        UPLOADED: 'bg-blue-100 text-blue-700 border-blue-200',
-        ACCEPTED: 'bg-indigo-100 text-indigo-700 border-indigo-200',
-        PRINTING: 'bg-amber-100 text-amber-700 border-amber-200',
-        READY: 'bg-green-100 text-green-700 border-green-200',
-        COMPLETED: 'bg-slate-100 text-slate-700 border-slate-200',
-        CANCELLED: 'bg-red-100 text-red-700 border-red-200',
+        UPLOADED: 'bg-blue-900/50 text-blue-400 border-blue-700',
+        ACCEPTED: 'bg-indigo-900/50 text-indigo-400 border-indigo-700',
+        PRINTING: 'bg-amber-900/50 text-amber-400 border-amber-700',
+        READY: 'bg-green-900/50 text-green-400 border-green-700',
+        COMPLETED: 'bg-gray-700 text-gray-300 border-gray-600',
+        CANCELLED: 'bg-red-900/50 text-red-400 border-red-700',
     };
 
     return (
@@ -128,10 +128,10 @@ function OrderDetailsDialog({
     return (
         <>
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-800 border-gray-700">
                     <DialogHeader>
-                        <DialogTitle>Order Details</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-white">Order Details</DialogTitle>
+                        <DialogDescription className="text-gray-400">
                             Order ID: {order.id.slice(0, 8).toUpperCase()}
                         </DialogDescription>
                     </DialogHeader>
@@ -139,71 +139,71 @@ function OrderDetailsDialog({
                     <div className="space-y-6 py-4">
                         {/* Customer Information */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Customer Information</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Customer Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Full Name</p>
-                                    <p className="text-sm font-medium text-slate-900">{customerName}</p>
+                                    <p className="text-xs text-gray-400 mb-1">Full Name</p>
+                                    <p className="text-sm font-medium text-white">{customerName}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Email</p>
-                                    <p className="text-sm font-medium text-slate-900">{order.customer?.email || 'N/A'}</p>
+                                    <p className="text-xs text-gray-400 mb-1">Email</p>
+                                    <p className="text-sm font-medium text-white">{order.customer?.email || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Order Information */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Order Information</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Order Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Order ID</p>
-                                    <p className="text-sm font-mono font-medium text-slate-900">{order.id.slice(0, 8).toUpperCase()}</p>
+                                    <p className="text-xs text-gray-400 mb-1">Order ID</p>
+                                    <p className="text-sm font-mono font-medium text-white">{order.id.slice(0, 8).toUpperCase()}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Date Created</p>
-                                    <p className="text-sm font-medium text-slate-900">
+                                    <p className="text-xs text-gray-400 mb-1">Date Created</p>
+                                    <p className="text-sm font-medium text-white">
                                         {format(new Date(order.createdAt), 'MMM d, yyyy h:mm a')}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Current Status</p>
+                                    <p className="text-xs text-gray-400 mb-1">Current Status</p>
                                     <OrderStatusBadge status={order.status} />
                                 </div>
                                 {order.completedAt && (
                                     <div>
-                                        <p className="text-xs text-slate-500 mb-1">Completed At</p>
-                                        <p className="text-sm font-medium text-slate-900">
+                                        <p className="text-xs text-gray-400 mb-1">Completed At</p>
+                                        <p className="text-sm font-medium text-white">
                                             {format(new Date(order.completedAt), 'MMM d, yyyy h:mm a')}
                                         </p>
                                     </div>
                                 )}
                                 {order.estimatedCompletionTime && (
                                     <div>
-                                        <p className="text-xs text-slate-500 mb-1">Estimated Completion</p>
-                                        <p className="text-sm font-medium text-slate-900">
+                                        <p className="text-xs text-gray-400 mb-1">Estimated Completion</p>
+                                        <p className="text-sm font-medium text-white">
                                             {format(new Date(order.estimatedCompletionTime), 'MMM d, yyyy h:mm a')}
                                         </p>
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-xs text-slate-500 mb-1">Shop</p>
-                                    <p className="text-sm font-medium text-slate-900">{order.shop?.name || 'N/A'}</p>
+                                    <p className="text-xs text-gray-400 mb-1">Shop</p>
+                                    <p className="text-sm font-medium text-white">{order.shop?.name || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Items List */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Order Items</h3>
-                            <div className="border border-slate-200 rounded-lg overflow-hidden">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Order Items</h3>
+                            <div className="border border-gray-600 rounded-lg overflow-hidden">
                                 <table className="w-full text-sm">
-                                    <thead className="bg-slate-50 border-b border-slate-200">
+                                    <thead className="bg-gray-700 border-b border-gray-600">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Item</th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Pages</th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase">Configuration</th>
-                                            <th className="px-4 py-3 text-right text-xs font-semibold text-slate-700 uppercase">Price</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">Item</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">Pages</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">Configuration</th>
+                                            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase">Price</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -217,20 +217,20 @@ function OrderDetailsDialog({
                                             ].filter(Boolean);
 
                                             return (
-                                                <tr key={item.id} className="border-b border-slate-100 last:border-0">
+                                                <tr key={item.id} className="border-b border-gray-600 last:border-0">
                                                     <td className="px-4 py-3">
-                                                        <p className="font-medium text-slate-900">{item.document?.fileName || 'Document'}</p>
-                                                        <p className="text-xs text-slate-500">{item.document?.fileType || 'N/A'}</p>
+                                                        <p className="font-medium text-white">{item.document?.fileName || 'Document'}</p>
+                                                        <p className="text-xs text-gray-400">{item.document?.fileType || 'N/A'}</p>
                                                     </td>
-                                                    <td className="px-4 py-3 text-slate-600">{item.pageCount}</td>
+                                                    <td className="px-4 py-3 text-gray-300">{item.pageCount}</td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex flex-wrap gap-1">
                                                             {configParts.map((part, idx) => (
-                                                                <span key={idx} className="text-xs text-slate-600">{part}</span>
+                                                                <span key={idx} className="text-xs text-gray-300">{part}</span>
                                                             ))}
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3 text-right font-medium text-slate-900">
+                                                    <td className="px-4 py-3 text-right font-medium text-white">
                                                         TZS {Number(item.price).toLocaleString()}
                                                     </td>
                                                 </tr>
@@ -243,21 +243,21 @@ function OrderDetailsDialog({
 
                         {/* Totals Section */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Totals</h3>
-                            <div className="space-y-2 p-4 bg-slate-50 rounded-lg">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Totals</h3>
+                            <div className="space-y-2 p-4 bg-gray-700 rounded-lg border border-gray-600">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-600">Subtotal:</span>
-                                    <span className="font-medium text-slate-900">TZS {subtotal.toLocaleString()}</span>
+                                    <span className="text-gray-300">Subtotal:</span>
+                                    <span className="font-medium text-white">TZS {subtotal.toLocaleString()}</span>
                                 </div>
                                 {commissionFee > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">Commission Fee:</span>
-                                        <span className="font-medium text-slate-900">TZS {commissionFee.toLocaleString()}</span>
+                                        <span className="text-gray-300">Commission Fee:</span>
+                                        <span className="font-medium text-white">TZS {commissionFee.toLocaleString()}</span>
                                     </div>
                                 )}
-                                <div className="pt-2 border-t border-slate-200 flex justify-between">
-                                    <span className="font-semibold text-slate-900">Total:</span>
-                                    <span className="font-bold text-lg text-slate-900">TZS {total.toLocaleString()}</span>
+                                <div className="pt-2 border-t border-gray-600 flex justify-between">
+                                    <span className="font-semibold text-white">Total:</span>
+                                    <span className="font-bold text-lg text-white">TZS {total.toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -265,7 +265,7 @@ function OrderDetailsDialog({
                         {/* Attachments Section */}
                         {fileAttachments.length > 0 && (
                             <div className="space-y-3">
-                                <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                                <h3 className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
                                     <Paperclip className="h-4 w-4" />
                                     Attachments ({fileAttachments.length})
                                 </h3>
@@ -282,8 +282,8 @@ function OrderDetailsDialog({
                         )}
 
                         {/* Status Update Section */}
-                        <div className="space-y-3 pt-4 border-t border-slate-200">
-                            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Update Status</h3>
+                        <div className="space-y-3 pt-4 border-t border-gray-600">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Update Status</h3>
                             <div className="flex gap-3 items-end">
                                 <div className="flex-1">
                                     <Select
@@ -923,8 +923,8 @@ export function OrdersPage() {
                     className={cn(
                         'fixed bottom-4 right-4 z-[100] max-w-sm rounded-lg border px-4 py-3 shadow-lg flex items-center gap-2',
                         toast.type === 'success'
-                            ? 'border-green-200 bg-green-50 text-green-800'
-                            : 'border-red-200 bg-red-50 text-red-800'
+                            ? 'border-green-700 bg-green-900/50 text-green-400'
+                            : 'border-red-700 bg-red-900/50 text-red-400'
                     )}
                     role="alert"
                 >
@@ -940,16 +940,16 @@ export function OrdersPage() {
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Orders</h1>
-                    <p className="text-slate-500 mt-1">Manage and track all customer orders</p>
+                    <h1 className="text-2xl font-bold text-white">Orders</h1>
+                    <p className="text-gray-400 mt-1">Manage and track all customer orders</p>
                 </div>
                 <PrintAllOrders orders={orders} />
             </div>
 
             {/* Loading State */}
             {loading && (
-                <Card className="border border-slate-200">
-                    <CardContent className="py-12 flex items-center justify-center gap-2 text-slate-500">
+                <Card className="border border-gray-700 bg-gray-800">
+                    <CardContent className="py-12 flex items-center justify-center gap-2 text-gray-400">
                         <Loader2 className="h-6 w-6 animate-spin" />
                         <span>Loading orders…</span>
                     </CardContent>
@@ -958,8 +958,8 @@ export function OrdersPage() {
 
             {/* Error State */}
             {error && (
-                <Card className="border border-red-200 bg-red-50/50">
-                    <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-700">
+                <Card className="border border-red-700 bg-red-900/50">
+                    <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-400">
                         <AlertCircle className="h-10 w-10" />
                         <p className="font-medium">Failed to load orders</p>
                         <p className="text-sm">{error.message || 'Please try again later.'}</p>
@@ -972,9 +972,9 @@ export function OrdersPage() {
 
             {/* Empty State */}
             {!loading && !error && orders.length === 0 && (
-                <Card className="border border-slate-200">
-                    <CardContent className="py-12 text-center text-slate-500">
-                        <Package className="h-12 w-12 mx-auto mb-3 text-slate-400" />
+                <Card className="border border-gray-700 bg-gray-800">
+                    <CardContent className="py-12 text-center text-gray-400">
+                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-500" />
                         <p className="font-medium">No orders yet</p>
                         <p className="text-sm">Wait for customers to place orders.</p>
                     </CardContent>
@@ -990,30 +990,30 @@ export function OrdersPage() {
                             : order.customer?.email || 'Customer';
 
                         return (
-                            <Card key={order.id} className="border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                            <Card key={order.id} className="border border-gray-700 bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
                                 <CardContent className="p-6">
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                         {/* Order Info */}
                                         <div className="flex items-start gap-4 flex-1">
-                                            <div className="h-12 w-12 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold flex-shrink-0">
+                                            <div className="h-12 w-12 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold flex-shrink-0">
                                                 {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
                                             </div>
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <p className="font-bold text-slate-900">{customerName}</p>
+                                                    <p className="font-bold text-white">{customerName}</p>
                                                     <OrderStatusBadge status={order.status} />
                                                 </div>
-                                                <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-                                                    <span>Order ID: <strong className="text-slate-900">{order.id.slice(0, 8).toUpperCase()}</strong></span>
+                                                <div className="flex flex-wrap items-center gap-2 text-sm text-gray-400">
+                                                    <span>Order ID: <strong className="text-white">{order.id.slice(0, 8).toUpperCase()}</strong></span>
                                                     <span>•</span>
                                                     <span>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</span>
                                                     <span>•</span>
                                                     <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
                                                     <span>•</span>
-                                                    <span className="font-medium text-slate-900">TZS {Number(order.totalPrice).toLocaleString()}</span>
+                                                    <span className="font-medium text-white">TZS {Number(order.totalPrice).toLocaleString()}</span>
                                                 </div>
                                                 {order.shop?.name && (
-                                                    <p className="text-xs text-slate-500 mt-1">Shop: {order.shop.name}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">Shop: {order.shop.name}</p>
                                                 )}
                                             </div>
                                         </div>

@@ -19,6 +19,7 @@ import AdminOrdersPage from './pages/admin/orders/page';
 import AdminDocumentsPage from './pages/admin/documents/page';
 import AdminPricingPage from './pages/admin/pricing/page';
 import AdminSettingsPage from './pages/admin/settings/page';
+import AdminProfilePage from './pages/admin/profile/page';
 
 // Protected Route Component
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
@@ -65,6 +66,7 @@ function App() {
                 <Route path="documents" element={<AdminDocumentsPage />} />
                 <Route path="pricing" element={<AdminPricingPage />} />
                 <Route path="settings" element={<AdminSettingsPage />} />
+                <Route path="profile" element={<AdminProfilePage />} />
               </Route>
             </Route>
 

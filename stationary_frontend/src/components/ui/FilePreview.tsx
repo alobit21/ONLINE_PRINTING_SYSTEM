@@ -461,7 +461,7 @@ export function FileAttachmentCard({ file, onPreview }: FileAttachmentCardProps)
 
     return (
         <div
-            className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+            className="flex items-center gap-3 p-3 border border-gray-700 rounded-lg hover:bg-gray-700/50 cursor-pointer transition-colors"
             onClick={() => onPreview(file)}
         >
             <div className="flex-shrink-0">
@@ -469,7 +469,7 @@ export function FileAttachmentCard({ file, onPreview }: FileAttachmentCardProps)
             </div>
 
             <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{file.fileName}</p>
+                <p className="text-sm font-medium text-white truncate">{file.fileName}</p>
                 <div className="flex items-center gap-2 mt-1">
                     <Badge className={cn('text-xs', getFileTypeColor(category))}>
                         {category}

@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/Button';
 import { LayoutDashboard, ShoppingBag, Settings, LogOut, Printer, Package } from 'lucide-react';
-import { cn } from '../components/ui/Button';
+import { cn } from '../lib/utils';
 
 export const DashboardLayout = () => {
     const { logout, user } = useAuthStore();
@@ -23,12 +23,12 @@ export const DashboardLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
+        <div className="min-h-screen bg-gray-900 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r flex flex-col fixed inset-y-0 z-50">
-                <div className="p-6 border-b flex items-center gap-2">
+            <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col fixed inset-y-0 z-50">
+                <div className="p-6 border-b border-gray-700 flex items-center gap-2">
                     <Printer className="w-6 h-6 text-brand-600" />
-                    <span className="font-bold text-lg text-slate-800 tracking-tight">PrintSync</span>
+                    <span className="font-bold text-lg text-white tracking-tight">PrintSync</span>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-1">
@@ -48,10 +48,10 @@ export const DashboardLayout = () => {
                                 key={item.href}
                                 to={item.href}
                                 className={cn(
-                                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-slate-50",
+                                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-gray-700",
                                     isSelected
-                                        ? "bg-brand-50 text-brand-700"
-                                        : "text-slate-600 hover:text-slate-900"
+                                        ? "bg-brand-600 text-white"
+                                        : "text-gray-300 hover:text-white"
                                 )}
                             >
                                 <Icon className="w-4 h-4" />
@@ -61,17 +61,17 @@ export const DashboardLayout = () => {
                     })}
                 </nav>
 
-                <div className="p-4 border-t bg-slate-50/50">
+                <div className="p-4 border-t border-gray-700 bg-gray-900/50">
                     <div className="flex items-center gap-3 mb-4 px-2">
-                        <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-xs border border-brand-200">
+                        <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-xs">
                             {user?.email?.charAt(0).toUpperCase()}
                         </div>
                         <div className="overflow-hidden">
-                            <p className="text-sm font-medium text-slate-900 truncate" title={user?.email}>{user?.email}</p>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">{user?.role?.replace('_', ' ')}</p>
+                            <p className="text-sm font-medium text-white truncate" title={user?.email}>{user?.email}</p>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">{user?.role?.replace('_', ' ')}</p>
                         </div>
                     </div>
-                    <Button variant="ghost" className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={logout}>
+                    <Button variant="ghost" className="w-full justify-start gap-2 text-red-400 hover:text-red-300 hover:bg-red-900/20" onClick={logout}>
                         <LogOut className="w-4 h-4" />
                         Sign Out
                     </Button>

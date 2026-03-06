@@ -60,21 +60,21 @@ interface CreateShopData {
 
 // StatCard Component
 const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
-    <Card className="glass card-hover border-0 shadow-lg">
+    <Card className="bg-gray-800 border-gray-700 shadow-lg">
         <CardContent className="p-6">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                    <p className="text-sm font-medium text-slate-600">{title}</p>
-                    <p className="text-3xl font-bold text-slate-900">{value}</p>
+                    <p className="text-sm font-medium text-gray-400">{title}</p>
+                    <p className="text-3xl font-bold text-white">{value}</p>
                     {change && (
-                        <div className={`flex items-center gap-1 text-sm font-medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                        <div className={`flex items-center gap-1 text-sm font-medium ${trend === 'up' ? 'text-green-400' : 'text-red-400'}`}>
                             <TrendingUp className={`h-4 w-4 ${trend === 'down' && 'rotate-180'}`} />
                             <span>{change}</span>
                         </div>
                     )}
                 </div>
-                <div className={`p-4 rounded-xl ${trend === 'up' ? 'bg-green-100' : 'bg-brand-100'}`}>
-                    <Icon className={`h-6 w-6 ${trend === 'up' ? 'text-green-600' : 'text-brand-600'}`} />
+                <div className={`p-4 rounded-xl ${trend === 'up' ? 'bg-green-900/50' : 'bg-brand-900/50'}`}>
+                    <Icon className={`h-6 w-6 ${trend === 'up' ? 'text-green-400' : 'text-brand-400'}`} />
                 </div>
             </div>
         </CardContent>
@@ -84,15 +84,15 @@ const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
 // OrderStatusBadge Component
 const OrderStatusBadge = ({ status }: { status: string }) => {
     const styles: Record<string, string> = {
-        pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        processing: 'bg-blue-100 text-blue-700 border-blue-200',
-        completed: 'bg-green-100 text-green-700 border-green-200',
-        cancelled: 'bg-red-100 text-red-700 border-red-200',
-        UPLOADED: 'bg-blue-100 text-blue-700 border-blue-200',
-        ACCEPTED: 'bg-indigo-100 text-indigo-700 border-indigo-200',
-        PRINTING: 'bg-amber-100 text-amber-700 border-amber-200',
-        READY: 'bg-green-100 text-green-700 border-green-200',
-        COMPLETED: 'bg-slate-100 text-slate-700 border-slate-200',
+        pending: 'bg-yellow-900/50 text-yellow-400 border-yellow-700',
+        processing: 'bg-blue-900/50 text-blue-400 border-blue-700',
+        completed: 'bg-green-900/50 text-green-400 border-green-700',
+        cancelled: 'bg-red-900/50 text-red-400 border-red-700',
+        UPLOADED: 'bg-blue-900/50 text-blue-400 border-blue-700',
+        ACCEPTED: 'bg-indigo-900/50 text-indigo-400 border-indigo-700',
+        PRINTING: 'bg-amber-900/50 text-amber-400 border-amber-700',
+        READY: 'bg-green-900/50 text-green-400 border-green-700',
+        COMPLETED: 'bg-gray-700 text-gray-300 border-gray-600',
     };
 
     const icons: Record<string, any> = {
@@ -213,10 +213,10 @@ export const ShopDashboard = () => {
     // Loading State
     if (shopsLoading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
                 <div className="text-center space-y-4">
                     <Loader2 className="h-12 w-12 text-brand-600 animate-spin mx-auto" />
-                    <p className="text-slate-500 font-medium animate-pulse">Loading your dashboard...</p>
+                    <p className="text-gray-400 font-medium animate-pulse">Loading your dashboard...</p>
                 </div>
             </div>
         );
@@ -228,27 +228,27 @@ export const ShopDashboard = () => {
 
         if (shopsError || myShopsStatus === false) {
             return (
-                <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
-                    <Card className="max-w-md w-full shadow-2xl border-none overflow-hidden">
+                <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
+                    <Card className="max-w-md w-full shadow-2xl bg-gray-800 border-gray-700 overflow-hidden">
                         <div className="h-2 bg-red-500" />
                         <CardHeader>
-                            <CardTitle className="text-red-700 flex items-center gap-2">
+                            <CardTitle className="text-red-400 flex items-center gap-2">
                                 <AlertCircle className="h-5 w-5" />
                                 {isAuthError ? 'Session Expired' : 'Connection Error'}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <p className="text-slate-600 text-sm">
+                            <p className="text-gray-300 text-sm">
                                 {isAuthError
                                     ? "Your session has expired. Please log in again to manage your shops."
                                     : (shopsError?.message || myShopsMessage || "We couldn't fetch your shop details.")}
                             </p>
                             <div className="flex gap-3">
-                                <Button onClick={() => isAuthError ? navigate('/login') : refetchShops()} className="flex-1 gradient-brand">
+                                <Button onClick={() => isAuthError ? navigate('/login') : refetchShops()} className="flex-1 bg-brand-600 hover:bg-brand-700">
                                     {isAuthError ? 'Go to Login' : 'Retry Connection'}
                                 </Button>
                                 {!isAuthError && (
-                                    <Button variant="outline" onClick={() => navigate('/login')} className="flex-1">
+                                    <Button variant="outline" onClick={() => navigate('/login')} className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">
                                         Back to Login
                                     </Button>
                                 )}
@@ -260,35 +260,35 @@ export const ShopDashboard = () => {
         }
 
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-                <Card className="max-w-md w-full text-center p-8 space-y-6 shadow-xl border-none">
-                    <div className="h-20 w-20 bg-brand-100 rounded-full flex items-center justify-center mx-auto text-brand-600">
+            <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full text-center p-8 space-y-6 shadow-xl bg-gray-800 border-gray-700">
+                    <div className="h-20 w-20 bg-brand-900/50 rounded-full flex items-center justify-center mx-auto text-brand-400">
                         <Store className="h-10 w-10" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Welcome to PrintSync!</h1>
-                        <p className="text-slate-500 mt-2">To start accepting orders, you need to set up your shop profile first.</p>
+                        <h1 className="text-2xl font-bold text-white">Welcome to PrintSync!</h1>
+                        <p className="text-gray-400 mt-2">To start accepting orders, you need to set up your shop profile first.</p>
 
-                        <div className="mt-6 p-4 bg-slate-50 rounded-2xl text-left space-y-2 border border-slate-100">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Account Context</p>
+                        <div className="mt-6 p-4 bg-gray-700 rounded-2xl text-left space-y-2 border border-gray-600">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Account Context</p>
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-slate-600">Logged in as:</span>
-                                <span className="text-xs font-bold text-slate-900">{user?.email}</span>
+                                <span className="text-xs text-gray-300">Logged in as:</span>
+                                <span className="text-xs font-bold text-white">{user?.email}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-slate-600">Role:</span>
-                                <span className="text-xs font-bold text-brand-600">{user?.role}</span>
+                                <span className="text-xs text-gray-300">Role:</span>
+                                <span className="text-xs font-bold text-brand-400">{user?.role}</span>
                             </div>
-                            <div className="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
-                                <span className="text-xs text-slate-600">Shops Found:</span>
-                                <span className="text-xs font-bold text-slate-900">0</span>
+                            <div className="flex items-center justify-between border-t border-gray-600 pt-2 mt-2">
+                                <span className="text-xs text-gray-300">Shops Found:</span>
+                                <span className="text-xs font-bold text-white">0</span>
                             </div>
                         </div>
                     </div>
                     <Button
                         onClick={handleCreateShop}
                         disabled={creatingShop}
-                        className="w-full h-12 gradient-brand text-white font-bold text-lg shadow-lg shadow-brand-500/30"
+                        className="w-full h-12 bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg shadow-lg shadow-brand-500/30"
                     >
                         {creatingShop ? <Loader2 className="animate-spin mr-2" /> : <Plus className="mr-2" />}
                         Create My Shop
@@ -299,45 +299,45 @@ export const ShopDashboard = () => {
     }
 
     return (
-        <div className="fade-in">
+        <div className="fade-in bg-gray-900">
             {/* Header */}
-            <div className="sticky top-0 z-10 glass border-b border-white/20 shadow-sm">
+            <div className="sticky top-0 z-10 bg-gray-800 border-b border-gray-700 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-gradient-brand">Shop Dashboard</h1>
-                            <p className="text-sm text-slate-600 mt-1">Welcome back, {user?.email}</p>
+                            <h1 className="text-2xl font-bold text-brand-400">Shop Dashboard</h1>
+                            <p className="text-sm text-gray-400 mt-1">Welcome back, {user?.email}</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Button variant="ghost" size="sm" className="relative">
+                            <Button variant="ghost" size="sm" className="relative text-gray-300 hover:text-white hover:bg-gray-700">
                                 <Bell className="h-5 w-5" />
                                 <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
                                     3
                                 </span>
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-gray-700">
                                 <Settings className="h-5 w-5" />
                             </Button>
-                            <div className="h-10 w-10 rounded-full gradient-brand flex items-center justify-center text-white font-bold shadow-lg">
+                            <div className="h-10 w-10 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold shadow-lg">
                                 {user?.email?.charAt(0).toUpperCase()}
                             </div>
                         </div>
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex gap-2 mt-6 border-b border-slate-200 overflow-x-auto">
+                    <div className="flex gap-2 mt-6 border-b border-gray-700 overflow-x-auto">
                         {['overview', 'orders', 'products', 'analytics', 'settings'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-4 py-2 font-medium text-sm transition-all relative whitespace-nowrap ${activeTab === tab
-                                    ? 'text-brand-600'
-                                    : 'text-slate-600 hover:text-slate-900'
+                                    ? 'text-brand-400'
+                                    : 'text-gray-400 hover:text-white'
                                     }`}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 {activeTab === tab && (
-                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 gradient-brand" />
+                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-400" />
                                 )}
                             </button>
                         ))}
@@ -361,14 +361,14 @@ export const ShopDashboard = () => {
 
                 {activeTab === 'analytics' && (
                     <div className="space-y-6 fade-in">
-                        <Card className="glass border-0 shadow-lg">
+                        <Card className="bg-gray-800 border-gray-700 shadow-lg">
                             <CardHeader>
-                                <CardTitle>Analytics Dashboard</CardTitle>
-                                <CardDescription>Insights and performance metrics</CardDescription>
+                                <CardTitle className="text-white">Analytics Dashboard</CardTitle>
+                                <CardDescription className="text-gray-400">Insights and performance metrics</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-center py-12 text-slate-500">
-                                    <BarChart3 className="h-16 w-16 mx-auto mb-4 text-slate-300" />
+                                <div className="text-center py-12 text-gray-400">
+                                    <BarChart3 className="h-16 w-16 mx-auto mb-4 text-gray-500" />
                                     <p className="text-lg font-medium">Analytics coming soon</p>
                                     <p className="text-sm">Detailed charts and insights will be available here</p>
                                 </div>
@@ -385,14 +385,14 @@ export const ShopDashboard = () => {
 
                 {activeTab === 'settings' && (
                     <div className="space-y-6 fade-in">
-                        <Card className="glass border-0 shadow-lg">
+                        <Card className="bg-gray-800 border-gray-700 shadow-lg">
                             <CardHeader>
-                                <CardTitle>Shop Settings</CardTitle>
-                                <CardDescription>Configure your shop profile and preferences</CardDescription>
+                                <CardTitle className="text-white">Shop Settings</CardTitle>
+                                <CardDescription className="text-gray-400">Configure your shop profile and preferences</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-center py-12 text-slate-500">
-                                    <Settings className="h-16 w-16 mx-auto mb-4 text-slate-300" />
+                                <div className="text-center py-12 text-gray-400">
+                                    <Settings className="h-16 w-16 mx-auto mb-4 text-gray-500" />
                                     <p className="text-lg font-medium">Settings</p>
                                     <p className="text-sm">Manage operating hours, location, and account details.</p>
                                 </div>

@@ -131,10 +131,10 @@ export function ProductsPage() {
             {toast && (
                 <div
                     className={cn(
-                        'fixed bottom-4 right-4 z-[100] max-w-sm rounded-lg border px-4 py-3 shadow-lg',
+                        'fixed bottom-4 right-4 z-[100] max-w-sm rounded-lg border px-4 py-3 shadow-lg flex items-center gap-2',
                         toast.type === 'success'
-                            ? 'border-green-200 bg-green-50 text-green-800'
-                            : 'border-red-200 bg-red-50 text-red-800'
+                            ? 'border-green-700 bg-green-900/50 text-green-400'
+                            : 'border-red-700 bg-red-900/50 text-red-400'
                     )}
                     role="alert"
                 >
@@ -145,8 +145,8 @@ export function ProductsPage() {
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Products & Services</h1>
-                    <p className="text-slate-500 mt-1">Manage your printing services and pricing</p>
+                    <h1 className="text-2xl font-bold text-white">Products & Services</h1>
+                    <p className="text-gray-400 mt-1">Manage your printing services and pricing</p>
                 </div>
                 <Dialog open={dialogOpen} onOpenChange={(open: boolean) => { setDialogOpen(open); if (!open) closeDialogAndReset(); }}>
                     <DialogTrigger asChild>
@@ -155,10 +155,10 @@ export function ProductsPage() {
                             Add Service
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="bg-gray-800 border-gray-700">
                         <DialogHeader>
-                            <DialogTitle>Add Service</DialogTitle>
-                            <DialogDescription>Add a new service and set its base price.</DialogDescription>
+                            <DialogTitle className="text-white">Add Service</DialogTitle>
+                            <DialogDescription className="text-gray-400">Add a new service and set its base price.</DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <Select
@@ -199,23 +199,23 @@ export function ProductsPage() {
 
             {/* Content */}
             {!shopId ? (
-                <Card className="border border-slate-200">
-                    <CardContent className="py-12 text-center text-slate-500">
-                        <Package className="h-12 w-12 mx-auto mb-3 text-slate-400" />
+                <Card className="border border-gray-700 bg-gray-800">
+                    <CardContent className="py-12 text-center text-gray-400">
+                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-500" />
                         <p className="font-medium">No shop found</p>
                         <p className="text-sm">Create or select a shop to manage products and services.</p>
                     </CardContent>
                 </Card>
             ) : pricingLoading ? (
-                <Card className="border border-slate-200">
-                    <CardContent className="py-12 flex items-center justify-center gap-2 text-slate-500">
+                <Card className="border border-gray-700 bg-gray-800">
+                    <CardContent className="py-12 flex items-center justify-center gap-2 text-gray-400">
                         <Loader2 className="h-6 w-6 animate-spin" />
                         <span>Loading services…</span>
                     </CardContent>
                 </Card>
             ) : pricingError || response?.status === false ? (
-                <Card className="border border-red-200 bg-red-50/50">
-                    <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-700">
+                <Card className="border border-red-700 bg-red-900/50">
+                    <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-400">
                         <AlertCircle className="h-10 w-10" />
                         <p className="font-medium">Failed to load services</p>
                         <p className="text-sm">
@@ -224,9 +224,9 @@ export function ProductsPage() {
                     </CardContent>
                 </Card>
             ) : pricingRules.length === 0 ? (
-                <Card className="border border-slate-200">
-                    <CardContent className="py-12 text-center text-slate-500">
-                        <Package className="h-12 w-12 mx-auto mb-3 text-slate-400" />
+                <Card className="border border-gray-700 bg-gray-800">
+                    <CardContent className="py-12 text-center text-gray-400">
+                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-500" />
                         <p className="font-medium">No services yet</p>
                         <p className="text-sm">Add your first service using the button above.</p>
                     </CardContent>
@@ -234,18 +234,18 @@ export function ProductsPage() {
             ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {pricingRules.map((rule: ShopPricingRule) => (
-                        <Card key={rule.id} className="border border-slate-200 shadow-sm">
+                        <Card key={rule.id} className="border border-gray-700 bg-gray-800 shadow-sm">
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-base">
+                                <CardTitle className="text-base text-white">
                                     {getServiceTypeLabel(rule.serviceType)}
                                 </CardTitle>
-                                <CardDescription>
-                                    Category: {getServiceTypeLabel(rule.serviceType)}
+                                <CardDescription className="text-gray-400">
+                                    Per page pricing
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-2xl font-semibold text-slate-900">
-                                    {Number(rule.basePrice).toFixed(2)} <span className="text-sm font-normal text-slate-500">base price</span>
+                                <p className="text-2xl font-semibold text-white">
+                                    {Number(rule.basePrice).toFixed(2)} <span className="text-sm font-normal text-gray-500">base price</span>
                                 </p>
                             </CardContent>
                         </Card>

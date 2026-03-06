@@ -11,8 +11,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
 
 export function AdminNavbar() {
+  const navigate = useNavigate();
+  const { logout, user } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleProfile = () => {
+    navigate('/admin/profile');
+  };
+
+  const handleSettings = () => {
+    navigate('/admin/settings');
+  };
   return (
     <header className="h-16 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-6">
       {/* Left side - Mobile Menu & Search */}
@@ -99,22 +116,31 @@ export function AdminNavbar() {
               <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center">
                 <User className="h-4 w-4 text-white" />
               </div>
-              <span className="text-sm text-gray-300">Admin</span>
+              <span className="text-sm text-gray-300">{user?.email?.split('@')[0] || 'Admin'}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 bg-gray-800 border-gray-700">
             <DropdownMenuLabel className="text-gray-300">Admin Account</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-gray-700" />
-            <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+            <DropdownMenuItem 
+              className="text-gray-300 hover:bg-gray-700 cursor-pointer"
+              onClick={handleProfile}
+            >
               <User className="h-4 w-4 mr-2" />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+            <DropdownMenuItem 
+              className="text-gray-300 hover:bg-gray-700 cursor-pointer"
+              onClick={handleSettings}
+            >
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-gray-700" />
-            <DropdownMenuItem className="text-red-400 hover:bg-gray-700 hover:text-red-400">
+            <DropdownMenuItem 
+              className="text-red-400 hover:bg-gray-700 hover:text-red-400 cursor-pointer"
+              onClick={handleLogout}
+            >
               <LogOut className="h-4 w-4 mr-2" />
               Log out
             </DropdownMenuItem>
