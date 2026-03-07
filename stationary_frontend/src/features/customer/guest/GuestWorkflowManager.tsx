@@ -59,7 +59,6 @@ export const GuestWorkflowManager = () => {
                         <GuestPrintUploadFlow />
                     </div>
                 );
-            case 'analyze':
             case 'analysis':
                 return (
                     <div className="max-w-5xl mx-auto p-4 dark:bg-gray-900 min-h-screen">
