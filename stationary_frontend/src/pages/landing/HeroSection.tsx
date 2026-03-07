@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
-import { ChevronRight, Upload, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heroDashboard from '../../assets/hero-dashboard.png';
 
 export const HeroSection = () => {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gray-900">
+    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gray-900 dark:bg-gray-50">
       
       {/* Background Gradient Blobs */}
       <div className="absolute inset-0 pointer-events-none -z-10">
@@ -23,25 +23,25 @@ export const HeroSection = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <span className="text-xs md:text-sm font-black uppercase tracking-widest text-brand-400 mb-4 block lg:ml-1">
+              <span className="text-xs md:text-sm font-black uppercase tracking-widest text-brand-400 dark:text-brand-600 mb-4 block lg:ml-1">
                 Future of Workflow
               </span>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white leading-[1.1] tracking-tight mb-6">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white dark:text-gray-900 leading-[1.1] tracking-tight mb-6">
                 Print <br className="hidden xl:block" />
                 <span className="text-gradient-brand">Smarter.</span>
               </h1>
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-5 mb-8">
-                <span className="text-xl md:text-3xl font-black text-gray-400 italic tracking-tight">Faster.</span>
+                <span className="text-xl md:text-3xl font-black text-gray-400 dark:text-gray-600 italic tracking-tight">Faster.</span>
                 <div className="h-1.5 w-1.5 bg-brand-400 rounded-full opacity-50" />
-                <span className="text-xl md:text-3xl font-black text-gray-400 italic tracking-tight">Closer.</span>
+                <span className="text-xl md:text-3xl font-black text-gray-400 dark:text-gray-600 italic tracking-tight">Closer.</span>
                 <div className="h-1.5 w-1.5 bg-brand-400 rounded-full opacity-50" />
-                <span className="text-xl md:text-3xl font-black text-white italic tracking-tight underline decoration-brand-800 decoration-8 underline-offset-4">
+                <span className="text-xl md:text-3xl font-black text-white dark:text-gray-900 italic tracking-tight underline decoration-brand-800 dark:decoration-brand-400 decoration-8 underline-offset-4">
                   Reliable.
                 </span>
               </div>
 
-              <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-medium mb-12 max-w-[640px] mx-auto lg:mx-0">
+              <p className="text-lg md:text-xl text-gray-300 dark:text-gray-700 leading-relaxed font-medium mb-12 max-w-[640px] mx-auto lg:mx-0">
                 All-in-one platform to upload, analyze, and print your documents at nearby professional shops. Save time, reduce costs, and experience high-quality printing instantly.
               </p>
 

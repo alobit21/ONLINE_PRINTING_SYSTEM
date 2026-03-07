@@ -14,14 +14,14 @@ export const HowItWorks = () => {
     return (
         <section
             id="how-it-works"
-            className="section-padding relative overflow-hidden text-center bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white"
+            className="section-padding relative overflow-hidden text-center bg-gradient-to-b from-gray-950 via-gray-900 to-black dark:from-gray-50 dark:via-gray-100 dark:to-white text-white dark:text-gray-900"
         >
             {/* ambient glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),transparent_60%)] pointer-events-none" />
 
             <div className="section-container relative z-10">
                 <div className="heading-centered">
-                    <h2 className="text-brand-400 font-black tracking-widest uppercase text-xs mb-4">
+                    <h2 className="text-brand-400 dark:text-brand-600 font-black tracking-widest uppercase text-xs mb-4">
                         The Process
                     </h2>
 
@@ -29,7 +29,7 @@ export const HowItWorks = () => {
                         Seamless workflow in seconds.
                     </h3>
 
-                    <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-gray-400 dark:text-gray-600 max-w-2xl mx-auto leading-relaxed">
                         We've revolutionized the document journey from your screen to the paper
                         with a frictionless 6-step automation system.
                     </p>

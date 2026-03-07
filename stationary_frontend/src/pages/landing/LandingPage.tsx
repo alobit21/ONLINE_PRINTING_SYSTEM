@@ -8,6 +8,7 @@ import { FeaturesSection } from './FeaturesSection';
 import { BenefitsSection } from './BenefitsSection';
 import { CallToAction } from './CallToAction';
 import { Footer } from './Footer';
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 
 export const LandingPage = () => {
     useEffect(() => {
@@ -26,7 +27,8 @@ export const LandingPage = () => {
     }, []);
 
     return (
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-50 dark:via-gray-100 dark:to-gray-50">
+            <ThemeToggle />
             <LandingHeader />
             <main className="flex-grow">
                 <HeroSection />

@@ -23,14 +23,14 @@ export const BenefitsSection = () => {
     ];
 
     return (
-        <section className="section-padding bg-slate-900 text-white overflow-hidden">
+        <section className="section-padding bg-slate-900 dark:bg-gray-50 text-white dark:text-gray-900 overflow-hidden">
             <div className="section-container">
                 <div className="heading-centered text-center">
-                    <h2 className="text-brand-400 font-black tracking-widest uppercase text-xs mb-4">Why Sationary?</h2>
+                    <h2 className="text-brand-400 dark:text-brand-600 font-black tracking-widest uppercase text-xs mb-4">Why Sationary?</h2>
                     <h3 className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 leading-tight">
                         Real value, measurable results.
                     </h3>
-                    <p className="paragraph-lead text-slate-400">
+                    <p className="paragraph-lead text-slate-400 dark:text-gray-600">
                         Our platform creates a win-win ecosystem where quality, speed, and
                         affordability meet professional scale.
                     </p>
@@ -38,7 +38,7 @@ export const BenefitsSection = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 relative mt-24">
                     {/* Vertical Divider (Desktop) */}
-                    <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-slate-800" />
+                    <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-slate-800 dark:bg-gray-300" />
 
                     {/* Customer Side */}
                     <motion.div
@@ -47,18 +47,18 @@ export const BenefitsSection = () => {
                         viewport={{ once: true }}
                         className="flex flex-col gap-12"
                     >
-                        <div className="bg-brand-600/10 border border-brand-500/20 p-10 rounded-[3rem]">
-                            <h4 className="text-2xl font-black mb-8 flex items-center gap-3">
+                        <div className="bg-brand-600/10 dark:bg-brand-600/5 border border-brand-500/20 dark:border-brand-500/10 p-10 rounded-[3rem]">
+                            <h4 className="text-2xl font-black mb-8 flex items-center gap-3 text-white dark:text-gray-900">
                                 <span className="bg-brand-600 text-[10px] px-3 py-1 rounded-full uppercase tracking-tighter">Students</span>
                                 Happy & Productive
                             </h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {customerBenefits.map((benefit, i) => (
                                     <div key={i} className="flex items-start gap-3">
-                                        <div className="mt-1 bg-brand-500/20 p-1 rounded-full text-brand-400">
+                                        <div className="mt-1 bg-brand-500/20 p-1 rounded-full text-brand-400 dark:text-brand-600">
                                             <Check size={14} strokeWidth={3} />
                                         </div>
-                                        <span className="text-slate-300 text-sm font-bold leading-tight">{benefit}</span>
+                                        <span className="text-slate-300 dark:text-gray-700 text-sm font-bold leading-tight">{benefit}</span>
                                     </div>
                                 ))}
                             </div>
@@ -81,18 +81,18 @@ export const BenefitsSection = () => {
                         viewport={{ once: true }}
                         className="flex flex-col gap-12"
                     >
-                        <div className="bg-emerald-600/10 border border-emerald-500/20 p-10 rounded-[3rem]">
-                            <h4 className="text-2xl font-black mb-8 flex items-center gap-3 text-emerald-400">
+                        <div className="bg-emerald-600/10 dark:bg-emerald-600/5 border border-emerald-500/20 dark:border-emerald-500/10 p-10 rounded-[3rem]">
+                            <h4 className="text-2xl font-black mb-8 flex items-center gap-3 text-emerald-400 dark:text-emerald-600">
                                 <span className="bg-emerald-600 text-white text-[10px] px-3 py-1 rounded-full uppercase tracking-tighter">Shop Owners</span>
                                 Growth & Efficiency
                             </h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {shopBenefits.map((benefit, i) => (
                                     <div key={i} className="flex items-start gap-3">
-                                        <div className="mt-1 bg-emerald-500/20 p-1 rounded-full text-emerald-400">
+                                        <div className="mt-1 bg-emerald-500/20 p-1 rounded-full text-emerald-400 dark:text-emerald-600">
                                             <Check size={14} strokeWidth={3} />
                                         </div>
-                                        <span className="text-slate-300 text-sm font-bold leading-tight">{benefit}</span>
+                                        <span className="text-slate-300 dark:text-gray-700 text-sm font-bold leading-tight">{benefit}</span>
                                     </div>
                                 ))}
                             </div>

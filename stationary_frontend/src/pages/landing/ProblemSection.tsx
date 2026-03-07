@@ -12,7 +12,7 @@ export const ProblemSection = () => {
   ];
 
   return (
-    <section id="problems" className="section-padding relative overflow-hidden bg-gray-900">
+    <section id="problems" className="section-padding relative overflow-hidden bg-gray-900 dark:bg-gray-50">
       
       {/* Subtle ambient background blobs */}
       <div className="absolute inset-0 pointer-events-none">
@@ -22,11 +22,11 @@ export const ProblemSection = () => {
 
       <div className="section-container relative z-10">
         <div className="heading-centered">
-          <h2 className="text-brand-400 font-black tracking-widest uppercase text-xs mb-4">The Challenge</h2>
-          <h3 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+          <h2 className="text-brand-400 dark:text-brand-600 font-black tracking-widest uppercase text-xs mb-4">The Challenge</h2>
+          <h3 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white dark:text-gray-900 mb-6 leading-tight">
             Stop wasting time with traditional printing.
           </h3>
-          <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed text-lg font-medium">
+          <p className="text-gray-300 dark:text-gray-700 max-w-2xl mx-auto leading-relaxed text-lg font-medium">
             Traditional printing processes are fragmented and frustrating. We've identified the core friction points and eliminated them for good.
           </p>
         </div>
@@ -39,13 +39,13 @@ export const ProblemSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="p-8 rounded-[2.5rem] bg-gray-800/80 backdrop-blur-lg border border-gray-700 shadow-md hover:shadow-2xl transition-all duration-500 group"
+              className="p-8 rounded-[2.5rem] bg-gray-800/80 dark:bg-white/80 backdrop-blur-lg border border-gray-700 dark:border-gray-200 shadow-md hover:shadow-2xl transition-all duration-500 group"
             >
               <div className={`${problem.iconBg} ${problem.border} p-4 rounded-2xl w-fit mb-6 flex items-center justify-center group-hover:scale-110 transition-transform border`}>
                 {problem.icon}
               </div>
-              <h4 className="text-2xl font-extrabold text-white mb-3">{problem.title}</h4>
-              <p className="text-gray-300 text-sm leading-relaxed font-medium">{problem.description}</p>
+              <h4 className="text-2xl font-extrabold text-white dark:text-gray-900 mb-3">{problem.title}</h4>
+              <p className="text-gray-300 dark:text-gray-700 text-sm leading-relaxed font-medium">{problem.description}</p>
             </motion.div>
           ))}
         </div>

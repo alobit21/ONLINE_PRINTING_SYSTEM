@@ -30,15 +30,15 @@ export const SolutionSection = () => {
     ];
 
     return (
-        <section id="solution" className="section-padding bg-gray-800 overflow-hidden">
+        <section id="solution" className="section-padding bg-gray-800 dark:bg-gray-100 overflow-hidden">
             <div className="section-container">
                 <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
                     <div className="flex-1">
-                        <h2 className="text-brand-600 font-black tracking-widest uppercase text-xs mb-4">The Solution</h2>
-                        <h3 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
+                        <h2 className="text-brand-600 dark:text-brand-700 font-black tracking-widest uppercase text-xs mb-4">The Solution</h2>
+                        <h3 className="text-4xl md:text-5xl font-black text-white dark:text-gray-900 mb-8 leading-tight">
                             A smarter way to handle<br />every print job.
                         </h3>
-                        <p className="text-lg text-gray-300 mb-12 font-medium">
+                        <p className="text-lg text-gray-300 dark:text-gray-700 mb-12 font-medium">
                             We bridge the gap between people needing quality prints and professional
                             shops looking to serve them efficiently.
                         </p>
@@ -51,13 +51,13 @@ export const SolutionSection = () => {
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: index * 0.1 }}
-                                    className="p-8 rounded-[2rem] bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:shadow-xl transition-all duration-300"
+                                    className="p-8 rounded-[2rem] bg-gray-700 dark:bg-white border border-gray-600 dark:border-gray-200 hover:bg-gray-600 dark:hover:bg-gray-50 hover:shadow-xl transition-all duration-300"
                                 >
                                     <div className={`p-3 rounded-xl ${item.color} w-fit mb-4`}>
                                         {item.icon}
                                     </div>
-                                    <h4 className="text-lg font-black text-white mb-2">{item.title}</h4>
-                                    <p className="text-sm text-gray-400 font-medium leading-relaxed">{item.description}</p>
+                                    <h4 className="text-lg font-black text-white dark:text-gray-900 mb-2">{item.title}</h4>
+                                    <p className="text-sm text-gray-400 dark:text-gray-600 font-medium leading-relaxed">{item.description}</p>
                                 </motion.div>
                             ))}
                         </div>
