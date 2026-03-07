@@ -172,22 +172,22 @@ class Command(BaseCommand):
         pricing_data = [
             {
                 'service_type': ServiceType.PRINTING_BW,
-                'base_price': Decimal('0.10'),
+                'base_price': Decimal('100.00'),
                 'modifiers': {'A4': 1.0, 'A3': 2.0}
             },
             {
                 'service_type': ServiceType.PRINTING_COLOR,
-                'base_price': Decimal('0.50'),
+                'base_price': Decimal('150.00'),
                 'modifiers': {'A4': 1.0, 'A3': 2.0}
             },
             {
                 'service_type': ServiceType.BINDING,
-                'base_price': Decimal('1.50'),
+                'base_price': Decimal('1000.00'),
                 'modifiers': {'HardCover': 2.0, 'Spiral': 1.0}
             },
             {
                 'service_type': ServiceType.LAMINATION,
-                'base_price': Decimal('1.00'),
+                'base_price': Decimal('1000.00'),
                 'modifiers': {'A4': 1.0, 'A3': 2.5}
             },
         ]

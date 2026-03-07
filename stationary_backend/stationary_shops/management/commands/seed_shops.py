@@ -184,46 +184,35 @@ class Command(BaseCommand):
 
     def _create_pricing_rules(self, shop):
         """Create pricing rules for a shop"""
-        # Base prices vary by shop tier
-        tier_multipliers = {
-            Shop.Subscription.STARTER: 1.0,
-            Shop.Subscription.PRO: 0.9,
-            Shop.Subscription.BUSINESS: 0.85,
-        }
-        multiplier = tier_multipliers.get(shop.subscription_tier, 1.0)
-
+        # Standard pricing for all shops
         pricing_data = [
             {
                 'service_type': ServiceType.PRINTING_BW,
-                'base_price': Decimal(str(round(0.10 * multiplier, 2))),
+                'base_price': Decimal('100.00'),
                 'modifiers': {
                     'A4': 1.0,
-                    'A3': 1.5,
-                    'Letter': 1.0,
-                    'Legal': 1.2,
+                    'A3': 2.0
                 }
             },
             {
                 'service_type': ServiceType.PRINTING_COLOR,
-                'base_price': Decimal(str(round(0.50 * multiplier, 2))),
+                'base_price': Decimal('150.00'),
                 'modifiers': {
                     'A4': 1.0,
-                    'A3': 1.8,
-                    'Letter': 1.0,
-                    'Legal': 1.3,
+                    'A3': 2.0
                 }
             },
             {
                 'service_type': ServiceType.BINDING,
-                'base_price': Decimal(str(round(2.00 * multiplier, 2))),
+                'base_price': Decimal('1000.00'),
                 'modifiers': {}
             },
             {
                 'service_type': ServiceType.LAMINATION,
-                'base_price': Decimal(str(round(1.00 * multiplier, 2))),
+                'base_price': Decimal('1000.00'),
                 'modifiers': {
                     'A4': 1.0,
-                    'A3': 1.5,
+                    'A3': 2.5
                 }
             },
         ]
