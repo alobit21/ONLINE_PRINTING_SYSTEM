@@ -70,6 +70,34 @@ class CreateDocumentMutation(graphene.Mutation):
         except Exception as e:
             return CreateDocumentMutation(response=build_error(str(e)))
 
+class CreateGuestDocumentMutation(graphene.Mutation):
+    class Arguments:
+        file_name = graphene.String(required=True)
+        file_size = graphene.Int(required=True)
+        file_type = graphene.String()
+
+    response = graphene.Field(ResponseObject)
+    document = graphene.Field(DocumentType)
+
+    def mutate(self, info, file_name, file_size, file_type="application/pdf"):
+        # No authentication required for guest uploads
+        try:
+            # Create document without owner for guest uploads
+            document = Document.objects.create(
+                owner=None,  # No owner for guest documents
+                file_name=file_name,
+                file_size=file_size,
+                file_type=file_type,
+                file="guest_upload/" + str(uuid.uuid4())
+            )
+            
+            return CreateGuestDocumentMutation(
+                response=build_success_response("Guest document metadata created. Proceed to upload."),
+                document=document
+            )
+        except Exception as e:
+            return CreateGuestDocumentMutation(response=build_error(str(e)))
+
 class Query(graphene.ObjectType):
     my_documents = graphene.List(DocumentType)
     documents = graphene.Field(DocumentResponseDTO)
@@ -100,3 +128,4 @@ class Query(graphene.ObjectType):
 
 class Mutation(graphene.ObjectType):
     create_document = CreateDocumentMutation.Field()
+    create_guest_document = CreateGuestDocumentMutation.Field()

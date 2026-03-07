@@ -99,6 +99,7 @@ export const useCustomerStore = create<CustomerState>()(
         {
             name: 'customer-workflow-storage',
             partialize: (state) => ({
+                currentStep: state.currentStep,
                 files: state.files.filter(f => f.status === 'ready'),
                 selectedShopId: state.selectedShopId
             }),

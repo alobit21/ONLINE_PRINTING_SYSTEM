@@ -8,6 +8,7 @@ import { ShopDashboard } from './pages/dashboard/ShopDashboard';
 import { useAuthStore } from './stores/authStore';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import AdminLayout from './components/admin/admin-layout';
+import { GuestWorkflowManager } from './features/customer/guest/GuestWorkflowManager';
 
 import { LandingPage } from './pages/landing/LandingPage';
 
@@ -47,6 +48,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/checkout" element={<GuestWorkflowManager />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute allowedRoles={['CUSTOMER', 'SHOP_OWNER', 'ADMIN']} />}>

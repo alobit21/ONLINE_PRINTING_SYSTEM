@@ -52,6 +52,13 @@ export const LandingHeader = () => {
 
                     <div className="hidden md:flex items-center gap-4">
                         <Link
+                            to="/checkout"
+                            className="text-sm font-semibold text-green-400 hover:text-green-300 transition-all duration-300 hover:scale-105 relative group"
+                        >
+                            Start Guest Order
+                            <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-600 to-green-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                        </Link>
+                        <Link
                             to="/login"
                             className="text-sm font-semibold text-gray-300 hover:text-brand-400 transition-all duration-300 hover:scale-105 relative group"
                         >
@@ -98,6 +105,13 @@ export const LandingHeader = () => {
                                 </a>
                             ))}
                             <div className="flex flex-col gap-3 pt-4 border-t border-gray-800/50">
+                                <Link
+                                    to="/checkout"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="text-center py-4 bg-green-600/20 hover:bg-green-600/30 rounded-2xl text-green-400 font-bold transition-all duration-300 border border-green-600/50"
+                                >
+                                    Start Guest Order
+                                </Link>
                                 <Link
                                     to="/login"
                                     className="text-center py-4 bg-gray-800/50 hover:bg-gray-700/50 rounded-2xl text-white font-bold transition-all duration-300 border border-gray-700/50"

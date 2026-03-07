@@ -77,3 +77,30 @@ export interface GetShopOrdersData {
 export interface GetAllMyShopOrdersData {
     allMyShopOrders: Order[];
 }
+
+export interface GuestCustomerInput {
+    name: string;
+    whatsappNumber: string;
+    email?: string;
+}
+
+export interface CreateGuestOrderData {
+    createGuestOrder: {
+        response: {
+            status: boolean;
+            message: string;
+        };
+        order?: {
+            id: string;
+            status: OrderStatus;
+            customerInfo: {
+                type: 'guest';
+                name: string;
+                email?: string;
+                phone: string;
+                id: string;
+            };
+            isGuestOrder: boolean;
+        };
+    };
+}

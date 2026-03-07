@@ -1,6 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
-from stationary_orders.models import Order, OrderItem
+from graphene.types import JSONString
+from stationary_orders.models import Order, OrderItem, GuestCustomer
 from stationary_shops.models import Shop, ShopPricing, PageRangeDiscount, ServiceType
 from stationary_storage.models import Document
 from stationary_accounts.models import User
@@ -13,15 +14,30 @@ from tarxemo_django_graphene_utils import (
 from decimal import Decimal
 import json
 from django.db import transaction, models
+import re
 
 # ------------------------------
 # Types
 # ------------------------------
 
+class GuestCustomerType(DjangoObjectType):
+    class Meta:
+        model = GuestCustomer
+        fields = "__all__"
+
 class OrderType(DjangoObjectType):
     class Meta:
         model = Order
         fields = "__all__"
+    
+    customer_info = JSONString()
+    is_guest_order = graphene.Boolean()
+    
+    def resolve_customer_info(self, info):
+        return self.customer_info
+    
+    def resolve_is_guest_order(self, info):
+        return self.is_guest_order
 
 class OrderItemType(DjangoObjectType):
     class Meta:
@@ -41,6 +57,11 @@ class OrderItemInput(graphene.InputObjectType):
     is_binding = graphene.Boolean()
     is_lamination = graphene.Boolean()
     paper_size = graphene.String(default_value="A4")
+
+class GuestCustomerInput(graphene.InputObjectType):
+    name = graphene.String(required=True, help_text="Customer's full name")
+    whatsapp_number = graphene.String(required=True, help_text="WhatsApp number for communication")
+    email = graphene.String(help_text="Optional email for order confirmation")
 
 # ------------------------------
 # Pricing Logic
@@ -118,6 +139,119 @@ def calculate_item_price(shop, item_input, user=None):
 # ------------------------------
 # Mutations
 # ------------------------------
+
+class CreateGuestOrderMutation(graphene.Mutation):
+    allow_any = True  # Allow unauthenticated access
+    
+    class Arguments:
+        shop_id = graphene.UUID(required=True)
+        guest_customer = graphene.Argument(GuestCustomerInput, required=True)
+        items = graphene.List(OrderItemInput, required=True)
+        payment_option = graphene.String(required=False)
+
+    response = graphene.Field(ResponseObject)
+    order = graphene.Field(OrderType)
+
+    def mutate(self, info, shop_id, guest_customer, items, payment_option=None):
+        try:
+            shop = Shop.objects.get(id=shop_id)
+            if not shop.is_accepting_orders:
+                 return CreateGuestOrderMutation(response=build_error("Shop is not currently accepting orders"))
+
+            # Validate guest customer information
+            if not guest_customer.name or not guest_customer.name.strip():
+                return CreateGuestOrderMutation(response=build_error("Customer name is required"))
+            
+            if not guest_customer.whatsapp_number or not guest_customer.whatsapp_number.strip():
+                return CreateGuestOrderMutation(response=build_error("WhatsApp number is required"))
+            
+            # Basic phone number validation
+            whatsapp_number = guest_customer.whatsapp_number.strip()
+            if not re.match(r'^\+?[\d\s\-()]+$', whatsapp_number):
+                return CreateGuestOrderMutation(response=build_error("Invalid WhatsApp number format"))
+            
+            # Email validation if provided
+            if guest_customer.email and guest_customer.email.strip():
+                email = guest_customer.email.strip()
+                if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
+                    return CreateGuestOrderMutation(response=build_error("Invalid email format"))
+
+            # Create guest customer
+            guest_customer_obj = GuestCustomer.objects.create(
+                name=guest_customer.name.strip(),
+                whatsapp_number=whatsapp_number,
+                email=guest_customer.email.strip() if guest_customer.email else None,
+                ip_address=info.context.META.get('REMOTE_ADDR'),
+                user_agent=info.context.META.get('HTTP_USER_AGENT', '')
+            )
+
+            # Validations and calculations
+            order_items_data = []
+            total_order_price = Decimal("0.00")
+            
+            # Pre-calculation loop (no user discounts for guests)
+            for item in items:
+                price = calculate_item_price(shop, item, user=None)
+                total_order_price += price
+                
+                try:
+                    doc = Document.objects.get(id=item.document_id)
+                except Document.DoesNotExist:
+                    return CreateGuestOrderMutation(response=build_error(f"Document with ID {item.document_id} not found"))
+                
+                order_items_data.append({
+                    "document": doc,
+                    "price": price,
+                    "page_count": item.page_count,
+                    "config_snapshot": {
+                        "is_color": item.is_color,
+                        "paper_size": item.paper_size,
+                        "binding": item.is_binding,
+                        "lamination": item.is_lamination
+                    }
+                })
+
+            # Atomic Order Creation
+            with transaction.atomic():
+                commission = total_order_price * Decimal("0.05")
+                
+                # Validate payment option
+                valid_payment_options = [choice[0] for choice in Order.PaymentOption.choices]
+                if payment_option and payment_option not in valid_payment_options:
+                    payment_option = Order.PaymentOption.PAY_BEFORE.value
+                elif not payment_option:
+                    payment_option = Order.PaymentOption.PAY_BEFORE.value
+                
+                order = Order.objects.create(
+                    customer=None,  # No registered customer
+                    guest_customer=guest_customer_obj,
+                    shop=shop,
+                    status=Order.Status.UPLOADED.value,
+                    payment_option=payment_option,
+                    total_price=total_order_price,
+                    commission_fee=commission
+                )
+                
+                for data in order_items_data:
+                    OrderItem.objects.create(
+                        order=order,
+                        document=data["document"],
+                        price=data["price"],
+                        page_count=data["page_count"],
+                        config_snapshot=data["config_snapshot"]
+                    )
+
+            return CreateGuestOrderMutation(
+                response=build_success_response("Guest order placed successfully"),
+                order=order
+            )
+
+        except Shop.DoesNotExist:
+            return CreateGuestOrderMutation(response=build_error("Shop not found"))
+        except Document.DoesNotExist:
+            return CreateGuestOrderMutation(response=build_error("Document not found"))
+        except Exception as e:
+            return CreateGuestOrderMutation(response=build_error(str(e)))
 
 class CreateOrderMutation(graphene.Mutation):
     class Arguments:
@@ -306,4 +440,5 @@ class UpdateOrderStatusMutation(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
     create_order = CreateOrderMutation.Field()
+    create_guest_order = CreateGuestOrderMutation.Field()
     update_order_status = UpdateOrderStatusMutation.Field()

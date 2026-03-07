@@ -84,7 +84,12 @@ function OrderDetailsDialog({
 
     const customerName = order.customer?.firstName && order.customer?.lastName
         ? `${order.customer.firstName} ${order.customer.lastName}`
-        : order.customer?.email || 'Customer';
+        : order.customer?.email 
+        ? order.customer.email
+        : 'Guest Customer';
+
+    const customerPhone = order.customer?.phone || 'N/A';
+    const customerEmail = order.customer?.email || 'N/A';
 
     const statusOptions: { value: OrderStatus; label: string }[] = [
         { value: 'UPLOADED', label: 'Uploaded' },
@@ -147,7 +152,17 @@ function OrderDetailsDialog({
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 mb-1">Email</p>
-                                    <p className="text-sm font-medium text-white">{order.customer?.email || 'N/A'}</p>
+                                    <p className="text-sm font-medium text-white">{customerEmail}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-400 mb-1">Phone/WhatsApp</p>
+                                    <p className="text-sm font-medium text-white">{customerPhone}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-400 mb-1">Customer Type</p>
+                                    <p className="text-sm font-medium text-white">
+                                        {order.customer?.email ? 'Registered' : 'Guest'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -321,14 +336,25 @@ function OrderDetailsDialog({
                                 <Copy className="h-4 w-4 mr-2" />
                                 Copy Order ID
                             </Button>
-                            {order.customer?.email && (
+                            {customerPhone !== 'N/A' && (
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => window.open(`mailto:${order.customer?.email}`, '_blank')}
+                                    onClick={() => window.open(`https://wa.me/${customerPhone.replace(/[^0-9+]/g, '')}`, '_blank')}
+                                    className="text-green-400 border-green-600 hover:bg-green-900/20"
                                 >
                                     <Mail className="h-4 w-4 mr-2" />
-                                    Contact Customer
+                                    Contact on WhatsApp
+                                </Button>
+                            )}
+                            {customerEmail !== 'N/A' && customerEmail !== 'Guest Customer' && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => window.open(`mailto:${customerEmail}`, '_blank')}
+                                >
+                                    <Mail className="h-4 w-4 mr-2" />
+                                    Email Customer
                                 </Button>
                             )}
                         </div>

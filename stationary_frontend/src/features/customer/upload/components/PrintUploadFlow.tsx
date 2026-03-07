@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
 import { Upload, FileText, Loader2, CheckCircle2, AlertCircle, ArrowRight, Settings, Package } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
+import { useAuthStore } from '../../../../stores/authStore';
 import { cn } from '../../../../lib/utils';
 import { Card, CardContent } from '../../../../components/ui/Card';
 import { Button } from '../../../../components/ui/Button';
 import { DocumentSummary } from '../../../../components/ui/DocumentSummary';
 import { useMutation } from '@apollo/client/react';
-import { CREATE_DOCUMENT, type CreateDocumentData, type CreateDocumentVariables } from '../api';
+import { CREATE_DOCUMENT, CREATE_GUEST_DOCUMENT, type CreateDocumentData, type CreateDocumentVariables, type CreateGuestDocumentData } from '../api';
 
 // Supported formats
 const SUPPORTED_FORMATS = [
@@ -29,6 +30,7 @@ interface PrintConfiguration {
 
 export const PrintUploadFlow = () => {
   const { addFiles, files, updateFile } = useCustomerStore();
+  const { user } = useAuthStore();
   const [currentStep, setCurrentStep] = useState<UploadStep>('upload');
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [config, setConfig] = useState<PrintConfiguration>({
@@ -39,7 +41,9 @@ export const PrintUploadFlow = () => {
     isLamination: false
   });
 
+  // Use appropriate mutation based on authentication status
   const [createDocument] = useMutation<CreateDocumentData, CreateDocumentVariables>(CREATE_DOCUMENT);
+  const [createGuestDocument] = useMutation<CreateGuestDocumentData, CreateDocumentVariables>(CREATE_GUEST_DOCUMENT);
 
   const selectedFile = files.find(f => f.id === selectedFileId);
 
@@ -72,22 +76,44 @@ export const PrintUploadFlow = () => {
       updateFile(tempId, { status: 'uploading', progress: 20 });
 
       // Step 1: Create document metadata via GraphQL
-      const { data } = await createDocument({
-        variables: {
-          fileName: file.name,
-          fileSize: file.size,
-          fileType: file.type || 'application/pdf'
-        }
-      });
+      const isGuest = !user;
+      const { data } = isGuest 
+        ? await createGuestDocument({
+            variables: {
+              fileName: file.name,
+              fileSize: file.size,
+              fileType: file.type || 'application/pdf'
+            }
+          })
+        : await createDocument({
+            variables: {
+              fileName: file.name,
+              fileSize: file.size,
+              fileType: file.type || 'application/pdf'
+            }
+          });
 
-      if (data?.createDocumentDev.response.status) {
-        const backendId = data.createDocumentDev.document.id;
+      let backendId: string;
+      if (isGuest && (data as any)?.createGuestDocument?.response.status) {
+        backendId = (data as any).createGuestDocument.document.id;
         
         updateFile(tempId, {
           id: backendId,
           progress: 60,
           status: 'uploading'
         });
+      } else if (!isGuest && (data as any)?.createDocument?.response.status) {
+        backendId = (data as any).createDocument.document.id;
+        
+        updateFile(tempId, {
+          id: backendId,
+          progress: 60,
+          status: 'uploading'
+        });
+      } else {
+        updateFile(tempId, { status: 'error', error: 'Upload failed' });
+        return;
+      }
 
         // Step 2: Upload actual file via REST API (development endpoint)
         const formData = new FormData();

@@ -48,6 +48,23 @@ export const CREATE_ORDER = gql`
     }
 `;
 
+export const CREATE_GUEST_ORDER = gql`
+    mutation CreateGuestOrder($shopId: UUID!, $guestCustomer: GuestCustomerInput!, $items: [OrderItemInput!]!) {
+        createGuestOrder(shopId: $shopId, guestCustomer: $guestCustomer, items: $items) {
+            response {
+                status
+                message
+            }
+            order {
+                id
+                status
+                customerInfo
+                isGuestOrder
+            }
+        }
+    }
+`;
+
 export const GET_SHOP_ORDERS = gql`
     query GetShopOrders($shopId: UUID!) {
         shopOrders(shopId: $shopId) {

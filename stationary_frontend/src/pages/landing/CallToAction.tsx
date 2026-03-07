@@ -47,6 +47,13 @@ export const CallToAction = () => {
                 <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform" strokeWidth={3} />
               </Link>
               <Link
+                to="/checkout"
+                className="w-full sm:w-auto px-10 py-5 rounded-2xl border-2 border-green-500 text-green-400 font-bold text-xl flex items-center justify-center gap-3 transition-all hover:bg-green-600 hover:text-white hover:scale-105 transform hover:-translate-y-1"
+              >
+                Start Guest Order
+                <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform" strokeWidth={3} />
+              </Link>
+              <Link
                 to="/register?role=shop"
                 className="w-full sm:w-auto px-10 py-5 rounded-2xl border-2 border-brand-500 text-white font-bold text-xl flex items-center justify-center gap-3 transition-all hover:bg-brand-600 hover:scale-105 transform hover:-translate-y-1"
               >

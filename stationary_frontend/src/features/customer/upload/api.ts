@@ -16,8 +16,41 @@ export const CREATE_DOCUMENT = gql`
         }
     }
 `;
+
+export const CREATE_GUEST_DOCUMENT = gql`
+    mutation CreateGuestDocument($fileName: String!, $fileSize: Int!, $fileType: String) {
+        createGuestDocument(fileName: $fileName, fileSize: $fileSize, fileType: $fileType) {
+            response {
+                status
+                message
+            }
+            document {
+                id
+                fileName
+                fileSize
+                fileType
+            }
+        }
+    }
+`;
+
 export interface CreateDocumentData {
     createDocument: {
+        response: {
+            status: boolean;
+            message: string;
+        };
+        document: {
+            id: string;
+            fileName: string;
+            fileSize: number;
+            fileType: string;
+        };
+    };
+}
+
+export interface CreateGuestDocumentData {
+    createGuestDocument: {
         response: {
             status: boolean;
             message: string;
