@@ -9,6 +9,9 @@ import { useAuthStore } from './stores/authStore';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import AdminLayout from './components/admin/admin-layout';
 import { GuestWorkflowManager } from './features/customer/guest/GuestWorkflowManager';
+import { GuestOrdersPage } from './features/customer/guest/GuestOrdersPage';
+import { GuestLayout } from './layouts/GuestLayout';
+import { ThemeToggle } from './components/ui/ThemeToggle';
 
 import { LandingPage } from './pages/landing/LandingPage';
 
@@ -42,13 +45,21 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <div className="min-h-screen bg-slate-50 font-sans antialiased">
+        <div className="min-h-screen bg-slate-50 dark:bg-gray-900 font-sans antialiased transition-colors duration-200">
+          <ThemeToggle />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/checkout" element={<GuestWorkflowManager />} />
+            
+            {/* Guest Routes - No authentication required */}
+            <Route element={<GuestLayout />}>
+                <Route path="/guest/orders" element={<GuestOrdersPage />} />
+                <Route path="/guest/wallet" element={<div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-8"><div className="max-w-4xl mx-auto"><h1 className="text-2xl font-bold">Guest Wallet Page (Coming Soon)</h1></div></div>} />
+                <Route path="/guest/profile" element={<div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-8"><div className="max-w-4xl mx-auto"><h1 className="text-2xl font-bold">Guest Profile Page (Coming Soon)</h1></div></div>} />
+            </Route>
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute allowedRoles={['CUSTOMER', 'SHOP_OWNER', 'ADMIN']} />}>

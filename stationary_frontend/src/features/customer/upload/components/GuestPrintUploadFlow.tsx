@@ -1,9 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { useAuthStore } from '../../../../stores/authStore';
 import { Card, CardContent } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_GUEST_DOCUMENT, type CreateGuestDocumentData, type CreateDocumentVariables } from '../api';
 
@@ -15,8 +13,6 @@ const SUPPORTED_FORMATS = [
   { ext: 'JPG', type: 'image/jpeg' },
   { ext: 'PNG', type: 'image/png' }
 ];
-
-type UploadStep = 'upload' | 'analyzing' | 'configure' | 'pricing' | 'confirmation';
 
 interface PrintConfiguration {
   isColor: boolean;
@@ -145,17 +141,6 @@ export const GuestPrintUploadFlow = () => {
 
   return (
     <div className="space-y-8">
-      {/* Test Button */}
-      <div className="bg-yellow-100 border border-yellow-300 p-4 rounded">
-        <p className="text-sm text-yellow-800">Debug: GuestUploadFlow component is loaded</p>
-        <Button 
-          onClick={() => console.log("Test button clicked", { files })}
-          className="mt-2"
-        >
-          Test Component State
-        </Button>
-      </div>
-
       {/* Upload Zone */}
       <Card className="border-2 border-dashed border-gray-300 hover:border-brand-400 transition-colors">
         <CardContent className="p-12 text-center">

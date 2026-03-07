@@ -1,11 +1,15 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
-import { FileText, Layers, Maximize, Compass, Zap, BarChart } from 'lucide-react';
+import { FileText, Layers, Maximize, Compass, Zap, BarChart, ArrowRight } from 'lucide-react';
 import { cn } from '../../../../lib/utils';
 
 export const DocumentAnalyzer = () => {
-    const { files } = useCustomerStore();
+    const { files, setCurrentStep } = useCustomerStore();
     const readyFiles = files.filter(f => f.status === 'ready');
+
+    const handleContinue = () => {
+        setCurrentStep('optimize');
+    };
 
     return (
         <div className="space-y-6 fade-in">
@@ -70,6 +74,18 @@ export const DocumentAnalyzer = () => {
             {readyFiles.length === 0 && (
                 <div className="text-center py-20 bg-slate-800/50 rounded-3xl border-2 border-dashed border-slate-600">
                     <p className="text-slate-400 font-medium">Please upload documents first to see analysis.</p>
+                </div>
+            )}
+
+            {readyFiles.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={handleContinue}
+                        className="bg-brand-600 hover:bg-brand-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                        Continue to Configuration
+                        <ArrowRight className="w-4 h-4" />
+                    </button>
                 </div>
             )}
         </div>

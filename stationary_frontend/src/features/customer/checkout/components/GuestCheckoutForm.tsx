@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
 import { Button } from '../../../../components/ui/Button';
 import { Input } from '../../../../components/ui/Input';
-import { User, Phone, Mail, ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
+import { User, Phone, Mail, ShieldCheck, AlertTriangle, Loader2, ShoppingBag, FileText, Clock } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_GUEST_ORDER } from '../../orders/api';
@@ -137,165 +137,204 @@ export const GuestCheckoutForm = () => {
     }
 
     return (
-        <div className="space-y-8 fade-in">
-            <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold text-slate-900">Guest Checkout</h2>
-                <p className="text-slate-500">Provide your contact details so we can reach you when your order is ready.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div className="lg:col-span-8 space-y-6">
-                    <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden">
-                        <CardHeader className="bg-brand-600/5 p-6 border-b border-brand-100">
-                            <CardTitle className="text-lg font-bold flex items-center gap-2 text-brand-700">
-                                <User className="h-5 w-5" />
-                                Contact Information
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-6 space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Full Name *
-                                </label>
-                                <Input
-                                    placeholder="Enter your full name"
-                                    value={guestData.name}
-                                    onChange={(e) => handleInputChange('name', e.target.value)}
-                                    className={`w-full ${errors.name ? 'border-red-300 focus:border-red-500' : ''}`}
-                                />
-                                {errors.name && (
-                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                        <AlertTriangle className="h-3 w-3" />
-                                        {errors.name}
-                                    </p>
-                                )}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800">
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column - Contact Form & Order Items */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Hero Section */}
+                        <div className="text-center space-y-4 py-8">
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl shadow-lg mb-4">
+                                <ShieldCheck className="w-8 h-8 text-white" />
                             </div>
+                            <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Secure Guest Checkout</h2>
+                            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                                Provide your contact details so we can reach you when your order is ready. Your information is secure and only used for order fulfillment.
+                            </p>
+                        </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    WhatsApp Number *
-                                </label>
-                                <Input
-                                    placeholder="+255 123 456 789"
-                                    value={guestData.whatsappNumber}
-                                    onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
-                                    className={`w-full ${errors.whatsappNumber ? 'border-red-300 focus:border-red-500' : ''}`}
-                                />
-                                {errors.whatsappNumber && (
-                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                        <AlertTriangle className="h-3 w-3" />
-                                        {errors.whatsappNumber}
+                        {/* Contact Information Card */}
+                        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
+                            <CardHeader className="bg-gradient-to-r from-brand-50 to-blue-50 dark:from-brand-900/20 dark:to-blue-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
+                                <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
+                                    <div className="w-10 h-10 bg-brand-100 dark:bg-brand-800 rounded-xl flex items-center justify-center">
+                                        <User className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                                    </div>
+                                    Contact Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-8 space-y-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                        Full Name *
+                                    </label>
+                                    <Input
+                                        placeholder="Enter your full name"
+                                        value={guestData.name}
+                                        onChange={(e) => handleInputChange('name', e.target.value)}
+                                        className={`w-full h-12 rounded-xl ${errors.name ? 'border-red-300 focus:border-red-500 dark:border-red-400 dark:focus:border-red-400' : 'dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100'}`}
+                                    />
+                                    {errors.name && (
+                                        <p className="text-red-500 dark:text-red-400 text-xs mt-1 flex items-center gap-1">
+                                            <AlertTriangle className="h-3 w-3" />
+                                            {errors.name}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                        WhatsApp Number *
+                                    </label>
+                                    <Input
+                                        placeholder="+255 123 456 789"
+                                        value={guestData.whatsappNumber}
+                                        onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
+                                        className={`w-full h-12 rounded-xl ${errors.whatsappNumber ? 'border-red-300 focus:border-red-500 dark:border-red-400 dark:focus:border-red-400' : 'dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100'}`}
+                                    />
+                                    {errors.whatsappNumber && (
+                                        <p className="text-red-500 dark:text-red-400 text-xs mt-1 flex items-center gap-1">
+                                            <AlertTriangle className="h-3 w-3" />
+                                            {errors.whatsappNumber}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                                        The shop owner will contact you on this number when your order is ready.
                                     </p>
-                                )}
-                                <p className="text-xs text-slate-500 mt-1">
-                                    The shop owner will contact you on this number when your order is ready.
-                                </p>
-                            </div>
+                                </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Email (Optional)
-                                </label>
-                                <Input
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    value={guestData.email}
-                                    onChange={(e) => handleInputChange('email', e.target.value)}
-                                    className={`w-full ${errors.email ? 'border-red-300 focus:border-red-500' : ''}`}
-                                />
-                                {errors.email && (
-                                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                        <AlertTriangle className="h-3 w-3" />
-                                        {errors.email}
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                        Email (Optional)
+                                    </label>
+                                    <Input
+                                        type="email"
+                                        placeholder="your@email.com"
+                                        value={guestData.email}
+                                        onChange={(e) => handleInputChange('email', e.target.value)}
+                                        className={`w-full h-12 rounded-xl ${errors.email ? 'border-red-300 focus:border-red-500 dark:border-red-400 dark:focus:border-red-400' : 'dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100'}`}
+                                    />
+                                    {errors.email && (
+                                        <p className="text-red-500 dark:text-red-400 text-xs mt-1 flex items-center gap-1">
+                                            <AlertTriangle className="h-3 w-3" />
+                                            {errors.email}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                                        Optional: For order confirmation and updates.
                                     </p>
-                                )}
-                                <p className="text-xs text-slate-500 mt-1">
-                                    Optional: For order confirmation and updates.
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                    <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden">
-                        <CardHeader className="bg-brand-600/5 p-6 border-b border-brand-100">
-                            <CardTitle className="text-lg font-bold flex items-center gap-2 text-brand-700">
-                                <Phone className="h-5 w-5" />
-                                Order Items
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                            <ul className="divide-y divide-slate-100">
-                                {readyFiles.map((file) => (
-                                    <li key={file.id} className="py-4 flex justify-between items-center group">
-                                        <div className="flex gap-4">
-                                            <div className="h-12 w-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-brand-100 group-hover:text-brand-600 transition-colors">
-                                                {file.name.split('.').pop()?.toUpperCase()}
+                        {/* Order Items Card */}
+                        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
+                            <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
+                                <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
+                                    <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-800 rounded-xl flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                    </div>
+                                    Order Items ({readyFiles.length})
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <ul className="space-y-3">
+                                    {readyFiles.map((file) => (
+                                        <li key={file.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl group hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-105 transition-transform">
+                                                    {file.name.split('.').pop()?.toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-slate-900 dark:text-slate-100">{file.name}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                        <Clock className="w-3 h-3 inline mr-1" />
+                                                        {file.metadata?.pageCount} Pages • {file.metadata?.isColor ? 'Color' : 'Grayscale'} • {file.metadata?.paperSize}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-bold text-slate-900">{file.name}</p>
-                                                <p className="text-xs text-slate-500 mt-0.5">
-                                                    {file.metadata?.pageCount} Pages • {file.metadata?.isColor ? 'Color' : 'Grayscale'} • {file.metadata?.paperSize}
+                                            <div className="text-right">
+                                                <p className="font-bold text-lg text-slate-900 dark:text-slate-100">
+                                                    TZS {((file.metadata?.pageCount || 0) * (file.metadata?.isColor ? 500 : 100)).toLocaleString()}
                                                 </p>
                                             </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Right Column - Order Summary */}
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-24 space-y-6">
+                            {/* Order Summary Card */}
+                            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-3xl overflow-hidden">
+                                <CardHeader className="bg-gradient-to-r from-brand-600 to-blue-600 p-6 text-white">
+                                    <CardTitle className="text-xl font-bold flex items-center gap-3">
+                                        <ShoppingBag className="w-6 h-6" />
+                                        Order Summary
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-6 space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center py-2">
+                                            <span className="text-slate-600 dark:text-slate-400">Base Printing</span>
+                                            <span className="font-semibold text-slate-900 dark:text-slate-100">TZS {subtotal.toLocaleString()}</span>
                                         </div>
-                                        <p className="font-bold text-slate-900">
-                                            TZS {((file.metadata?.pageCount || 0) * (file.metadata?.isColor ? 500 : 100)).toLocaleString()}
-                                        </p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="lg:col-span-4 space-y-4">
-                    <Card className="glass border-brand-500/20 shadow-2xl rounded-3xl overflow-hidden sticky top-24">
-                        <CardHeader className="p-6">
-                            <CardTitle className="text-xl font-bold">Order Summary</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-6 pt-0 space-y-4">
-                            <div className="space-y-3">
-                                <div className="flex justify-between text-sm text-slate-600">
-                                    <span>Base Printing</span>
-                                    <span>TZS {subtotal.toLocaleString()}</span>
-                                </div>
-                            </div>
-
-                            <div className="pt-4 border-t border-slate-100">
-                                <div className="flex justify-between items-baseline mb-6">
-                                    <span className="text-lg font-bold text-slate-900">Total</span>
-                                    <span className="text-3xl font-black text-brand-700">TZS {total.toLocaleString()}</span>
-                                </div>
-
-                                {hasInvalidFiles && !isProcessing && (
-                                    <div className="flex flex-col gap-3 p-4 bg-red-50 rounded-2xl border border-red-100 mb-4 text-center">
-                                        <div className="flex items-center gap-2 text-red-700 justify-center">
-                                            <AlertTriangle className="h-5 w-5" />
-                                            <span className="font-bold text-xs uppercase tracking-tight">Session Issue</span>
-                                        </div>
-                                        <p className="text-[10px] text-red-600 leading-tight">Some items need to be reuploaded.</p>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={resetWorkflow}
-                                            className="h-8 text-[10px] border-red-200 text-red-600 hover:bg-red-100"
-                                        >
-                                            Reset & Start Fresh
-                                        </Button>
                                     </div>
-                                )}
 
-                                <Button
-                                    className="w-full h-14 rounded-2xl gradient-brand text-white font-black text-lg shadow-xl shadow-brand-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
-                                    disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles}
-                                    onClick={handleGuestCheckout}
-                                >
-                                    {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Phone className="h-6 w-6" />}
-                                    Place Order as Guest
-                                </Button>
+                                    <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
+                                        <div className="flex justify-between items-baseline">
+                                            <span className="text-lg font-bold text-slate-900 dark:text-slate-100">Total</span>
+                                            <span className="text-3xl font-black text-brand-600 dark:text-brand-400">TZS {total.toLocaleString()}</span>
+                                        </div>
+                                    </div>
+
+                                    {hasInvalidFiles && !isProcessing && (
+                                        <div className="flex flex-col gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-200 dark:border-red-800 text-center">
+                                            <div className="flex items-center gap-2 text-red-700 dark:text-red-400 justify-center">
+                                                <AlertTriangle className="h-5 w-5" />
+                                                <span className="font-bold text-xs uppercase tracking-tight">Session Issue</span>
+                                            </div>
+                                            <p className="text-xs text-red-600 dark:text-red-400 leading-tight">Some items need to be reuploaded.</p>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={resetWorkflow}
+                                                className="h-8 text-xs border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20"
+                                            >
+                                                Reset & Start Fresh
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    <Button
+                                        className="w-full h-14 rounded-2xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3"
+                                        disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles}
+                                        onClick={handleGuestCheckout}
+                                    >
+                                        {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Phone className="h-6 w-6" />}
+                                        Place Order as Guest
+                                    </Button>
+                                </CardContent>
+                            </Card>
+
+                            {/* Security Badge */}
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-4 border border-green-200 dark:border-green-800">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-xl flex items-center justify-center">
+                                        <ShieldCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-green-800 dark:text-green-200 text-sm">Secure Checkout</p>
+                                        <p className="text-xs text-green-600 dark:text-green-400">Your data is encrypted and protected</p>
+                                    </div>
+                                </div>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

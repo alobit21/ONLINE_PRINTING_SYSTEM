@@ -14,6 +14,7 @@ from tarxemo_django_graphene_utils import (
 from decimal import Decimal
 import json
 from django.db import transaction, models
+from django.db.models import Q
 import re
 
 # ------------------------------
@@ -63,6 +64,10 @@ class GuestCustomerInput(graphene.InputObjectType):
     whatsapp_number = graphene.String(required=True, help_text="WhatsApp number for communication")
     email = graphene.String(help_text="Optional email for order confirmation")
 
+class GuestContactInput(graphene.InputObjectType):
+    email = graphene.String(required=False, help_text="Email address for order lookup")
+    whatsapp_number = graphene.String(required=False, help_text="WhatsApp number for order lookup")
+
 # ------------------------------
 # Pricing Logic
 # ------------------------------
@@ -81,7 +86,7 @@ def calculate_item_price(shop, item_input, user=None):
         base_rate = pricing_rule.base_price
         modifiers = pricing_rule.modifiers
     except ShopPricing.DoesNotExist:
-        base_rate = Decimal("100.00") if not is_color else Decimal("500.00")
+        base_rate = Decimal("100.00")  # Standard rate of TSh 100 per page for all printing
         modifiers = {}
 
     size_mod = Decimal(str(modifiers.get(size, "1.0")))
@@ -349,6 +354,7 @@ class Query(graphene.ObjectType):
     shop_orders = graphene.List(OrderType, shop_id=graphene.UUID(required=True))
     all_my_shop_orders = graphene.List(OrderType)
     orders = graphene.Field(OrderResponseDTO)
+    guest_orders = graphene.List(OrderType, contact_info=graphene.Argument(GuestContactInput, required=True))
 
     def resolve_my_orders(self, info):
         user = info.context.user
@@ -397,6 +403,37 @@ class Query(graphene.ObjectType):
                 "response": build_error(str(e)),
                 "data": []
             }
+
+    def resolve_guest_orders(self, info, contact_info):
+        """
+        Resolve guest orders based on contact information (email or WhatsApp number)
+        """
+        if not contact_info:
+            return Order.objects.none()
+
+        email = contact_info.get('email')
+        whatsapp_number = contact_info.get('whatsapp_number')
+
+        # Build query filters - use guest_customer field instead of is_guest_order property
+        filters = Q(guest_customer__isnull=False)
+
+        if email:
+            filters &= Q(guest_customer__email__iexact=email)
+        
+        if whatsapp_number:
+            filters &= Q(guest_customer__whatsapp_number__iexact=whatsapp_number)
+
+        # If neither email nor whatsapp provided, return empty
+        if not email and not whatsapp_number:
+            return Order.objects.none()
+
+        # Query orders matching the contact information
+        orders = Order.objects.filter(filters).select_related(
+            'shop', 'guest_customer'
+        ).prefetch_related('items').order_by('-created_at')
+
+        print(f'Debug - guest_orders resolver - found {orders.count()} orders for contact: {contact_info}')
+        return orders
 
 class UpdateOrderStatusMutation(graphene.Mutation):
     class Arguments:
