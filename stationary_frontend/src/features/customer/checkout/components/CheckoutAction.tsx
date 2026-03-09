@@ -1,7 +1,7 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
 import { Button } from '../../../../components/ui/Button';
-import { CreditCard, ShieldCheck, Truck, Quote, CheckCircle2, AlertTriangle, FileCheck, Loader2 } from 'lucide-react';
+import { CreditCard, ShieldCheck, Truck, Quote, CheckCircle2, AlertTriangle, FileCheck, Loader2, Smartphone } from 'lucide-react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { CREATE_ORDER } from '../../orders/api';
 import { GET_SHOP_DETAILS } from '../../../shops/api';
@@ -15,6 +15,8 @@ export const CheckoutAction = () => {
     const navigate = useNavigate();
     const { files, selectedShopId, resetWorkflow } = useCustomerStore();
     const [isSuccess, setIsSuccess] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('MPESA');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     const isUUID = (str: string) => {
         const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -31,7 +33,7 @@ export const CheckoutAction = () => {
     });
 
     const [error, setError] = useState<string | null>(null);
-    const [createOrder, { loading: isProcessing }] = useMutation<CreateOrderData, { shopId: string; items: OrderItemInput[] }>(CREATE_ORDER, {
+    const [createOrder, { loading: isProcessing }] = useMutation<CreateOrderData, { shopId: string; items: OrderItemInput[]; payment: { paymentMethod: string; phoneNumber: string } }>(CREATE_ORDER, {
         onCompleted: (data) => {
             if (data.createOrder.response.status) {
                 setIsSuccess(true);
@@ -71,7 +73,7 @@ export const CheckoutAction = () => {
     const total = subtotal + serviceFee + laminationFee - discount;
 
     const handleCheckout = async () => {
-        if (!selectedShopId) return;
+        if (!selectedShopId || !phoneNumber.trim()) return;
         setError(null);
 
         const items = readyFiles.map(file => ({
@@ -83,11 +85,17 @@ export const CheckoutAction = () => {
             paperSize: file.metadata?.paperSize || "A4"
         }));
 
+        const payment = {
+            paymentMethod,
+            phoneNumber: phoneNumber.trim()
+        };
+
         try {
             await createOrder({
                 variables: {
                     shopId: selectedShopId,
-                    items
+                    items,
+                    payment
                 }
             });
         } catch (err: any) {
@@ -243,12 +251,46 @@ export const CheckoutAction = () => {
 
                                 <Button
                                     className="w-full h-14 rounded-2xl gradient-brand text-white font-black text-lg shadow-xl shadow-brand-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
-                                    disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles}
+                                    disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim()}
                                     onClick={handleCheckout}
                                 >
                                     {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : <CreditCard className="h-6 w-6" />}
                                     Place Order
                                 </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="glass border-none shadow-xl rounded-3xl overflow-hidden">
+                        <CardHeader className="bg-brand-600/5 p-6 border-b border-brand-100">
+                            <CardTitle className="text-lg font-bold flex items-center gap-2 text-brand-700">
+                                <Smartphone className="h-5 w-5" />
+                                Payment Information
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Payment Method</label>
+                                <select
+                                    value={paymentMethod}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                    className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                                >
+                                    <option value="MPESA">M-Pesa</option>
+                                    <option value="TIGOPESA">Tigo Pesa</option>
+                                    <option value="AIRTELMONEY">Airtel Money</option>
+                                    <option value="HALOPESA">Halopesa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                                <input
+                                    type="tel"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    placeholder="+255 7xx xxx xxx"
+                                    className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                                />
                             </div>
                         </CardContent>
                     </Card>

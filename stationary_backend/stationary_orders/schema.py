@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphene.types import JSONString
-from stationary_orders.models import Order, OrderItem, GuestCustomer
+from stationary_orders.models import Payment, Order, OrderItem, GuestCustomer
 from stationary_shops.models import Shop, ShopPricing, PageRangeDiscount, ServiceType
 from stationary_storage.models import Document
 from stationary_accounts.models import User
@@ -16,6 +16,7 @@ import json
 from django.db import transaction, models
 from django.db.models import Q
 import re
+from .clickpesa_service import ClickPesaService
 
 # ------------------------------
 # Types
@@ -24,6 +25,11 @@ import re
 class GuestCustomerType(DjangoObjectType):
     class Meta:
         model = GuestCustomer
+        fields = "__all__"
+
+class PaymentType(DjangoObjectType):
+    class Meta:
+        model = Payment
         fields = "__all__"
 
 class OrderType(DjangoObjectType):
@@ -258,15 +264,23 @@ class CreateGuestOrderMutation(graphene.Mutation):
         except Exception as e:
             return CreateGuestOrderMutation(response=build_error(str(e)))
 
+class PaymentInput(graphene.InputObjectType):
+    payment_method = graphene.String(required=True)
+    phone_number = graphene.String(required=True)
+
 class CreateOrderMutation(graphene.Mutation):
+    allow_any = True  # Allow unauthenticated access
+    
     class Arguments:
         shop_id = graphene.UUID(required=True)
         items = graphene.List(OrderItemInput, required=True)
+        payment = graphene.Argument(PaymentInput, required=True)
 
     response = graphene.Field(ResponseObject)
     order = graphene.Field(OrderType)
+    payment = graphene.Field(PaymentType)
 
-    def mutate(self, info, shop_id, items):
+    def mutate(self, info, shop_id, items, payment):
         user = info.context.user
         print(f'Debug - GraphQL User: {user}')
         print(f'Debug - User is_authenticated: {user.is_authenticated if user else "No user"}')
@@ -274,8 +288,18 @@ class CreateOrderMutation(graphene.Mutation):
         print(f'Debug - Context type: {type(info.context)}')
         print(f'Debug - Has user attribute: {hasattr(info.context, "user")}')
         
-        if not user.is_authenticated:
-            return CreateOrderMutation(response=build_error("Authentication required"))
+        # Allow unauthenticated access since allow_any = True
+        # if not user.is_authenticated:
+        #     return CreateOrderMutation(response=build_error("Authentication required"))
+
+        # Validate payment method
+        valid_methods = [choice[0] for choice in Payment.PaymentMethod.choices]
+        if payment.payment_method not in valid_methods:
+            return CreateOrderMutation(response=build_error(f'Invalid payment method. Valid methods: {valid_methods}'))
+
+        # Validate phone number
+        if not payment.phone_number or not payment.phone_number.strip():
+            return CreateOrderMutation(response=build_error('Phone number is required'))
 
         try:
             shop = Shop.objects.get(id=shop_id)
@@ -288,7 +312,7 @@ class CreateOrderMutation(graphene.Mutation):
             
             # Pre-calculation loop
             for item in items:
-                price = calculate_item_price(shop, item, user=user)
+                price = calculate_item_price(shop, item, user=user if user.is_authenticated else None)
                 total_order_price += price
                 
                 try:
@@ -317,12 +341,33 @@ class CreateOrderMutation(graphene.Mutation):
                 commission = total_order_price * Decimal("0.05")
                 
                 order = Order.objects.create(
-                    customer=user,
+                    customer=user if user.is_authenticated else None,
                     shop=shop,
                     status=Order.Status.UPLOADED.value,
+                    payment_status=Order.PaymentStatus.PENDING_PAYMENT.value,
                     total_price=total_order_price,
                     commission_fee=commission
                 )
+                
+                # Create payment record
+                payment_obj = Payment.objects.create(
+                    order=order,
+                    payment_method=payment.payment_method,
+                    amount=total_order_price,
+                    phone_number=payment.phone_number,
+                    status=Payment.Status.PENDING
+                )
+                
+                # Initiate payment with ClickPesa
+                clickpesa_service = ClickPesaService()
+                payment_result = clickpesa_service.initiate_mobile_money_payment(
+                    payment_obj, payment.phone_number, payment.payment_method
+                )
+                
+                if not payment_result['success']:
+                    # If payment initiation fails, delete order and return error
+                    order.delete()
+                    return CreateOrderMutation(response=build_error(f"Payment initiation failed: {payment_result['error']}"))
                 
                 for data in order_items_data:
                     OrderItem.objects.create(
@@ -334,8 +379,9 @@ class CreateOrderMutation(graphene.Mutation):
                     )
 
             return CreateOrderMutation(
-                response=build_success_response("Order placed successfully"),
-                order=order
+                response=build_success_response("Order placed successfully and payment initiated"),
+                order=order,
+                payment=payment_obj
             )
 
         except Shop.DoesNotExist:

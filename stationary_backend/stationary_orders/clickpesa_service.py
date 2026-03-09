@@ -5,7 +5,8 @@ import json
 from decimal import Decimal
 from django.conf import settings
 from django.utils import timezone
-from .models import Payment, Payment.Status
+from .models import Payment
+from .models import Payment as PaymentModel
 
 
 class ClickPesaService:
@@ -88,7 +89,7 @@ class ClickPesaService:
             payment.clickpesa_payment_id = response_data.get('id')
             payment.reference_number = response_data.get('reference')
             payment.phone_number = phone_number
-            payment.status = Payment.Status.PROCESSING
+            payment.status = PaymentModel.Status.PROCESSING
             payment.save()
             
             # Update order payment status
@@ -110,7 +111,7 @@ class ClickPesaService:
                 except:
                     pass
             
-            payment.status = Payment.Status.FAILED
+            payment.status = PaymentModel.Status.FAILED
             payment.failure_reason = error_msg
             payment.save()
             
@@ -159,12 +160,12 @@ class ClickPesaService:
         clickpesa_status = clickpesa_data.get('status', '').upper()
         
         status_mapping = {
-            'PENDING': Payment.Status.PENDING,
-            'PROCESSING': Payment.Status.PROCESSING,
-            'COMPLETED': Payment.Status.COMPLETED,
-            'SUCCESS': Payment.Status.COMPLETED,
-            'FAILED': Payment.Status.FAILED,
-            'CANCELLED': Payment.Status.CANCELLED,
+            'PENDING': PaymentModel.Status.PENDING,
+            'PROCESSING': PaymentModel.Status.PROCESSING,
+            'COMPLETED': PaymentModel.Status.COMPLETED,
+            'SUCCESS': PaymentModel.Status.COMPLETED,
+            'FAILED': PaymentModel.Status.FAILED,
+            'CANCELLED': PaymentModel.Status.CANCELLED,
         }
         
         if clickpesa_status in status_mapping:

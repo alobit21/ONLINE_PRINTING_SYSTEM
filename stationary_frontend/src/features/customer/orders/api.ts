@@ -34,8 +34,8 @@ export const GET_MY_ORDERS = gql`
     }
 `;
 export const CREATE_ORDER = gql`
-    mutation CreateOrder($shopId: UUID!, $items: [OrderItemInput!]!) {
-        createOrder(shopId: $shopId, items: $items) {
+    mutation CreateOrder($shopId: UUID!, $items: [OrderItemInput!]!, $payment: PaymentInput!) {
+        createOrder(shopId: $shopId, items: $items, payment: $payment) {
             response {
                 status
                 message
@@ -43,6 +43,15 @@ export const CREATE_ORDER = gql`
             order {
                 id
                 status
+                totalPrice
+                paymentStatus
+            }
+            payment {
+                id
+                status
+                paymentMethod
+                amount
+                referenceNumber
             }
         }
     }

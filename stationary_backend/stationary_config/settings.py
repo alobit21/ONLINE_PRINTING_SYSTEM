@@ -10,10 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -171,3 +176,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://127.0.0.1:5173",
 ]
+
+# ClickPesa Configuration
+CLICKPESA_CLIENT_ID = os.getenv('CLICKPESA_CLIENT_ID', '')
+CLICKPESA_API_KEY = os.getenv('CLICKPESA_API_KEY', '')
+CLICKPESA_SECRET_KEY = os.getenv('CLICKPESA_SECRET_KEY', '')
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:8000')
