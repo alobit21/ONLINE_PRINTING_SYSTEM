@@ -96,7 +96,7 @@ export const PaymentStatusTracker: React.FC<PaymentStatusTrackerProps> = ({
     onPaymentFailed
 }) => {
     const [pollingCount, setPollingCount] = useState(0);
-    const [showRetry, setShowRetry] = useState(false);
+    const [showRetry] = useState(false);
 
     const { data, loading, error, refetch } = useQuery<PaymentStatusData>(
         GET_PAYMENT_STATUS,

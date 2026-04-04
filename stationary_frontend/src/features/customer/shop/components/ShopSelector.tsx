@@ -59,32 +59,40 @@ export const ShopSelector = () => {
     const { data, loading, error } = useQuery<GetShopsData>(GET_SHOPS, {
         variables: {
             filterInput: {
-                radiusKm: userLocation ? 50 : null,
+                radiusKm: userLocation ? 500 : null,
                 latitude: userLocation?.[0] ?? null,
                 longitude: userLocation?.[1] ?? null,
                 searchTerm: searchTerm || null
             }
         },
-        fetchPolicy: 'network-only', // Always fetch fresh data
-        onCompleted: (data) => {
+        fetchPolicy: 'network-only' // Always fetch fresh data
+    });
+
+    // Handle query errors
+    useEffect(() => {
+        if (error) {
+            console.error('[SHOP SELECTOR] Query error:', error);
+        }
+    }, [error]);
+
+    // Handle query completion
+    useEffect(() => {
+        if (!loading && data) {
             console.log('[SHOP SELECTOR] Query completed:', data);
             console.log('[SHOP SELECTOR] Filter params:', {
-                radiusKm: userLocation ? 50 : null,
+                radiusKm: userLocation ? 500 : null,
                 latitude: userLocation?.[0] ?? null,
                 longitude: userLocation?.[1] ?? null,
                 searchTerm: searchTerm || null
             });
-        },
-        onError: (error) => {
-            console.error('[SHOP SELECTOR] Query error:', error);
         }
-    });
+    }, [data, loading, userLocation, searchTerm]);
 
 
     // Calculate distances and sort shops by distance
     const shopsWithDistance = (data?.shops?.data || []).map(shop => ({
         ...shop,
-        calculatedDistance: userLocation
+        calculatedDistance: userLocation && shop.latitude && shop.longitude
             ? calculateDistance(userLocation[0], userLocation[1], shop.latitude, shop.longitude)
             : shop.distance || 0
     })).sort((a, b) => a.calculatedDistance - b.calculatedDistance);
@@ -173,7 +181,7 @@ export const ShopSelector = () => {
                                     : "border-slate-100 hover:border-brand-200"
                             )}
                             style={{ animationDelay: `${index * 100}ms` }}
-                            onClick={() => setSelectedShopId(shop.id)}
+                            onClick={() => shop.id && setSelectedShopId(shop.id)}
                         >
                             <CardContent className="p-0 flex h-32">
                                 <div className="w-32 bg-slate-200 relative overflow-hidden">
@@ -238,3 +246,4 @@ export const ShopSelector = () => {
         </div>
     );
 };
+

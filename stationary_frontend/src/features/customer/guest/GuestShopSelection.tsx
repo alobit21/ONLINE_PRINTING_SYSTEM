@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { GET_SHOPS } from '../../shops/api';
 import { useCustomerStore } from '../../../stores/customerStore';
 import { Card, CardContent } from '../../../components/ui/Card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
 import { Star, MapPin, Clock, CheckCircle } from 'lucide-react';
 
 interface Shop {
@@ -29,8 +30,38 @@ interface GetShopsData {
 export const GuestShopSelection = () => {
   const { selectedShopId, setSelectedShopId, setCurrentStep } = useCustomerStore();
   const [selectedShop, setSelectedShop] = useState<string | null>(selectedShopId);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
-  const { data, loading, error } = useQuery<GetShopsData>(GET_SHOPS);
+  // Get user's geolocation (same as ShopSelector)
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([position.coords.latitude, position.coords.longitude]);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          // Fallback to default location (Dodoma, Tanzania)
+          setUserLocation([-6.17, 35.74]);
+        }
+      );
+    } else {
+      // Fallback if geolocation is not supported
+      setUserLocation([-6.17, 35.74]);
+    }
+  }, []);
+
+  const { data, loading, error } = useQuery<GetShopsData>(GET_SHOPS, {
+    variables: {
+      filterInput: {
+        radiusKm: userLocation ? 500 : null,
+        latitude: userLocation?.[0] ?? null,
+        longitude: userLocation?.[1] ?? null,
+        searchTerm: null
+      }
+    },
+    fetchPolicy: 'network-only'
+  });
 
   const allShops = data?.shops?.data || [];
   const shops = allShops.filter(shop => shop.isAcceptingOrders);
@@ -93,7 +124,8 @@ export const GuestShopSelection = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
+    <TooltipProvider>
+      <div className="max-w-5xl mx-auto p-4">
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Choose a Printing Shop</h2>
         <p className="text-gray-600 dark:text-gray-400">Select a shop to handle your printing order</p>
@@ -113,7 +145,14 @@ export const GuestShopSelection = () => {
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-1">{shop.name}</h3>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-1 cursor-help">{shop.name}</h3>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{shop.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <MapPin className="w-4 h-4 mr-1" />
                     <span className="truncate">{shop.address}</span>
@@ -171,5 +210,6 @@ export const GuestShopSelection = () => {
         </div>
       )}
     </div>
+    </TooltipProvider>
   );
 };
