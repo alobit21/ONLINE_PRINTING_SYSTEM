@@ -68,6 +68,13 @@ export interface CreateOrderData {
             id: string;
             status: OrderStatus;
         };
+        payment?: {
+            id: string;
+            status: string;
+            paymentMethod: string;
+            amount: number;
+            referenceNumber?: string;
+        };
     };
 }
 export interface GetShopOrdersData {

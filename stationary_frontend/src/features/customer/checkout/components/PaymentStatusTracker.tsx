@@ -16,6 +16,25 @@ import {
     ShieldCheck
 } from 'lucide-react';
 
+interface PaymentStatusData {
+    paymentStatus: {
+        id: string;
+        status: string;
+        paymentMethod: string;
+        amount: number;
+        referenceNumber?: string;
+        transactionId?: string;
+        failureReason?: string;
+        createdAt: string;
+        updatedAt: string;
+        order?: {
+            id: string;
+            paymentStatus: string;
+            status: string;
+        };
+    };
+}
+
 interface PaymentStatusTrackerProps {
     paymentId: string;
     phoneNumber: string;
@@ -79,7 +98,7 @@ export const PaymentStatusTracker: React.FC<PaymentStatusTrackerProps> = ({
     const [pollingCount, setPollingCount] = useState(0);
     const [showRetry, setShowRetry] = useState(false);
 
-    const { data, loading, error, refetch } = useQuery(
+    const { data, loading, error, refetch } = useQuery<PaymentStatusData>(
         GET_PAYMENT_STATUS,
         {
             variables: { paymentId },

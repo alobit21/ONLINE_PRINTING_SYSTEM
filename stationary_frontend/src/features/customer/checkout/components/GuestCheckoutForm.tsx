@@ -181,7 +181,7 @@ export const GuestCheckoutForm = () => {
                     The shop owner will contact you on WhatsApp at {guestData.whatsappNumber} when your order is ready.
                 </p>
                 <div className="mt-10 flex gap-4">
-                    <Button variant="default" onClick={resetWorkflow}>Place Another Order</Button>
+                    <Button variant="primary" onClick={resetWorkflow}>Place Another Order</Button>
                 </div>
             </div>
         );
