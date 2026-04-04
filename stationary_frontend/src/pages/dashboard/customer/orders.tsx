@@ -321,7 +321,7 @@ const EmptyState = () => (
       className="mt-6 bg-cyan-500 hover:bg-cyan-600 text-white"
       onClick={() => {
         // TODO: Navigate to upload page
-        window.location.href = '/dashboard/customer/upload';
+        window.location.href = '';
       }}
     >
       <Package className="h-4 w-4 mr-2" />

@@ -4,6 +4,7 @@ import type { GetShopsData } from '../../../shops/types';
 import { ShopMap } from '../../../shops/components/ShopMap';
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { Card, CardContent } from '../../../../components/ui/Card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../../components/ui/tooltip';
 import { Star, MapPin, Navigation, Clock, Check, Search, Filter, AlertCircle, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '../../../../lib/utils';
@@ -98,9 +99,10 @@ export const ShopSelector = () => {
     })).sort((a, b) => a.calculatedDistance - b.calculatedDistance);
 
     return (
-        <div className="space-y-6 fade-in">
+        <TooltipProvider>
+            <div className="space-y-6 fade-in">
             <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold text-slate-900">Select Print Shop</h2>
+                <h2 className="text-3xl font-bold text-foreground ">Select Print Shop</h2>
                 <p className="text-slate-500">Choose a shop based on proximity, rating, and estimated pickup time.</p>
             </div>
 
@@ -177,14 +179,14 @@ export const ShopSelector = () => {
                             className={cn(
                                 "cursor-pointer transition-all duration-300 border-2 slide-in-right overflow-hidden",
                                 selectedShopId === shop.id
-                                    ? "border-brand-500 bg-brand-50 shadow-lg scale-[1.02]"
+                                    ? "border-brand-500 bg-background shadow-lg scale-[1.02]"
                                     : "border-slate-100 hover:border-brand-200"
                             )}
                             style={{ animationDelay: `${index * 100}ms` }}
                             onClick={() => shop.id && setSelectedShopId(shop.id)}
                         >
                             <CardContent className="p-0 flex h-32">
-                                <div className="w-32 bg-slate-200 relative overflow-hidden">
+                                <div className="w-32 bg-background relative overflow-hidden">
                                     <img
                                         src={shop.banner || `https://api.dicebear.com/7.x/initials/svg?seed=${shop.name}`}
                                         alt={shop.name}
@@ -199,11 +201,25 @@ export const ShopSelector = () => {
                                 <div className="flex-1 p-4 flex flex-col justify-between">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h3 className="font-bold text-slate-900 line-clamp-1">{shop.name}</h3>
-                                            <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                                                <MapPin className="h-3 w-3" />
-                                                {shop.address}
-                                            </p>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <h3 className="font-bold text-slate-900 line-clamp-1 cursor-help">{shop.name}</h3>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{shop.name}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5 cursor-help">
+                                                        <MapPin className="h-3 w-3" />
+                                                        {shop.address}
+                                                    </p>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{shop.address}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
                                         </div>
                                         <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-lg text-xs font-bold ring-1 ring-amber-100">
                                             <Star className="h-3 w-3 fill-amber-500" />
@@ -237,13 +253,14 @@ export const ShopSelector = () => {
 
                 {/* Map View */}
                 <div className="hidden lg:block rounded-3xl overflow-hidden shadow-2xl border-4 border-white h-full relative group">
-                    {userLocation && <ShopMap shops={shopsWithDistance} center={userLocation} />}
+                    {userLocation && <ShopMap shops={shopsWithDistance} center={userLocation} userLocation={userLocation} />}
                     <div className="absolute top-4 left-4 glass px-3 py-1.5 rounded-xl border border-white/20 shadow-lg text-xs font-bold text-slate-700 pointer-events-none group-hover:scale-105 transition-transform">
                         Interactive Map View
                     </div>
                 </div>
             </div>
         </div>
+        </TooltipProvider>
     );
 };
 
