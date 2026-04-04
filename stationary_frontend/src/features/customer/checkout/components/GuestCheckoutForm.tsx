@@ -8,6 +8,7 @@ import { useMutation } from '@apollo/client/react';
 import { CREATE_GUEST_ORDER } from '../../orders/api';
 import type { CreateGuestOrderData, OrderItemInput } from '../../orders/types';
 import { useNavigate } from 'react-router-dom';
+import PaymentStatusTracker from './PaymentStatusTracker';
 
 interface GuestCustomerData {
   name: string;
@@ -15,16 +16,25 @@ interface GuestCustomerData {
   email?: string;
 }
 
+interface PaymentData {
+  paymentMethod: string;
+  phoneNumber: string;
+}
+
 export const GuestCheckoutForm = () => {
     const navigate = useNavigate();
     const { files, selectedShopId, resetWorkflow } = useCustomerStore();
     const [isSuccess, setIsSuccess] = useState(false);
+    const [paymentId, setPaymentId] = useState<string | null>(null);
+    const [showPaymentTracker, setShowPaymentTracker] = useState(false);
     const [guestData, setGuestData] = useState<GuestCustomerData>({
         name: '',
         whatsappNumber: '',
         email: ''
     });
     const [errors, setErrors] = useState<Partial<GuestCustomerData>>({});
+    const [paymentMethod, setPaymentMethod] = useState('MPESA');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     const isUUID = (str: string) => {
         const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -37,11 +47,14 @@ export const GuestCheckoutForm = () => {
     const [createGuestOrder, { loading: isProcessing }] = useMutation<CreateGuestOrderData, { 
         shopId: string; 
         guestCustomer: GuestCustomerData; 
-        items: OrderItemInput[] 
+        items: OrderItemInput[];
+        payment?: PaymentData;
     }>(CREATE_GUEST_ORDER, {
         onCompleted: (data) => {
             if (data.createGuestOrder.response.status) {
-                setIsSuccess(true);
+                // Show payment tracker instead of success message
+                setPaymentId(data.createGuestOrder.payment?.id || null);
+                setShowPaymentTracker(true);
             }
         },
         onError: (err) => {
@@ -79,6 +92,12 @@ export const GuestCheckoutForm = () => {
             newErrors.email = 'Invalid email format';
         }
 
+        // Validate payment phone number
+        if (!phoneNumber.trim()) {
+            alert('Payment phone number is required');
+            return false;
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -102,6 +121,11 @@ export const GuestCheckoutForm = () => {
             paperSize: file.metadata?.paperSize || "A4"
         }));
 
+        const payment: PaymentData = {
+            paymentMethod,
+            phoneNumber: phoneNumber.trim()
+        };
+
         try {
             await createGuestOrder({
                 variables: {
@@ -111,7 +135,8 @@ export const GuestCheckoutForm = () => {
                         whatsappNumber: guestData.whatsappNumber.trim(),
                         email: guestData.email?.trim() || undefined
                     },
-                    items
+                    items,
+                    payment
                 }
             });
         } catch (err: any) {
@@ -119,15 +144,41 @@ export const GuestCheckoutForm = () => {
         }
     };
 
+    // Payment completion handlers
+    const handlePaymentComplete = () => {
+        setIsSuccess(true);
+        setShowPaymentTracker(false);
+    };
+
+    const handlePaymentFailed = () => {
+        console.error("Payment failed");
+        setShowPaymentTracker(false);
+    };
+
+    // Show payment tracker if payment was initiated
+    if (showPaymentTracker && paymentId) {
+        return (
+            <PaymentStatusTracker
+                paymentId={paymentId}
+                phoneNumber={phoneNumber}
+                paymentMethod={paymentMethod}
+                amount={total}
+                onComplete={handlePaymentComplete}
+                onPaymentFailed={handlePaymentFailed}
+            />
+        );
+    }
+
     if (isSuccess) {
         return (
             <div className="flex flex-col items-center justify-center text-center py-20 animate-fade-in">
                 <div className="h-24 w-24 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-6 scale-up-center">
                     <ShieldCheck className="h-12 w-12" />
                 </div>
-                <h2 className="text-4xl font-extrabold text-slate-900">Order Placed!</h2>
+                <h2 className="text-4xl font-extrabold text-slate-900">Payment Completed!</h2>
                 <p className="text-slate-500 mt-2 max-w-sm">
-                    Your order has been placed successfully. The shop owner will contact you on WhatsApp at {guestData.whatsappNumber} when your order is ready.
+                    Your payment was successful and order has been confirmed. 
+                    The shop owner will contact you on WhatsApp at {guestData.whatsappNumber} when your order is ready.
                 </p>
                 <div className="mt-10 flex gap-4">
                     <Button variant="default" onClick={resetWorkflow}>Place Another Order</Button>
@@ -228,6 +279,51 @@ export const GuestCheckoutForm = () => {
                             </CardContent>
                         </Card>
 
+                        {/* Payment Information Card */}
+                        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
+                            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
+                                <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
+                                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-800 rounded-xl flex items-center justify-center">
+                                        <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                    </div>
+                                    Payment Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-8 space-y-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                        Payment Method *
+                                    </label>
+                                    <select
+                                        value={paymentMethod}
+                                        onChange={(e) => setPaymentMethod(e.target.value)}
+                                        className="w-full h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    >
+                                        <option value="MPESA">M-Pesa</option>
+                                        <option value="TIGOPESA">Tigo Pesa</option>
+                                        <option value="AIRTELMONEY">Airtel Money</option>
+                                        <option value="HALOPESA">Halopesa</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                        Payment Phone Number *
+                                    </label>
+                                    <Input
+                                        type="tel"
+                                        placeholder="+255 7xx xxx xxx"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        className="w-full h-12 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                                    />
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                                        This number will be used for the mobile money payment prompt.
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         {/* Order Items Card */}
                         <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
                             <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
@@ -312,11 +408,11 @@ export const GuestCheckoutForm = () => {
 
                                     <Button
                                         className="w-full h-14 rounded-2xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3"
-                                        disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles}
+                                        disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim()}
                                         onClick={handleGuestCheckout}
                                     >
-                                        {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Phone className="h-6 w-6" />}
-                                        Place Order as Guest
+                                        {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShoppingBag className="h-6 w-6" />}
+                                        Place Order & Pay
                                     </Button>
                                 </CardContent>
                             </Card>

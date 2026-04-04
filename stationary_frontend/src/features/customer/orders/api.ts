@@ -58,8 +58,8 @@ export const CREATE_ORDER = gql`
 `;
 
 export const CREATE_GUEST_ORDER = gql`
-    mutation CreateGuestOrder($shopId: UUID!, $guestCustomer: GuestCustomerInput!, $items: [OrderItemInput!]!) {
-        createGuestOrder(shopId: $shopId, guestCustomer: $guestCustomer, items: $items) {
+    mutation CreateGuestOrder($shopId: UUID!, $guestCustomer: GuestCustomerInput!, $items: [OrderItemInput!]!, $payment: PaymentInput) {
+        createGuestOrder(shopId: $shopId, guestCustomer: $guestCustomer, items: $items, payment: $payment) {
             response {
                 status
                 message
@@ -69,6 +69,14 @@ export const CREATE_GUEST_ORDER = gql`
                 status
                 customerInfo
                 isGuestOrder
+                paymentStatus
+            }
+            payment {
+                id
+                status
+                paymentMethod
+                amount
+                referenceNumber
             }
         }
     }
@@ -162,6 +170,27 @@ export const GET_ALL_MY_SHOP_ORDERS = gql`
                     downloadUrl
                     createdAt
                 }
+            }
+        }
+    }
+`;
+
+export const GET_PAYMENT_STATUS = gql`
+    query GetPaymentStatus($paymentId: UUID!) {
+        paymentStatus(paymentId: $paymentId) {
+            id
+            status
+            paymentMethod
+            amount
+            referenceNumber
+            transactionId
+            failureReason
+            createdAt
+            updatedAt
+            order {
+                id
+                paymentStatus
+                status
             }
         }
     }

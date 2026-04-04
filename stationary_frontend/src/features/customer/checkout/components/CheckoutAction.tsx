@@ -10,11 +10,14 @@ import type { CreateOrderData, OrderItemInput } from '../../orders/types';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../../stores/authStore';
+import PaymentStatusTracker from './PaymentStatusTracker';
 
 export const CheckoutAction = () => {
     const navigate = useNavigate();
     const { files, selectedShopId, resetWorkflow } = useCustomerStore();
     const [isSuccess, setIsSuccess] = useState(false);
+    const [paymentId, setPaymentId] = useState<string | null>(null);
+    const [showPaymentTracker, setShowPaymentTracker] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('MPESA');
     const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -36,7 +39,9 @@ export const CheckoutAction = () => {
     const [createOrder, { loading: isProcessing }] = useMutation<CreateOrderData, { shopId: string; items: OrderItemInput[]; payment: { paymentMethod: string; phoneNumber: string } }>(CREATE_ORDER, {
         onCompleted: (data) => {
             if (data.createOrder.response.status) {
-                setIsSuccess(true);
+                // Show payment tracker instead of success message
+                setPaymentId(data.createOrder.payment?.id || null);
+                setShowPaymentTracker(true);
             } else {
                 setError(data.createOrder.response.message);
             }
@@ -104,14 +109,39 @@ export const CheckoutAction = () => {
         }
     };
 
+    // Payment completion handlers
+    const handlePaymentComplete = () => {
+        setIsSuccess(true);
+        setShowPaymentTracker(false);
+    };
+
+    const handlePaymentFailed = () => {
+        setError("Payment failed. Please try again.");
+        setShowPaymentTracker(false);
+    };
+
+    // Show payment tracker if payment was initiated
+    if (showPaymentTracker && paymentId) {
+        return (
+            <PaymentStatusTracker
+                paymentId={paymentId}
+                phoneNumber={phoneNumber}
+                paymentMethod={paymentMethod}
+                amount={total}
+                onComplete={handlePaymentComplete}
+                onPaymentFailed={handlePaymentFailed}
+            />
+        );
+    }
+
     if (isSuccess) {
         return (
             <div className="flex flex-col items-center justify-center text-center py-20 animate-fade-in">
                 <div className="h-24 w-24 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-6 scale-up-center">
                     <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h2 className="text-4xl font-extrabold text-slate-900">Order Placed!</h2>
-                <p className="text-slate-500 mt-2 max-w-sm">Your order has been sent to {shop?.name || 'the shop'}. You'll receive a notification when it's ready.</p>
+                <h2 className="text-4xl font-extrabold text-slate-900">Payment Completed!</h2>
+                <p className="text-slate-500 mt-2 max-w-sm">Your payment was successful and order has been confirmed. {shop?.name || 'The shop'} will start processing your order.</p>
                 <div className="mt-10 flex gap-4">
                     <Button variant="primary" onClick={() => navigate('/dashboard/customer/orders')}>View Order status</Button>
                     <Button variant="outline" onClick={resetWorkflow}>New Print Job</Button>

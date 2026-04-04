@@ -8,6 +8,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
 import json
 import logging
+from django.http import JsonResponse
+
+
 
 from .models import Payment, Order
 from .clickpesa_service import ClickPesaService
@@ -15,85 +18,22 @@ from .clickpesa_service import ClickPesaService
 logger = logging.getLogger(__name__)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def initiate_payment(request):
-    """
-    Initiate payment for an order using ClickPesa
-    """
-    try:
-        data = request.data
-        
-        # Validate required fields
-        order_id = data.get('order_id')
-        payment_method = data.get('payment_method')
-        phone_number = data.get('phone_number')
-        
-        if not all([order_id, payment_method, phone_number]):
-            return Response({
-                'error': 'Missing required fields: order_id, payment_method, phone_number'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Validate payment method
-        valid_methods = [choice[0] for choice in Payment.PaymentMethod.choices]
-        if payment_method not in valid_methods:
-            return Response({
-                'error': f'Invalid payment method. Valid methods: {valid_methods}'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Get order and verify ownership
-        try:
-            order = Order.objects.get(id=order_id, customer=request.user)
-        except Order.DoesNotExist:
-            return Response({
-                'error': 'Order not found or access denied'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-        # Check if payment already exists
-        if hasattr(order, 'payment'):
-            return Response({
-                'error': 'Payment already initiated for this order',
-                'payment_id': order.payment.id
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Create payment record
-        payment = Payment.objects.create(
-            order=order,
-            payment_method=payment_method,
-            amount=order.total_price,
-            phone_number=phone_number
-        )
-        
-        # Initiate payment with ClickPesa
-        clickpesa_service = ClickPesaService()
-        result = clickpesa_service.initiate_mobile_money_payment(
-            payment, phone_number, payment_method
-        )
-        
-        if result['success']:
-            return Response({
-                'success': True,
-                'message': 'Payment initiated successfully',
-                'payment_id': payment.id,
-                'payment_status': payment.status,
-                'clickpesa_payment_id': payment.clickpesa_payment_id,
-                'reference_number': payment.reference_number,
-                'amount': float(payment.amount),
-                'phone_number': payment.phone_number
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({
-                'success': False,
-                'error': result['error'],
-                'payment_id': payment.id
-            }, status=status.HTTP_400_BAD_REQUEST)
-            
-    except Exception as e:
-        logger.error(f"Payment initiation error: {str(e)}")
-        return Response({
-            'error': 'Internal server error'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def clickpesa_webhook(request):
+    try:
+        webhook_data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    clickpesa_service = ClickPesaService()
+    result = clickpesa_service.process_webhook(webhook_data)
+
+    if result['success']:
+        return JsonResponse({'success': True}, status=200)
+    else:
+        return JsonResponse({'error': result['error']}, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

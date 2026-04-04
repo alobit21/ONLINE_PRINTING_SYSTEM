@@ -115,45 +115,42 @@ export const PrintUploadFlow = () => {
         return;
       }
 
-        // Step 2: Upload actual file via REST API (development endpoint)
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const uploadResponse = await fetch('http://localhost:8001/api/storage/upload/dev/', {
-          method: 'POST',
-          body: formData
-        });
+      // Step 2: Upload actual file via REST API (development endpoint)
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const uploadResponse = await fetch('http://localhost:8001/api/storage/upload/dev/', {
+        method: 'POST',
+        body: formData
+      });
 
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json();
-          throw new Error(errorData.error || `Upload failed with status ${uploadResponse.status}`);
-        }
-
-        updateFile(backendId, {
-          status: 'analyzing',
-          progress: 80
-        });
-
-        // Simulate analysis (in real app, this would be backend processing)
-        setTimeout(() => {
-          updateFile(backendId, {
-            status: 'ready',
-            progress: 100,
-            metadata: {
-              pageCount: Math.floor(Math.random() * 20) + 1,
-              isColor: config.isColor,
-              paperSize: config.paperSize,
-              orientation: 'portrait' as const,
-              estimatedPrintTime: 10,
-              complexityScore: 3,
-              isBinding: config.isBinding,
-              isLamination: config.isLamination
-            }
-          });
-        }, 2000);
-      } else {
-        updateFile(tempId, { status: 'error', error: 'Upload failed' });
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.error || `Upload failed with status ${uploadResponse.status}`);
       }
+
+      updateFile(backendId, {
+        status: 'analyzing',
+        progress: 80
+      });
+
+      // Simulate analysis (in real app, this would be backend processing)
+      setTimeout(() => {
+        updateFile(backendId, {
+          status: 'ready',
+          progress: 100,
+          metadata: {
+            pageCount: Math.floor(Math.random() * 20) + 1,
+            isColor: config.isColor,
+            paperSize: config.paperSize,
+            orientation: 'portrait' as const,
+            estimatedPrintTime: 10,
+            complexityScore: 3,
+            isBinding: config.isBinding,
+            isLamination: config.isLamination
+          }
+        });
+      }, 2000);
     } catch (err) {
       console.error("Upload failed:", err);
       updateFile(tempId, {

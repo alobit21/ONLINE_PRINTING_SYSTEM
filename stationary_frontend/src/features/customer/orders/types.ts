@@ -78,6 +78,11 @@ export interface GetAllMyShopOrdersData {
     allMyShopOrders: Order[];
 }
 
+export interface PaymentInput {
+    paymentMethod: string;
+    phoneNumber: string;
+}
+
 export interface GuestCustomerInput {
     name: string;
     whatsappNumber: string;
@@ -101,6 +106,14 @@ export interface CreateGuestOrderData {
                 id: string;
             };
             isGuestOrder: boolean;
+            paymentStatus?: string;
+        };
+        payment?: {
+            id: string;
+            status: string;
+            paymentMethod: string;
+            amount: number;
+            referenceNumber?: string;
         };
     };
 }
