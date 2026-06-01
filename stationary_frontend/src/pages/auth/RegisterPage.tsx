@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { RegisterSchema } from '../../features/auth/types';
 import type { RegisterInput } from '../../features/auth/types';
-import { RegisterSchema } from '../../features/auth/types'; // Ensure correct import path
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -11,108 +11,108 @@ import { useAuth } from '../../features/auth/hooks/useAuth';
 export const RegisterPage = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<RegisterInput>({
         resolver: zodResolver(RegisterSchema),
-        defaultValues: {
-            role: "CUSTOMER" // Default role
-        }
+        defaultValues: { role: "CUSTOMER" }
     });
 
     const { register: registerUser, isLoading, error } = useAuth();
 
-    const onSubmit = (data: RegisterInput) => {
-        registerUser(data);
-    };
+    const onSubmit = (data: RegisterInput) => registerUser(data);
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-            <Card className="w-full max-w-md shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="space-y-1 text-center">
-                    <CardTitle className="text-2xl font-bold tracking-tight text-brand-700">
-                        Create an Account
+        <div className="min-h-screen flex items-center justify-center bg-gray-950 dark:bg-gray-50 px-4">
+
+            {/* subtle background glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_60%)] pointer-events-none" />
+
+            <Card className="relative w-full max-w-md bg-gray-900/80 dark:bg-white/80 backdrop-blur-xl border border-gray-800/50 dark:border-gray-200/50 shadow-2xl rounded-3xl">
+
+                <CardHeader className="text-center space-y-2">
+                    <CardTitle className="text-3xl font-black text-white dark:text-gray-900">
+                        Create Account
                     </CardTitle>
-                    <CardDescription>
-                        Join the smart printing marketplace today
+                    <CardDescription className="text-gray-400 dark:text-gray-600">
+                        Join the smart printing marketplace
                     </CardDescription>
                 </CardHeader>
+
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <CardContent className="grid gap-4">
+                    <CardContent className="space-y-5">
+
+                        {/* error */}
                         {error && (
-                            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm font-medium border border-red-100 animate-in fade-in slide-in-from-top-1">
+                            <div className="p-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
                                 {error}
                             </div>
                         )}
 
-                        <div className="grid gap-2">
-                            <Input
-                                id="email"
-                                label="Email"
-                                type="email"
-                                placeholder="name@example.com"
-                                autoComplete="email"
-                                disabled={isLoading}
-                                error={errors.email?.message}
-                                {...register("email")}
-                            />
-                        </div>
+                        {/* email */}
+                        <Input
+                            id="email"
+                            label="Email"
+                            type="email"
+                            disabled={isLoading}
+                            error={errors.email?.message}
+                            {...register("email")}
+                        />
 
-                        <div className="grid gap-2">
-                            <Input
-                                id="password"
-                                label="Password"
-                                type="password"
-                                autoComplete="new-password"
-                                disabled={isLoading}
-                                error={errors.password?.message}
-                                {...register("password")}
-                            />
-                        </div>
+                        {/* password */}
+                        <Input
+                            id="password"
+                            label="Password"
+                            type="password"
+                            disabled={isLoading}
+                            error={errors.password?.message}
+                            {...register("password")}
+                        />
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700">
-                                I want to join as a:
+                        {/* role selection */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-300 dark:text-gray-700">
+                                Join as
                             </label>
-                            <div className="flex gap-4">
-                                <label className="flex items-center space-x-2 border p-3 rounded-md w-full cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
-                                    <input
-                                        type="radio"
-                                        value="CUSTOMER"
-                                        {...register("role")}
-                                        className="h-4 w-4 text-brand-600 border-slate-300 focus:ring-brand-500"
-                                    />
-                                    <span className="text-sm font-medium">Customer</span>
+
+                            <div className="grid grid-cols-2 gap-3">
+
+                                <label className="cursor-pointer p-4 rounded-2xl border border-gray-700 dark:border-gray-300 bg-gray-800/60 dark:bg-white/60 hover:scale-[1.02] transition group has-[:checked]:border-brand-600 has-[:checked]:bg-brand-600/10">
+                                    <input type="radio" value="CUSTOMER" {...register("role")} className="hidden" />
+                                    <div className="text-sm font-bold text-white dark:text-gray-900 group-has-[:checked]:text-brand-500">
+                                        Customer
+                                    </div>
                                 </label>
-                                <label className="flex items-center space-x-2 border p-3 rounded-md w-full cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
-                                    <input
-                                        type="radio"
-                                        value="SHOP_OWNER"
-                                        {...register("role")}
-                                        className="h-4 w-4 text-brand-600 border-slate-300 focus:ring-brand-500"
-                                    />
-                                    <span className="text-sm font-medium">Shop Owner</span>
+
+                                <label className="cursor-pointer p-4 rounded-2xl border border-gray-700 dark:border-gray-300 bg-gray-800/60 dark:bg-white/60 hover:scale-[1.02] transition group has-[:checked]:border-brand-600 has-[:checked]:bg-brand-600/10">
+                                    <input type="radio" value="SHOP_OWNER" {...register("role")} className="hidden" />
+                                    <div className="text-sm font-bold text-white dark:text-gray-900 group-has-[:checked]:text-brand-500">
+                                        Shop Owner
+                                    </div>
                                 </label>
+
                             </div>
-                            {errors.role && <p className="text-xs font-medium text-red-500">{errors.role.message}</p>}
                         </div>
 
-                        <div className="grid gap-2">
-                            <Input
-                                id="phone"
-                                label="Phone Number (Optional)"
-                                type="tel"
-                                autoComplete="tel"
-                                disabled={isLoading}
-                                error={errors.phone_number?.message} // Ensure correct accessor
-                                {...register("phone_number")} // Matches Zod schema
-                            />
-                        </div>
-
+                        {/* phone */}
+                        <Input
+                            id="phone"
+                            label="Phone (optional)"
+                            type="tel"
+                            disabled={isLoading}
+                            error={errors.phone_number?.message}
+                            {...register("phone_number")}
+                        />
                     </CardContent>
+
                     <CardFooter className="flex flex-col gap-4">
-                        <Button className="w-full bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 shadow-lg transition-all duration-200" type="submit" isLoading={isLoading}>
+                        <Button
+                            type="submit"
+                            isLoading={isLoading}
+                            className="w-full bg-brand-600 hover:bg-brand-700 text-white rounded-2xl py-3 font-bold transition active:scale-[0.98]"
+                        >
                             Create Account
                         </Button>
-                        <p className="text-center text-sm text-slate-600">
+
+                        <p className="text-sm text-center text-gray-400 dark:text-gray-600">
                             Already have an account?{' '}
-                            <Link to="/login" className="font-semibold text-brand-600 hover:text-brand-500 hover:underline transition-all">
+                            <Link className="text-brand-500 font-semibold hover:underline" to="/login">
                                 Sign in
                             </Link>
                         </p>
