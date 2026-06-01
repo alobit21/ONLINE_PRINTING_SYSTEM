@@ -1,78 +1,78 @@
 import React from 'react';
 
-interface Step {
-  label: string;
-  isActive: boolean;
-  isCompleted: boolean;
-}
-
 interface OrderProgressProps {
-  currentStep: number; // 1-based index
+  currentStep: number;
 }
 
-const steps: string[] = [
-  'Upload Document',
-  'Document Analysis',
-  'Shop Selection',
+const steps = [
+  'Upload',
+  'Analyze',
+  'Shop',
   'Checkout',
-  'Order Tracking',
+  'Track',
 ];
 
 export const OrderProgress: React.FC<OrderProgressProps> = ({ currentStep }) => {
   return (
-    <div className="flex justify-between items-center w-full max-w-4xl mx-auto px-4 py-6">
-      {steps.map((label, index) => {
-        const stepNumber = index + 1;
-        const isCompleted = stepNumber < currentStep;
-        const isActive = stepNumber === currentStep;
+    <div className="w-full max-w-4xl mx-auto px-4 py-8">
+      
+      {/* Track line */}
+      <div className="relative flex justify-between items-center">
 
-        return (
-          <div key={label} className="flex flex-col items-center text-center flex-1">
-            <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors duration-300 
-                ${isCompleted ? 'bg-green-500 text-white' : isActive ? 'bg-brand-600 text-white' : 'bg-gray-300 text-gray-600'}`}
-            >
-              {isCompleted ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={3}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                stepNumber
-              )}
-            </div>
-            <div
-              className={`text-xs font-semibold transition-colors duration-300 
-                ${isCompleted ? 'text-green-600' : isActive ? 'text-brand-600' : 'text-gray-500'}`}
-            >
-              {label}
-            </div>
-            {index !== steps.length - 1 && (
+        {/* background line */}
+        <div className="absolute top-4 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
+
+        {/* active progress line */}
+        <div
+          className="absolute top-4 left-0 h-1 bg-brand-600 rounded-full transition-all duration-500"
+          style={{
+            width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+          }}
+        />
+
+        {steps.map((label, index) => {
+          const stepNumber = index + 1;
+
+          const isCompleted = stepNumber < currentStep;
+          const isActive = stepNumber === currentStep;
+
+          return (
+            <div key={label} className="flex flex-col items-center flex-1 relative z-10">
+
+              {/* circle */}
               <div
-                className={`h-1 flex-1 mt-4 rounded-full transition-colors duration-300 
-                  ${isCompleted ? 'bg-green-500' : 'bg-gray-300'}`}
-              />
-            )}
-          </div>
-        );
-      })}
+                className={`
+                  w-8 h-8 rounded-full flex items-center justify-center
+                  text-sm font-bold transition-all duration-300
+                  ${
+                    isCompleted
+                      ? 'bg-brand-600 text-white'
+                      : isActive
+                      ? 'bg-white dark:bg-gray-900 border-2 border-brand-600 text-brand-600 scale-110 shadow-md'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                  }
+                `}
+              >
+                {isCompleted ? '✓' : stepNumber}
+              </div>
+
+              {/* label */}
+              <div
+                className={`
+                  mt-2 text-xs font-semibold text-center
+                  ${
+                    isCompleted || isActive
+                      ? 'text-gray-900 dark:text-gray-100'
+                      : 'text-gray-400'
+                  }
+                `}
+              >
+                {label}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
-
-// TailwindCSS classes used for colors:
-// bg-green-500, text-green-600 for completed
-// bg-brand-600, text-brand-600 for active
-// bg-gray-300, text-gray-600, text-gray-500 for inactive
-
-// This component is responsive by default due to flex and max-w constraints
-
-// Usage example:
-// <OrderProgress currentStep={3} />
-

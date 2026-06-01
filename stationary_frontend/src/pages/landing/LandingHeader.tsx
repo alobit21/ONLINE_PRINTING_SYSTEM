@@ -8,9 +8,7 @@ export const LandingHeader = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-        };
+        const handleScroll = () => setIsScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -22,64 +20,69 @@ export const LandingHeader = () => {
 
     return (
         <header
-            className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'backdrop-blur-xl bg-gray-900/90 dark:bg-white/90 border-b border-gray-800/50 dark:border-gray-200/50 py-3 shadow-2xl' : 'bg-transparent py-5'
-                }`}
+            className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+                isScrolled
+                    ? 'bg-gray-900/90 dark:bg-white/90 backdrop-blur-xl border-b border-gray-800/40 dark:border-gray-200/40 py-3 shadow-lg'
+                    : 'bg-transparent py-5'
+            }`}
         >
             <div className="section-container">
                 <nav className="flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <div className="bg-gradient-to-br from-brand-600 to-brand-700 p-2.5 rounded-xl text-white group-hover:scale-110 transition-all shadow-lg shadow-brand-600/30">
-                            <Printer size={24} />
+
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center gap-2">
+                        <div className="bg-brand-600 p-2 rounded-lg text-white">
+                            <Printer size={22} />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-white dark:text-gray-900 uppercase">
-                            Sationary<span className="text-brand-400 dark:text-brand-600">.</span>
+                        <span className="text-lg font-bold uppercase text-white dark:text-gray-900">
+                            Sationary<span className="text-brand-500">.</span>
                         </span>
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
+                    {/* Desktop Nav */}
+                    <div className="hidden md:flex items-center gap-6">
                         {navLinks.map((link) => (
                             <a
                                 key={link.name}
                                 href={link.href}
-                                className="text-sm font-semibold text-gray-300 dark:text-gray-700 hover:text-brand-400 dark:hover:text-brand-600 transition-all duration-300 hover:scale-105 relative group"
+                                className="text-sm font-medium text-gray-300 dark:text-gray-700 hover:text-brand-400 transition-colors"
                             >
                                 {link.name}
-                                <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-brand-600 to-brand-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                             </a>
                         ))}
                     </div>
 
+                    {/* Desktop Actions */}
                     <div className="hidden md:flex items-center gap-4">
                         <Link
                             to="/checkout"
-                            className="text-sm font-semibold text-green-400 dark:text-green-600 hover:text-green-300 dark:hover:text-green-500 transition-all duration-300 hover:scale-105 relative group"
+                            className="text-sm text-green-400 hover:text-green-300 transition-colors"
                         >
-                            Start Guest Order
-                            <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-green-600 to-green-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                            Guest Order
                         </Link>
+
                         <Link
                             to="/login"
-                            className="text-sm font-semibold text-gray-300 dark:text-gray-700 hover:text-brand-400 dark:hover:text-brand-600 transition-all duration-300 hover:scale-105 relative group"
+                            className="text-sm text-gray-300 dark:text-gray-700 hover:text-brand-400 transition-colors"
                         >
                             Sign In
-                            <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-brand-600 to-brand-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                         </Link>
+
                         <Link
                             to="/register"
-                            className="bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white px-7 py-3 rounded-full text-sm font-bold transition-all duration-300 shadow-lg shadow-brand-600/30 flex items-center gap-2 group transform hover:scale-105 hover:shadow-xl hover:shadow-brand-600/40"
+                            className="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 transition"
                         >
                             Get Started
-                            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" strokeWidth={3} />
+                            <ChevronRight size={16} />
                         </Link>
                     </div>
 
-                    {/* Mobile Menu Toggle */}
+                    {/* Mobile Button */}
                     <button
-                        className="md:hidden p-2.5 text-gray-300 dark:text-gray-700 hover:text-white dark:hover:text-gray-900 hover:bg-gray-800/50 dark:hover:bg-gray-200/50 rounded-lg transition-all duration-300"
+                        className="md:hidden text-gray-300 dark:text-gray-700"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
-                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        {isMobileMenuOpen ? <X /> : <Menu />}
                     </button>
                 </nav>
             </div>
@@ -91,40 +94,33 @@ export const LandingHeader = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden backdrop-blur-xl bg-gray-900/95 dark:bg-white/95 border-t border-gray-800/50 dark:border-gray-200/50 overflow-hidden shadow-2xl"
+                        className="md:hidden bg-gray-900 dark:bg-white border-t border-gray-800 dark:border-gray-200 overflow-hidden"
                     >
-                        <div className="section-container py-8 flex flex-col gap-5">
+                        <div className="section-container py-6 flex flex-col gap-4">
+
                             {navLinks.map((link) => (
                                 <a
                                     key={link.name}
                                     href={link.href}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-lg font-bold text-white dark:text-gray-900 py-3 px-4 rounded-xl hover:bg-gray-800/50 dark:hover:bg-gray-200/50 transition-all duration-300 border border-transparent hover:border-gray-700/50 dark:hover:border-gray-300/50"
+                                    className="text-lg font-semibold text-white dark:text-gray-900"
                                 >
                                     {link.name}
                                 </a>
                             ))}
-                            <div className="flex flex-col gap-3 pt-4 border-t border-gray-800/50 dark:border-gray-200/50">
-                                <Link
-                                    to="/checkout"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-center py-4 bg-green-600/20 dark:bg-green-100/50 hover:bg-green-600/30 dark:hover:bg-green-200/50 rounded-2xl text-green-400 dark:text-green-700 font-bold transition-all duration-300 border border-green-600/50 dark:border-green-300/50"
-                                >
-                                    Start Guest Order
+
+                            <div className="pt-4 flex flex-col gap-3">
+                                <Link to={"/guest-order"} className="text-green-400 font-semibold">
+                                    Guest Order
                                 </Link>
-                                <Link
-                                    to="/login"
-                                    className="text-center py-4 bg-gray-800/50 dark:bg-gray-200/50 hover:bg-gray-700/50 dark:hover:bg-gray-300/50 rounded-2xl text-white dark:text-gray-900 font-bold transition-all duration-300 border border-gray-700/50 dark:border-gray-300/50"
-                                >
+                                <Link to={"/login"} className="text-gray-300 dark:text-gray-700">
                                     Sign In
                                 </Link>
-                                <Link
-                                    to="/register"
-                                    className="bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white text-center py-4 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-brand-600/30"
-                                >
+                                <Link to={"/register"} className="bg-brand-600 text-white py-3 rounded-xl text-center font-semibold">
                                     Get Started
                                 </Link>
                             </div>
+
                         </div>
                     </motion.div>
                 )}

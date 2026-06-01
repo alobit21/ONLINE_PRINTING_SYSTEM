@@ -1,76 +1,68 @@
-import { motion } from 'framer-motion';
-import { ArrowRight, Rocket } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const CallToAction = () => {
   return (
-    <section className="section-padding bg-gray-900 dark:bg-gray-50 relative overflow-hidden">
+    <section className="bg-[#ffffff] py-20 lg:py-[80px]">
       <div className="section-container">
-        <div className="relative rounded-3xl p-16 md:p-24 text-center text-white dark:text-gray-900 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-100 dark:to-white shadow-lg overflow-hidden">
 
-          {/* Subtle geometric background pattern */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-brand-600 to-purple-700 filter blur-3xl" />
-            <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-purple-700 to-brand-500 filter blur-2xl" />
+        {/* CTA BOX */}
+        <div className="bg-[#1a1a1a] text-white rounded-2xl p-16 lg:p-24 text-center">
+
+          {/* Heading */}
+          <h2 className="text-[56px] font-medium leading-none mb-6">
+            Start printing smarter today
+          </h2>
+
+          {/* Subtext */}
+          <p className="text-lg text-[#cfcfcf] max-w-2xl mx-auto mb-12 leading-relaxed">
+            Upload your documents, choose a print option, and connect instantly
+            with verified print shops near you.
+          </p>
+
+          {/* PRIMARY CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+
+            <Link
+              to="/register"
+              className="
+                bg-[#024ad8]
+                text-white
+                px-10 py-4
+                rounded-md
+                text-sm font-medium uppercase tracking-[0.7px]
+                flex items-center gap-3
+              "
+            >
+              Upload document
+              <ArrowRight size={18} />
+            </Link>
+
+            {/* SECONDARY CTA */}
+            <Link
+              to="/register?role=shop"
+              className="
+                border border-white
+                text-white
+                px-10 py-4
+                rounded-md
+                text-sm font-medium uppercase tracking-[0.7px]
+              "
+            >
+              Register shop
+            </Link>
+
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative z-10 max-w-4xl mx-auto"
-          >
+          {/* TRUST LINE */}
+          <div className="mt-12 text-xs text-[#9a9a9a] uppercase tracking-[0.7px]">
+            Secure upload · Verified print partners · Real-time order tracking
+          </div>
 
-            {/* Rocket Icon Card */}
-            <div className="mx-auto w-fit mb-10 p-4 rounded-2xl bg-gray-800/40 dark:bg-white/40 backdrop-blur-md border border-gray-700/30 dark:border-gray-300/30 flex items-center justify-center shadow-lg">
-              <Rocket size={40} className="text-brand-400 dark:text-brand-600" />
-            </div>
-
-            {/* Heading */}
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 leading-tight tracking-tight text-white dark:text-gray-900">
-              Start printing <br className="hidden md:block" /> smarter today.
-            </h2>
-
-            {/* Subtext */}
-            <p className="text-gray-300 dark:text-gray-700 mb-12 text-lg md:text-xl max-w-3xl mx-auto font-semibold">
-              Join 50,000+ users and 850+ print shops who have already
-              digitalized their entire printing workflow.
-            </p>
-
-            {/* Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link
-                to="/register"
-                className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-brand-600 text-white font-bold text-xl flex items-center justify-center gap-4 transition-all shadow-md hover:shadow-xl hover:scale-105 transform hover:-translate-y-1"
-              >
-                Upload Document
-                <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform" strokeWidth={3} />
-              </Link>
-              <Link
-                to="/checkout"
-                className="w-full sm:w-auto px-10 py-5 rounded-2xl border-2 border-green-500 text-green-400 dark:text-green-600 font-bold text-xl flex items-center justify-center gap-3 transition-all hover:bg-green-600 hover:text-white hover:scale-105 transform hover:-translate-y-1"
-              >
-                Start Guest Order
-                <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform" strokeWidth={3} />
-              </Link>
-              <Link
-                to="/register?role=shop"
-                className="w-full sm:w-auto px-10 py-5 rounded-2xl border-2 border-brand-500 text-white dark:text-gray-900 font-bold text-xl flex items-center justify-center gap-3 transition-all hover:bg-brand-600 hover:text-white hover:scale-105 transform hover:-translate-y-1"
-              >
-                Register Shop
-              </Link>
-            </div>
-
-            {/* Features / Trust indicators */}
-            <div className="mt-16 flex flex-wrap items-center justify-center gap-10 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600">
-              <div className="flex items-center gap-2">No Credit Card Needed</div>
-              <div className="flex items-center gap-2 border-l border-gray-600 dark:border-gray-400 pl-10">Instant Deployment</div>
-              <div className="flex items-center gap-2 border-l border-gray-600 dark:border-gray-400 pl-10">24/7 Global Support</div>
-            </div>
-
-          </motion.div>
         </div>
+
       </div>
     </section>
   );
 };
+
