@@ -3,13 +3,13 @@ import { GET_SHOPS } from '../../../shops/api';
 import type { GetShopsData } from '../../../shops/types';
 import { ShopMap } from '../../../shops/components/ShopMap';
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../../components/ui/tooltip';
 import { Star, MapPin, Navigation, Clock, Check, Search, Filter, AlertCircle, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '../../../../lib/utils';
-import { Input } from '../../../../components/ui/Input';
-import { Button } from '../../../../components/ui/Button';
+import { Input } from '../../../../components/ui/LegacyInput';
+import { Button } from '../../../../components/ui/LegacyButton';
 
 
 

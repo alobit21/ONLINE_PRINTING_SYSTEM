@@ -19,8 +19,8 @@ import {
     FileText
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '../../components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/LegacyButton';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
 import { useAuthStore } from '../../stores/authStore';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_MY_SHOPS, CREATE_SHOP } from '../../features/shops/api';

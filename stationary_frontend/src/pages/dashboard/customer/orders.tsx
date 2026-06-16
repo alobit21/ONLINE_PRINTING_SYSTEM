@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { gql } from '@apollo/client';
-import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
+import { Card, CardContent, CardHeader } from '../../../components/ui/LegacyCard';
 import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/LegacyButton';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { Separator } from '../../../components/ui/separator';
 import { Avatar } from '../../../components/ui/avatar';

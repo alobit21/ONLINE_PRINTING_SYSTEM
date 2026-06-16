@@ -1,0 +1,88 @@
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # persistent — survives container restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Django + Gunicorn ────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./stationary_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DB_HOST=db          # Docker internal hostname — matches service name above
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "8000:8000"         # host:container — Nginx on host will proxy to 8000
+    volumes:
+      - media_files:/app/media    # uploaded files persist across deploys
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120
+             --access-logfile - --error-logfile -
+             stationary_config.wsgi:application"
+
+  # ── Celery Worker ────────────────────────────────────────────────────────────
+  celery:
+    build:
+      context: ./stationary_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DB_HOST=db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A stationary_config worker --loglevel=info --concurrency=4
+
+  # ── React Frontend ───────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./stationary_frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"           # host:container — Nginx on host will proxy to 3000
+
+
+# ── Named volumes (data persists across docker compose down/up) ───────────────
+volumes:
+  postgres_data:
+  redis_data:
+  media_files:

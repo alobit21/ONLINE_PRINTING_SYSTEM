@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/LegacyCard';
+import { Button } from '../../../components/ui/LegacyButton';
+import { Input } from '../../../components/ui/LegacyInput';
 import { Phone, Mail, Search, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 

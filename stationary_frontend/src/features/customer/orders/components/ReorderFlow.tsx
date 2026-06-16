@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, RefreshCw, Edit3, ShoppingCart, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Button } from '../../../../components/ui/Button';
+import { Button } from '../../../../components/ui/LegacyButton';
 import type { Order } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';

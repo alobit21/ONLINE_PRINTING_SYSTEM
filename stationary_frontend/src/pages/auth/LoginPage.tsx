@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { LoginInput } from '../../features/auth/types';
 import { LoginSchema } from '../../features/auth/types';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/LegacyButton';
+import { Input } from '../../components/ui/LegacyInput';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 

@@ -28,8 +28,8 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
+import { Button } from '../../components/ui/LegacyButton';
 import { GET_ALL_MY_SHOP_ORDERS } from '../../features/customer/orders/api';
 import { GET_MY_SHOPS, GET_SHOP_DETAILS_WITH_PRICING } from '../../features/shops/api';
 import type { GetAllMyShopOrdersData } from '../../features/customer/orders/types';

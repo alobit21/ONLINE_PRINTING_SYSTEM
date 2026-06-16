@@ -1,7 +1,7 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
 import { Sparkles, Check, Zap, ArrowRight, DollarSign } from 'lucide-react';
-import { Button } from '../../../../components/ui/Button';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { cn } from '../../../../lib/utils';
 
 export const OptimizationSuggestions = () => {

@@ -1,6 +1,6 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/LegacyCard';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { CreditCard, ShieldCheck, Truck, Quote, CheckCircle2, AlertTriangle, FileCheck, Loader2, Smartphone } from 'lucide-react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { CREATE_ORDER } from '../../orders/api';

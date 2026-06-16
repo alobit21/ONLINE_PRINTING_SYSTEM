@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Info } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/LegacyCard';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../../components/ui/tooltip';
 
 interface DocumentMetadata {

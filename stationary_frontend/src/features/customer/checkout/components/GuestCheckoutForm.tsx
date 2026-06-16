@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
-import { Input } from '../../../../components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/LegacyCard';
+import { Button } from '../../../../components/ui/LegacyButton';
+import { Input } from '../../../../components/ui/LegacyInput';
 import { User, Phone, Mail, ShieldCheck, AlertTriangle, Loader2, ShoppingBag, FileText, Clock } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { useMutation } from '@apollo/client/react';

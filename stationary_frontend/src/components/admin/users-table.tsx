@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MoreHorizontal, Edit, Ban, Eye } from 'lucide-react';
 import { Badge } from '../ui/badge';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/LegacyButton';
 import { 
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { Input } from '../ui/Input';
-import { Select } from '../ui/Select';
+import { Input } from '../ui/LegacyInput';
+import { Select } from '../ui/LegacySelect';
 
 interface User {
   id: string;

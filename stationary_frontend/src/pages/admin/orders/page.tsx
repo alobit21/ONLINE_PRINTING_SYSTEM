@@ -3,7 +3,7 @@
 import { useQuery } from '@apollo/client/react';
 import { ShoppingCart, Package, Clock, CheckCircle, XCircle, MoreHorizontal, Eye, Download, Truck } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/LegacyButton';
 import { 
   Table,
   TableBody,
@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../../components/ui/dropdown-menu';
-import { Input } from '../../../components/ui/Input';
+import { Input } from '../../../components/ui/LegacyInput';
 import { GET_ALL_ORDERS, GET_ME } from '../../../features/admin/api';
 import { useAuthStore } from '../../../stores/authStore';
 

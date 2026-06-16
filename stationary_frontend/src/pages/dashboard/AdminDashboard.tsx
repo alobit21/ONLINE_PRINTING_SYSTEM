@@ -1,7 +1,7 @@
 import { Shield, Users, Store, FileText, BarChart3, AlertCircle } from 'lucide-react';
 import { useQuery } from '@apollo/client/react';
 import { GET_ADMIN_STATS, GET_PENDING_SHOPS } from '../../features/admin/api';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/LegacyCard';
 
 export const AdminDashboard = () => {
     const { data: statsData, loading: statsLoading, error: statsError } = useQuery(GET_ADMIN_STATS);

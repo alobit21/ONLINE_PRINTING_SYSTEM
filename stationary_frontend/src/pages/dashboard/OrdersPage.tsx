@@ -11,8 +11,8 @@ import {
     CheckCircle2,
     Paperclip,
 } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
-import { Card, CardContent } from '../../components/ui/Card';
+import { Button } from '../../components/ui/LegacyButton';
+import { Card, CardContent } from '../../components/ui/LegacyCard';
 import {
     Dialog,
     DialogContent,
@@ -21,7 +21,7 @@ import {
     DialogDescription,
     DialogFooter,
 } from '../../components/ui/dialog';
-import { Select } from '../../components/ui/Select';
+import { Select } from '../../components/ui/LegacySelect';
 import { FilePreview, FileAttachmentCard, type FileAttachment } from '../../components/ui/FilePreview';
 import { GET_ALL_MY_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
 import type { GetAllMyShopOrdersData, Order, OrderStatus } from '../../features/customer/orders/types';

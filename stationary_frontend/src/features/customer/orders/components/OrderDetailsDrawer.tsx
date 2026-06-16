@@ -3,7 +3,7 @@ import type { Order, OrderStatus } from '../types';
 import { X, FileText, CheckCircle2, Download, RefreshCw, MessageSquare, Clock } from 'lucide-react';
 import { Badge } from './Badge';
 import { cn } from '../../../../lib/utils';
-import { Button } from '../../../../components/ui/Button';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { InvoiceDownloader } from './InvoiceDownloader';
 
 interface OrderDetailsDrawerProps {

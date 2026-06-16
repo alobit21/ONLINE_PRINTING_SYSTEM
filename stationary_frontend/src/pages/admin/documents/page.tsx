@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { FileText, Download, Trash2, MoreHorizontal, Eye, File, Image, FileArchive } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/LegacyButton';
 import { 
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../../components/ui/dropdown-menu';
-import { Input } from '../../../components/ui/Input';
+import { Input } from '../../../components/ui/LegacyInput';
 import { GET_ALL_DOCUMENTS, GET_ME } from '../../../features/admin/api';
 import { useAuthStore } from '../../../stores/authStore';
 

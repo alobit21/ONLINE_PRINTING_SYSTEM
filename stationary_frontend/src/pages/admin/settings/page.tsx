@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Settings, Bell, Shield, Database, Globe, Save, RefreshCw } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/LegacyButton';
+import { Input } from '../../../components/ui/LegacyInput';
 import { 
   Table,
   TableBody,

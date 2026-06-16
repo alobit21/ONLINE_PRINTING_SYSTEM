@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { GET_SHOPS } from '../../shops/api';
 import { useCustomerStore } from '../../../stores/customerStore';
-import { Card, CardContent } from '../../../components/ui/Card';
+import { Card, CardContent } from '../../../components/ui/LegacyCard';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
 import { Star, MapPin, Clock, CheckCircle } from 'lucide-react';
 

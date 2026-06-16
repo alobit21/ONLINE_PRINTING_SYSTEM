@@ -1,5 +1,5 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/LegacyCard';
 import { FileText, Layers, Maximize, Compass, Zap, BarChart, ArrowRight } from 'lucide-react';
 import { cn } from '../../../../lib/utils';
 

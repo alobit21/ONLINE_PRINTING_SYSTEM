@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/LegacyCard';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';
 

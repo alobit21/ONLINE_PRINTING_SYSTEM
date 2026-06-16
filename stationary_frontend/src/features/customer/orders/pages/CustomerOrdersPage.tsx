@@ -10,7 +10,7 @@ import { NotificationCenter } from '../components/NotificationCenter';
 import type { Order, OrderStatus } from '../types';
 import { Loader2, PackageSearch, ArrowLeft, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '../../../../components/ui/Button';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../lib/utils';
 import { useNotificationStore } from '../../../../stores/notificationStore';

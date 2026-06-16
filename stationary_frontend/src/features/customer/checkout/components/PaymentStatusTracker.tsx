@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/LegacyCard';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { useQuery } from '@apollo/client/react';
 import { GET_PAYMENT_STATUS } from '../../orders/api';
 

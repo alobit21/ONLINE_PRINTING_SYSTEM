@@ -3,7 +3,7 @@
 import { useQuery } from '@apollo/client/react';
 import { Store, MapPin, Star, Check, MoreHorizontal, Eye, Edit, Ban } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/LegacyButton';
 import {
   DropdownMenu,
   DropdownMenuContent,

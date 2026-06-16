@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Button } from '../../../../components/ui/Button';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { cn } from '../../../../lib/utils';
 import type { Order } from '../types';
 import { format } from 'date-fns';

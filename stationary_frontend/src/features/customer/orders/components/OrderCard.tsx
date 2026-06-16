@@ -1,5 +1,5 @@
 import type { Order, OrderStatus } from '../types';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
 import { Badge } from './Badge';
 import { Progress } from './Progress';
 import { Clock, MapPin, ChevronRight, FileText, QrCode, MessageCircle } from 'lucide-react';

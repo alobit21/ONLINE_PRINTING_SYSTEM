@@ -1,6 +1,6 @@
 import { Bell, Search, User, LogOut, Settings, Menu } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
+import { Button } from '../ui/LegacyButton';
+import { Input } from '../ui/LegacyInput';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '../ui/sheet';
 import { AdminSidebar } from './sidebar';
 import { 

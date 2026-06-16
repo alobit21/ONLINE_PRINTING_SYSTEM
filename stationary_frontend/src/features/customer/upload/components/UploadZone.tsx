@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, X, FileText, CheckCircle2, Loader2, AlertCircle, Image as ImageIcon, File, ChevronRight } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { cn } from '../../../../lib/utils';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
 import { mediaAPI } from '../../../../services/mediaAPI';
 import type { UploadedFile } from '../../../../stores/customerStore';
 

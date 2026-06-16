@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../components/ui/Card";
-import { Button } from "../../../components/ui/Button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../components/ui/LegacyCard";
+import { Button } from "../../../components/ui/LegacyButton";
 import { Star, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Shop } from "../types";

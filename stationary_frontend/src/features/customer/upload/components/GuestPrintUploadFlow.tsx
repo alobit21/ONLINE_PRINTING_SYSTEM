@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_GUEST_DOCUMENT, type CreateGuestDocumentData, type CreateDocumentVariables } from '../api';
 

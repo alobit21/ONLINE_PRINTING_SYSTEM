@@ -1,6 +1,6 @@
 import { CreditCard, ArrowUpRight, History, Plus } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/LegacyCard';
+import { Button } from '../../../components/ui/LegacyButton';
 import { cn } from '../../../lib/utils';
 
 export const CustomerWallet = () => {

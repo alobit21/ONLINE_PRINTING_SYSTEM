@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Edit, Trash2, Plus, MoreHorizontal } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/LegacyButton';
 import { 
   Table,
   TableBody,

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { User, Mail, Shield, Calendar, Edit2, Save, X } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/LegacyButton';
+import { Input } from '../../../components/ui/LegacyInput';
 import { Badge } from '../../../components/ui/badge';
 import { useAuthStore } from '../../../stores/authStore';
 

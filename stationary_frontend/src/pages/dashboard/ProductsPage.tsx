@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { Plus, Loader2, Package, AlertCircle } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Select } from '../../components/ui/Select';
+import { Button } from '../../components/ui/LegacyButton';
+import { Input } from '../../components/ui/LegacyInput';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
+import { Select } from '../../components/ui/LegacySelect';
 import {
     Dialog,
     DialogTrigger,

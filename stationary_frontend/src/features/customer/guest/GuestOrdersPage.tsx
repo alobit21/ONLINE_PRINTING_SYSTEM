@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/LegacyCard';
+import { Button } from '../../../components/ui/LegacyButton';
 import { Search, Package, Clock, CheckCircle, Truck, Phone, Mail, Calendar, Filter, RefreshCw, AlertCircle, User, FileUp } from 'lucide-react';
 import { useGuestVerification } from '../../../hooks/useGuestVerification';
 import { useGuestOrders } from './hooks/useGuestOrders';

@@ -1,5 +1,5 @@
 import { forwardRef, HTMLAttributes } from 'react';
-import { cn } from './Button';
+import { cn } from './LegacyButton';
 
 const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     ({ className, ...props }, ref) => (

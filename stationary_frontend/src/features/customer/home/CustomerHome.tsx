@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { FileUp, Clock, MapPin, Zap, TrendingUp, ChevronRight, Star, AlertCircle } from 'lucide-react';
-import { Card, CardContent } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+import { Card, CardContent } from '../../../components/ui/LegacyCard';
+import { Button } from '../../../components/ui/LegacyButton';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { cn } from '../../../lib/utils';
 import { useQuery } from '@apollo/client/react';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Eye, Download, Loader2, AlertCircle, ExternalLink, X } from 'lucide-react';
-import { Button } from './Button';
+import { Button } from './LegacyButton';
 import { cn } from '../../lib/utils';
 import { getAuthToken, getAuthHeaders } from '../../lib/auth';
 

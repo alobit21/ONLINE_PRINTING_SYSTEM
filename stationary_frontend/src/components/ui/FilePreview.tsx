@@ -5,7 +5,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from './dialog';
-import { Button } from './Button';
+import { Button } from './LegacyButton';
 import { Badge } from './badge';
 import { ScrollArea } from './scroll-area';
 import {

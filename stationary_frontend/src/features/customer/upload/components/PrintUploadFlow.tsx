@@ -3,8 +3,8 @@ import { Upload, FileText, Loader2, CheckCircle2, AlertCircle, ArrowRight, Setti
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { useAuthStore } from '../../../../stores/authStore';
 import { cn } from '../../../../lib/utils';
-import { Card, CardContent } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
+import { Button } from '../../../../components/ui/LegacyButton';
 import { DocumentSummary } from '../../../../components/ui/DocumentSummary';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_DOCUMENT, CREATE_GUEST_DOCUMENT, type CreateDocumentData, type CreateDocumentVariables, type CreateGuestDocumentData } from '../api';

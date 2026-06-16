@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/LegacyButton';
 import { LayoutDashboard, ShoppingBag, Settings, LogOut, Printer, Package } from 'lucide-react';
 import { cn } from '../lib/utils';
 

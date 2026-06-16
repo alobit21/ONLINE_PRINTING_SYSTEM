@@ -1,5 +1,5 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Card, CardContent } from '../../../../components/ui/LegacyCard';
 import { Settings2, Scissors, Layers, Check, Info } from 'lucide-react';
 import { cn } from '../../../../lib/utils';
 import { useState } from 'react';
