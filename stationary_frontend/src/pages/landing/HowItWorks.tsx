@@ -66,33 +66,45 @@ export const HowItWorks = () => {
             return (
               <div
                 key={step.title}
-                className="
-                  bg-canvas
-                  border
-                  border-fog dark:border-charcoal
-                  rounded-[16px]
-                  p-8
-                  shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
-                "
+                className="flex flex-col relative"
               >
+                
+                {/* Responsive connecting arrows */}
+                {index % 3 !== 2 && index < steps.length - 1 && (
+                  <div className="hidden lg:flex absolute top-[48px] -right-8 w-8 -translate-y-1/2 text-canvas/40 items-center justify-center">
+                    <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 12H28" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" />
+                      <path d="M22 6L28 12L22 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+                
+                {index % 2 !== 1 && index < steps.length - 1 && (
+                  <div className="hidden sm:flex lg:hidden absolute top-[48px] -right-8 w-8 -translate-y-1/2 text-canvas/40 items-center justify-center">
+                    <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 12H28" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" />
+                      <path d="M22 6L28 12L22 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
 
-                {/* Step number (subtle, not decorative UI) */}
-                <div className="text-sm text-graphite mb-4">
+                {/* Step number */}
+                <div className="text-sm text-canvas/70 font-medium mb-4">
                   Step {index + 1}
                 </div>
 
                 {/* Icon */}
-                <div className="mb-4 text-hp-primary">
-                  <Icon size={22} />
+                <div className="mb-4 text-canvas">
+                  <Icon size={24} />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg font-medium text-ink mb-2">
+                <h3 className="text-[20px] font-medium text-canvas mb-2">
                   {step.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-charcoal leading-relaxed">
+                <p className="text-[15px] text-canvas/80 leading-relaxed">
                   {step.description}
                 </p>
 
