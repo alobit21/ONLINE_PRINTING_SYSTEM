@@ -110,7 +110,7 @@ export const GuestShopSelection = () => {
 
   return (
     <TooltipProvider>
-      <div className="max-w-5xl mx-auto p-4">
+      <div className="max-w-5xl mx-auto p-4 pb-28">
       <div className="mb-8">
         <h2 className="text-[28px] font-medium text-ink mb-2">Choose a Printing Shop</h2>
         <p className="text-charcoal">Select a shop to handle your printing order</p>
@@ -182,16 +182,26 @@ export const GuestShopSelection = () => {
         ))}
       </div>
 
-      {selectedShop && (
-        <div className="mt-8 flex justify-center">
+      {/* Sticky Bottom Action Bar */}
+      <div 
+        className={`fixed bottom-0 left-0 right-0 bg-canvas/80 backdrop-blur-lg border-t border-fog p-4 transform transition-all duration-300 z-50 shadow-[0_-4px_24px_rgba(26,26,26,0.08)] ${
+          selectedShop ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div className="hidden sm:block">
+            <p className="text-ink font-medium">Shop Selected</p>
+            <p className="text-charcoal text-sm">Ready to finalize your order?</p>
+          </div>
           <button 
             onClick={handleContinue}
-            className="bg-hp-primary text-canvas hover:bg-hp-primary/90 px-8 py-3 rounded-[4px] font-semibold transition-colors tracking-[0.7px]"
+            className="w-full sm:w-auto bg-hp-primary text-canvas hover:bg-hp-primary/90 px-8 py-3.5 rounded-[4px] font-semibold transition-colors tracking-[0.7px] shadow-lg flex items-center justify-center gap-2"
           >
             Continue to Checkout
+            <CheckCircle className="w-5 h-5" />
           </button>
         </div>
-      )}
+      </div>
     </div>
     </TooltipProvider>
   );
