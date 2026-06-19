@@ -13,7 +13,7 @@ export const LOGIN_MUTATION = gql`
         avatar
       }
       response {
-        status
+        success
         message
       }
     }
@@ -24,7 +24,7 @@ export const REGISTER_MUTATION = gql`
   mutation Register($email: String!, $password: String!, $role: String!, $phoneNumber: String) {
     registerUser(email: $email, password: $password, role: $role, phoneNumber: $phoneNumber) {
       response {
-        status
+        success
         message
       }
       user {

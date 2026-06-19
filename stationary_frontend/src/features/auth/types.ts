@@ -26,7 +26,7 @@ export interface User {
 }
 
 export interface Response {
-    status: boolean;
+    success: boolean;
     message: string;
 }
 

@@ -55,7 +55,7 @@ export const useAuth = () => {
                 phoneNumber: form.phone_number,
             };
             const { data } = await registerMutation({ variables });
-            if (data?.registerUser?.response?.status) {
+            if (data?.registerUser?.response?.success) {
                 // Auto login or redirect to login? Typically redirect to login for security/verification flow
                 // or auto-login if backend returns token (which current register mutation does NOT).
                 navigate('/login', { state: { message: "Account created! Please log in." } });
