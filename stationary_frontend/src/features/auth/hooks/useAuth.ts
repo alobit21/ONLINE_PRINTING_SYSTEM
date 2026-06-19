@@ -48,7 +48,13 @@ export const useAuth = () => {
     const register = async (form: any) => {
         setError(null);
         try {
-            const { data } = await registerMutation({ variables: form });
+            const variables = {
+                email: form.email,
+                password: form.password,
+                role: form.role,
+                phoneNumber: form.phone_number,
+            };
+            const { data } = await registerMutation({ variables });
             if (data?.registerUser?.response?.status) {
                 // Auto login or redirect to login? Typically redirect to login for security/verification flow
                 // or auto-login if backend returns token (which current register mutation does NOT).
