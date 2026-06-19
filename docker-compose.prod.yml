@@ -43,11 +43,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120
-             --access-logfile - --error-logfile -
-             stationary_config.wsgi:application"
+    command: sh -c "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile - stationary_config.wsgi:application"
 
   celery:
     image: ${DOCKERHUB_USERNAME}/stationary-backend:latest
