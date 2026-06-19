@@ -6,16 +6,16 @@ export const LandingHeader = () => {
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-canvas border-b border-fog transition-colors duration-300">
             {/* Utility Strip */}
-            <div className="w-full bg-ink flex items-center justify-between px-8 h-[36px] hidden md:flex">
+            <div className="w-full bg-gray-900 flex items-center justify-between px-8 h-[36px] hidden md:flex">
                 <div className="flex items-center gap-6">
-                    <span className="text-xs text-canvas opacity-70">EN / USD</span>
-                    <a href="#" className="text-xs text-canvas opacity-70 hover:opacity-100 transition">Help</a>
-                    <a href="#" className="text-xs text-canvas opacity-70 hover:opacity-100 transition">Store Locations</a>
+                    <span className="text-xs text-white opacity-70">EN / USD</span>
+                    <a href="#" className="text-xs text-white opacity-70 hover:opacity-100 transition">Help</a>
+                    <a href="#" className="text-xs text-white opacity-70 hover:opacity-100 transition">Store Locations</a>
                 </div>
                 <div className="flex items-center gap-6">
-                    <Link to="/orders" className="text-xs text-canvas opacity-70 hover:opacity-100 transition">My Orders</Link>
-                    <Link to="/login" className="text-xs text-canvas opacity-70 hover:opacity-100 transition">Sign in</Link>
-                    <Link to="/cart" className="text-xs text-canvas opacity-70 flex items-center gap-1 hover:opacity-100 transition">
+                    <Link to="/orders" className="text-xs text-white opacity-70 hover:opacity-100 transition">My Orders</Link>
+                    <Link to="/login" className="text-xs text-white opacity-70 hover:opacity-100 transition">Sign in</Link>
+                    <Link to="/cart" className="text-xs text-white opacity-70 flex items-center gap-1 hover:opacity-100 transition">
                         <ShoppingBag size={13} />
                         <span>Cart</span>
                     </Link>
