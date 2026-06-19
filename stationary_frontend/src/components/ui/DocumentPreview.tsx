@@ -74,10 +74,12 @@ export const DocumentPreview = ({
             return null;
         }
 
-        const response = await fetch(
-            `http://localhost:8000/api/documents/${documentId}/${endpoint}/`,
-            { headers: getAuthHeaders() }
-        );
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+const response = await fetch(
+    `${API_URL}/api/documents/${documentId}/${endpoint}/`,
+    { headers: getAuthHeaders() }
+);
 
         if (!response.ok) {
             setError(resolveAuthError(response.status));
