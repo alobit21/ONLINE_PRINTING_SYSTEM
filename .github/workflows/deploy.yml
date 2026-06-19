@@ -1,0 +1,152 @@
+name: Build, Test & Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+
+  # ── Run Django tests ──────────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: stationary_backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        working-directory: stationary_backend
+        env:
+          SECRET_KEY: test-secret-key
+          DEBUG: "False"
+          DB_NAME: test_db
+          DB_USER: test_user
+          DB_PASSWORD: test_pass
+          DB_HOST: localhost
+          DB_PORT: 5432
+        run: python manage.py test
+
+
+  # ── Build & push Docker images ────────────────────────────────────────────
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stationary_backend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/stationary-backend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/stationary-backend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/stationary-backend:buildcache,mode=max
+
+      - name: Build & push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stationary_frontend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/stationary-frontend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/stationary-frontend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/stationary-frontend:buildcache,mode=max
+
+
+  # ── Deploy to EC2 ──────────────────────────────────────────────────────────
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.prod.yml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "docker-compose.prod.yml"
+          target: "/home/ubuntu/stationary_app"
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/ubuntu/stationary_app
+
+            # Create .env if it doesn't exist yet (first deploy only — won't overwrite existing secrets)
+            if [ ! -f .env ]; then
+              echo "No .env found — creating from template. EDIT THIS FILE WITH REAL VALUES."
+              cat > .env << 'ENVEOF'
+            SECRET_KEY=changeme-generate-a-real-secret-key
+            DEBUG=False
+            ALLOWED_HOSTS=*
+            DB_NAME=stationary_db
+            DB_USER=stationary_user
+            DB_PASSWORD=changeme-strong-password
+            DB_HOST=db
+            DB_PORT=5432
+            REDIS_URL=redis://redis:6379/0
+            CLICKPESA_CLIENT_ID=
+            CLICKPESA_API_KEY=
+            CLICKPESA_SECRET_KEY=
+            BASE_URL=http://CHANGE_TO_SERVER_IP:8001
+            FRONTEND_URL=http://CHANGE_TO_SERVER_IP:3001
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            ENVEOF
+            fi
+
+            # Make sure DOCKERHUB_USERNAME is always current (used by compose to pull correct image)
+            sed -i '/^DOCKERHUB_USERNAME=/d' .env
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env
+
+            # Pull latest images and restart
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+            # Clean up old unused images to save disk space
+            docker image prune -f

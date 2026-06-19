@@ -40,7 +40,7 @@ services:
       - DB_HOST=db          # Docker internal hostname — matches service name above
       - REDIS_URL=redis://redis:6379/0
     ports:
-      - "8000:8000"         # host:container — Nginx on host will proxy to 8000
+      - "8001:8000"         # host:container — using 8001 since 80/443 are taken by github_management's nginx
     volumes:
       - media_files:/app/media    # uploaded files persist across deploys
     depends_on:
@@ -48,7 +48,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: sh -c "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile - stationary_config.wsgi:application"
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120
+             --access-logfile - --error-logfile -
+             stationary_config.wsgi:application"
 
   # ── Celery Worker ────────────────────────────────────────────────────────────
   celery:
@@ -74,7 +78,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3000:80"           # host:container — Nginx on host will proxy to 3000
+      - "3001:80"            # host:container — using 3001 to keep clear of other apps
 
 
 # ── Named volumes (data persists across docker compose down/up) ───────────────

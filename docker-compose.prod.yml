@@ -1,0 +1,75 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: ${DOCKERHUB_USERNAME}/stationary-backend:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DB_HOST=db
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "8001:8000"
+    volumes:
+      - media_files:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120
+             --access-logfile - --error-logfile -
+             stationary_config.wsgi:application"
+
+  celery:
+    image: ${DOCKERHUB_USERNAME}/stationary-backend:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DB_HOST=db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A stationary_config worker --loglevel=info --concurrency=4
+
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/stationary-frontend:latest
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_files:
