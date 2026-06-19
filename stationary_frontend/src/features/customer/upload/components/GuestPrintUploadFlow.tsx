@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { Card, CardContent } from '../../../../components/ui/LegacyCard';
+
 import { useMutation } from '@apollo/client/react';
 import { CREATE_GUEST_DOCUMENT, type CreateGuestDocumentData, type CreateDocumentVariables } from '../api';
 
@@ -142,15 +142,15 @@ export const GuestPrintUploadFlow = () => {
   return (
     <div className="space-y-8">
       {/* Upload Zone */}
-      <Card className="border-2 border-dashed border-gray-300 hover:border-brand-400 transition-colors">
-        <CardContent className="p-12 text-center">
+      <div className="bg-canvas border-2 border-dashed border-fog hover:border-hp-primary rounded-[16px] transition-colors shadow-sm">
+        <div className="p-12 text-center">
           <div className="space-y-4">
-            <div className="mx-auto w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center">
-              <Upload className="w-8 h-8 text-brand-600" />
+            <div className="mx-auto w-16 h-16 bg-cloud rounded-full flex items-center justify-center">
+              <Upload className="w-8 h-8 text-hp-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Upload your documents</h3>
-              <p className="text-gray-500 mt-1">PDF, DOC, DOCX, JPG, PNG (Max 10MB)</p>
+              <h3 className="text-lg font-medium text-ink">Upload your documents</h3>
+              <p className="text-charcoal mt-1">PDF, DOC, DOCX, JPG, PNG (Max 10MB)</p>
             </div>
             <input
               type="file"
@@ -171,7 +171,7 @@ export const GuestPrintUploadFlow = () => {
             />
             <button 
               type="button"
-              className="cursor-pointer bg-brand-600 text-white hover:bg-brand-700 px-6 py-3 rounded-lg font-medium flex items-center justify-center mx-auto transition-colors"
+              className="cursor-pointer bg-hp-primary text-canvas hover:bg-hp-primary/90 px-6 py-3 rounded-[4px] font-semibold flex items-center justify-center mx-auto transition-colors tracking-[0.7px]"
               onClick={() => {
                 console.log("Button clicked - triggering file input");
                 const fileInput = document.getElementById('file-upload') as HTMLInputElement;
@@ -186,21 +186,21 @@ export const GuestPrintUploadFlow = () => {
               Choose Files
             </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* File List */}
       {files.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Uploaded Files</h3>
+          <h3 className="text-lg font-medium text-ink">Uploaded Files</h3>
           {files.map(file => (
-            <Card key={file.id} className="p-4">
+            <div key={file.id} className="p-4 bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <FileText className="w-8 h-8 text-gray-400" />
+                  <FileText className="w-8 h-8 text-steel" />
                   <div>
-                    <p className="font-medium">{file.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-ink">{file.name}</p>
+                    <p className="text-sm text-charcoal">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
@@ -209,10 +209,10 @@ export const GuestPrintUploadFlow = () => {
                   {file.status === 'uploading' && <Loader2 className="w-4 h-4 animate-spin" />}
                   {file.status === 'ready' && <CheckCircle2 className="w-4 h-4 text-green-500" />}
                   {file.status === 'error' && <AlertCircle className="w-4 h-4 text-red-500" />}
-                  <span className="text-sm text-gray-500">{file.status}</span>
+                  <span className="text-sm text-steel capitalize">{file.status}</span>
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
@@ -232,7 +232,7 @@ export const GuestPrintUploadFlow = () => {
               
               console.log("Global step updated");
             }}
-            className="bg-brand-600 text-white hover:bg-brand-700 px-6 py-3 rounded-lg font-medium transition-colors"
+            className="bg-hp-primary text-canvas hover:bg-hp-primary/90 px-6 py-3 rounded-[4px] font-semibold transition-colors tracking-[0.7px]"
           >
             Continue to Configuration
           </button>

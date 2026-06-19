@@ -188,7 +188,7 @@ export const GuestCheckoutForm = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800">
+        <div className="min-h-screen">
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -196,26 +196,26 @@ export const GuestCheckoutForm = () => {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Hero Section */}
                         <div className="text-center space-y-4 py-8">
-                            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl shadow-lg mb-4">
-                                <ShieldCheck className="w-8 h-8 text-white" />
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-cloud rounded-[16px] mb-4">
+                                <ShieldCheck className="w-8 h-8 text-hp-primary" />
                             </div>
-                            <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Secure Guest Checkout</h2>
-                            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                            <h2 className="text-[28px] font-medium text-ink">Secure Guest Checkout</h2>
+                            <p className="text-charcoal max-w-2xl mx-auto">
                                 Provide your contact details so we can reach you when your order is ready. Your information is secure and only used for order fulfillment.
                             </p>
                         </div>
 
                         {/* Contact Information Card */}
-                        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
-                            <CardHeader className="bg-gradient-to-r from-brand-50 to-blue-50 dark:from-brand-900/20 dark:to-blue-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
-                                <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                                    <div className="w-10 h-10 bg-brand-100 dark:bg-brand-800 rounded-xl flex items-center justify-center">
-                                        <User className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                        <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden">
+                            <div className="bg-cloud p-6 border-b border-fog">
+                                <h3 className="text-lg font-medium flex items-center gap-3 text-ink">
+                                    <div className="w-10 h-10 bg-canvas border border-fog rounded-[8px] flex items-center justify-center">
+                                        <User className="w-5 h-5 text-hp-primary" />
                                     </div>
                                     Contact Information
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-8 space-y-6">
+                                </h3>
+                            </div>
+                            <div className="p-8 space-y-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                         Full Name *
@@ -276,20 +276,20 @@ export const GuestCheckoutForm = () => {
                                         Optional: For order confirmation and updates.
                                     </p>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Payment Information Card */}
-                        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
-                            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
-                                <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-800 rounded-xl flex items-center justify-center">
-                                        <Phone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                        <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden">
+                            <div className="bg-cloud p-6 border-b border-fog">
+                                <h3 className="text-lg font-medium flex items-center gap-3 text-ink">
+                                    <div className="w-10 h-10 bg-canvas border border-fog rounded-[8px] flex items-center justify-center">
+                                        <Phone className="w-5 h-5 text-hp-primary" />
                                     </div>
                                     Payment Information
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-8 space-y-6">
+                                </h3>
+                            </div>
+                            <div className="p-8 space-y-6">
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                         Payment Method *
@@ -321,20 +321,20 @@ export const GuestCheckoutForm = () => {
                                         This number will be used for the mobile money payment prompt.
                                     </p>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Order Items Card */}
-                        <Card className="border-0 shadow-xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden">
-                            <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 border-b border-slate-200 dark:border-slate-700">
-                                <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                                    <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-800 rounded-xl flex items-center justify-center">
-                                        <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden">
+                            <div className="bg-cloud p-6 border-b border-fog">
+                                <h3 className="text-lg font-medium flex items-center gap-3 text-ink">
+                                    <div className="w-10 h-10 bg-canvas border border-fog rounded-[8px] flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-hp-primary" />
                                     </div>
                                     Order Items ({readyFiles.length})
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-6">
+                                </h3>
+                            </div>
+                            <div className="p-6">
                                 <ul className="space-y-3">
                                     {readyFiles.map((file) => (
                                         <li key={file.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl group hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200">
@@ -358,22 +358,22 @@ export const GuestCheckoutForm = () => {
                                         </li>
                                     ))}
                                 </ul>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Right Column - Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-24 space-y-6">
                             {/* Order Summary Card */}
-                            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-3xl overflow-hidden">
-                                <CardHeader className="bg-gradient-to-r from-brand-600 to-blue-600 p-6 text-white">
-                                    <CardTitle className="text-xl font-bold flex items-center gap-3">
+                            <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden">
+                                <div className="bg-hp-primary p-6 text-canvas">
+                                    <h3 className="text-lg font-bold flex items-center gap-3">
                                         <ShoppingBag className="w-6 h-6" />
                                         Order Summary
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="p-6 space-y-6">
+                                    </h3>
+                                </div>
+                                <div className="p-6 space-y-6">
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center py-2">
                                             <span className="text-slate-600 dark:text-slate-400">Base Printing</span>
@@ -406,16 +406,16 @@ export const GuestCheckoutForm = () => {
                                         </div>
                                     )}
 
-                                    <Button
-                                        className="w-full h-14 rounded-2xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3"
+                                    <button
+                                        className="w-full h-14 rounded-[4px] bg-hp-primary hover:bg-hp-primary/90 text-canvas font-semibold text-lg transition-colors duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed tracking-[0.7px]"
                                         disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim()}
                                         onClick={handleGuestCheckout}
                                     >
                                         {isProcessing ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShoppingBag className="h-6 w-6" />}
                                         Place Order & Pay
-                                    </Button>
-                                </CardContent>
-                            </Card>
+                                    </button>
+                                </div>
+                            </div>
 
                             {/* Security Badge */}
                             <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-4 border border-green-200 dark:border-green-800">

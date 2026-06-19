@@ -1,11 +1,13 @@
 import { Outlet } from 'react-router-dom';
-import { TopHeader } from '../features/customer/layout/TopHeader';
+import { LandingHeader } from '../pages/landing/LandingHeader';
 
 export const GuestLayout = () => {
     return (
-        <div>
-            <TopHeader />
-            <Outlet />
+        <div className="min-h-screen bg-canvas transition-colors duration-300">
+            <LandingHeader />
+            <div className="pt-[100px]">
+                <Outlet />
+            </div>
         </div>
     );
 };

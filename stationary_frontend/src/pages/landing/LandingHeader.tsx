@@ -34,7 +34,7 @@ export const LandingHeader = () => {
                 </div>
 
                 <nav className="hidden md:flex items-center gap-8">
-                    <Link to="/upload" className="text-sm font-medium text-ink hover:text-hp-primary transition">Upload & Print</Link>
+                    <Link to="/checkout" className="text-sm font-medium text-ink hover:text-hp-primary transition">Upload & Print</Link>
                     <a href="#pricing" className="text-sm font-medium text-charcoal hover:text-ink transition">Pricing</a>
                     <a href="#how-it-works" className="text-sm font-medium text-charcoal hover:text-ink transition">How It Works</a>
                     <Link to="/track" className="text-sm font-medium text-charcoal hover:text-ink transition">Track Order</Link>
@@ -47,7 +47,7 @@ export const LandingHeader = () => {
                         <span className="text-sm text-steel">Search...</span>
                     </div>
                     <Link
-                        to="/register"
+                        to="/checkout"
                         className="bg-hp-primary hover:bg-hp-primary/90 text-canvas text-sm font-semibold px-4 rounded-[4px] flex items-center h-9 tracking-[0.7px] transition"
                     >
                         START PRINTING

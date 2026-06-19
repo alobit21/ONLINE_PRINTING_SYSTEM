@@ -20,11 +20,11 @@ export const OrderProgress: React.FC<OrderProgressProps> = ({ currentStep }) => 
       <div className="relative flex justify-between items-center">
 
         {/* background line */}
-        <div className="absolute top-4 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
+        <div className="absolute top-4 left-0 right-0 h-1 bg-fog rounded-full" />
 
         {/* active progress line */}
         <div
-          className="absolute top-4 left-0 h-1 bg-brand-600 rounded-full transition-all duration-500"
+          className="absolute top-4 left-0 h-1 bg-hp-primary rounded-full transition-all duration-500"
           style={{
             width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
           }}
@@ -46,10 +46,10 @@ export const OrderProgress: React.FC<OrderProgressProps> = ({ currentStep }) => 
                   text-sm font-bold transition-all duration-300
                   ${
                     isCompleted
-                      ? 'bg-brand-600 text-white'
+                      ? 'bg-hp-primary text-canvas'
                       : isActive
-                      ? 'bg-white dark:bg-gray-900 border-2 border-brand-600 text-brand-600 scale-110 shadow-md'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                      ? 'bg-canvas border-2 border-hp-primary text-hp-primary scale-110 shadow-[0_2px_8px_rgba(26,26,26,0.08)]'
+                      : 'bg-fog text-steel'
                   }
                 `}
               >
@@ -62,8 +62,8 @@ export const OrderProgress: React.FC<OrderProgressProps> = ({ currentStep }) => 
                   mt-2 text-xs font-semibold text-center
                   ${
                     isCompleted || isActive
-                      ? 'text-gray-900 dark:text-gray-100'
-                      : 'text-gray-400'
+                      ? 'text-ink'
+                      : 'text-steel'
                   }
                 `}
               >
