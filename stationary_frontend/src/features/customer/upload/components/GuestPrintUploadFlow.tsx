@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Loader2, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
 
 import { useMutation } from '@apollo/client/react';
@@ -23,8 +23,9 @@ interface PrintConfiguration {
 }
 
 export const GuestPrintUploadFlow = () => {
-  const { addFiles, files, updateFile } = useCustomerStore();
+  const { addFiles, files, updateFile, deleteDocumentFromServer } = useCustomerStore();
   const [previewFileId, setPreviewFileId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [config] = useState<PrintConfiguration>({
     isColor: false,
     paperSize: 'A4',
@@ -153,6 +154,22 @@ export const GuestPrintUploadFlow = () => {
   const readyFiles = files.filter(f => f.status === 'ready');
   const hasFiles = files.length > 0;
   
+  const handleRemoveFile = async (id: string) => {
+    setIsDeleting(id);
+    try {
+      await deleteDocumentFromServer(id);
+      if (previewFileId === id) {
+        setPreviewFileId(null);
+      }
+    } catch (err) {
+      console.error('Failed to remove file:', err);
+      // Even if backend fails, we might want to force remove it from UI, 
+      // but deleteDocumentFromServer already handles 404s gracefully.
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+  
   // Determine which file to preview
   const fileToPreview = files.find(f => f.id === previewFileId) || readyFiles[0] || files[0];
 
@@ -231,11 +248,25 @@ export const GuestPrintUploadFlow = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  {file.status === 'uploading' && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {file.status === 'ready' && <CheckCircle2 className="w-4 h-4 text-green-500" />}
-                  {file.status === 'error' && <AlertCircle className="w-4 h-4 text-red-500" />}
-                  <span className="text-sm text-steel capitalize">{file.status}</span>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    {file.status === 'uploading' && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {file.status === 'ready' && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                    {file.status === 'error' && <AlertCircle className="w-4 h-4 text-red-500" />}
+                    <span className="text-sm text-steel capitalize hidden sm:inline-block">{file.status}</span>
+                  </div>
+                  <div className="w-[1px] h-4 bg-fog hidden sm:block"></div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFile(file.id);
+                    }}
+                    disabled={isDeleting === file.id || file.status === 'uploading'}
+                    className="p-1.5 text-steel hover:text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Remove file"
+                  >
+                    {isDeleting === file.id ? <Loader2 className="w-4 h-4 animate-spin text-red-500" /> : <X className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
             </div>
