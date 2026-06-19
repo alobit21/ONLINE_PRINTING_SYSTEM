@@ -61,7 +61,7 @@ export const Footer = () => {
                                 <a
                                     key={i}
                                     href={social.href}
-                                    className="bg-cloud dark:bg-charcoal hover:bg-hp-primary p-3 rounded-[4px] text-ink hover:text-canvas transition-all transform hover:-translate-y-1 shadow-sm"
+                                    className="p-2 text-charcoal hover:text-hp-primary transition-colors transform hover:-translate-y-1"
                                 >
                                     {social.icon}
                                 </a>
