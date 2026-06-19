@@ -44,7 +44,7 @@ export const ReorderFlow = ({ order, onClose, onSuccess }: ReorderFlowProps) => 
                 },
             });
 
-            if (data?.createOrder?.response?.status) {
+            if (data?.createOrder?.response?.success) {
                 setStep('success');
                 setTimeout(() => {
                     onClose();

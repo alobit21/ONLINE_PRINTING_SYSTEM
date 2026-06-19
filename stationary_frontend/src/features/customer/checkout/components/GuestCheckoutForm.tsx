@@ -51,7 +51,7 @@ export const GuestCheckoutForm = () => {
         payment?: PaymentData;
     }>(CREATE_GUEST_ORDER, {
         onCompleted: (data) => {
-            if (data.createGuestOrder.response.status) {
+            if (data.createGuestOrder.response.success) {
                 // Show payment tracker instead of success message
                 setPaymentId(data.createGuestOrder.payment?.id || null);
                 setShowPaymentTracker(true);

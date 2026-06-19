@@ -4,7 +4,7 @@ export const CREATE_DOCUMENT = gql`
     mutation CreateDocument($fileName: String!, $fileSize: Int!, $fileType: String) {
         createDocument(fileName: $fileName, fileSize: $fileSize, fileType: $fileType) {
             response {
-                status
+                success
                 message
             }
             document {
@@ -21,7 +21,7 @@ export const CREATE_GUEST_DOCUMENT = gql`
     mutation CreateGuestDocument($fileName: String!, $fileSize: Int!, $fileType: String) {
         createGuestDocument(fileName: $fileName, fileSize: $fileSize, fileType: $fileType) {
             response {
-                status
+                success
                 message
             }
             document {
@@ -37,7 +37,7 @@ export const CREATE_GUEST_DOCUMENT = gql`
 export interface CreateDocumentData {
     createDocument: {
         response: {
-            status: boolean;
+            success: boolean;
             message: string;
         };
         document: {
@@ -52,7 +52,7 @@ export interface CreateDocumentData {
 export interface CreateGuestDocumentData {
     createGuestDocument: {
         response: {
-            status: boolean;
+            success: boolean;
             message: string;
         };
         document: {

@@ -4,7 +4,7 @@ export const GET_ADMIN_STATS = gql`
   query GetAdminStats {
     adminStats {
       response {
-        status
+        success
         message
       }
       data {
@@ -22,7 +22,7 @@ export const GET_PENDING_SHOPS = gql`
   query GetPendingShops {
     pendingShops {
       response {
-        status
+        success
         message
       }
       data {
@@ -39,7 +39,7 @@ export const GET_ALL_USERS = gql`
   query GetAllUsers($filterInput: UserFilterInput) {
     users(filterInput: $filterInput) {
       response {
-        status
+        success
         message
       }
       data {
@@ -67,7 +67,7 @@ export const GET_ALL_USERS_SIMPLE_RESPONSE = gql`
   query GetAllUsersSimpleResponse($pageNumber: Int, $itemsPerPage: Int) {
     usersSimpleResponse(pageNumber: $pageNumber, itemsPerPage: $itemsPerPage) {
       response {
-        status
+        success
         message
       }
       page {
@@ -95,7 +95,7 @@ export const GET_ALL_SHOPS = gql`
   query GetAllShops {
     shops {
       response {
-        status
+        success
         message
       }
       data {
@@ -121,7 +121,7 @@ export const GET_ALL_ORDERS = gql`
   query GetAllOrders {
     orders {
       response {
-        status
+        success
         message
       }
       data {
@@ -153,7 +153,7 @@ export const GET_ALL_DOCUMENTS = gql`
   query GetAllDocuments {
     documents {
       response {
-        status
+        success
         message
       }
       data {
@@ -181,7 +181,7 @@ export const GET_PRICING_RULES = gql`
   query GetPricingRules {
     pricingRules {
       response {
-        status
+        success
         message
       }
       data {

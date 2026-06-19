@@ -39,7 +39,7 @@ export const useReorder = ({ onSuccess, onError }: UseReorderOptions = {}) => {
                 },
             });
 
-            if (data?.createOrder?.response?.status) {
+            if (data?.createOrder?.response?.success) {
                 const newOrderId = data.createOrder.order?.id;
                 onSuccess?.(newOrderId);
                 return { success: true, orderId: newOrderId };

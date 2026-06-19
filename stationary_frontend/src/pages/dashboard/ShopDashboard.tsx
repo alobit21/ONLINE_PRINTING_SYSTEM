@@ -157,13 +157,13 @@ export const ShopDashboard = () => {
     }, [shopsError, myShopsData]);
 
     const shopId = myShopsData?.myShops?.data?.[0]?.id;
-    const myShopsStatus = myShopsData?.myShops?.response?.status;
+    const myShopsStatus = myShopsData?.myShops?.response?.success;
     const myShopsMessage = myShopsData?.myShops?.response?.message;
 
     const [createShop, { loading: creatingShop, error: createError }] = useMutation<CreateShopData>(CREATE_SHOP, {
         onCompleted: (data) => {
             console.log("Shop created:", data);
-            if (data?.createShop?.response?.status) {
+            if (data?.createShop?.response?.success) {
                 refetchShops();
             } else {
                 console.error("Shop creation failed:", data?.createShop?.response?.message);

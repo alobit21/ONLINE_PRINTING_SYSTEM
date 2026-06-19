@@ -913,7 +913,7 @@ export function OrdersPage() {
                 variables: { orderId, status: newStatus },
             });
 
-            if (result.data?.updateOrderStatus?.response?.status) {
+            if (result.data?.updateOrderStatus?.response?.success) {
                 setToast({ type: 'success', message: 'Order status updated successfully.' });
                 refetch();
                 // Update selected order if it's the one being updated

@@ -94,7 +94,7 @@ export const PrintUploadFlow = () => {
           });
 
       let backendId: string;
-      if (isGuest && (data as any)?.createGuestDocument?.response.status) {
+      if (isGuest && (data as any)?.createGuestDocument?.response.success) {
         backendId = (data as any).createGuestDocument.document.id;
         
         updateFile(tempId, {
@@ -102,7 +102,7 @@ export const PrintUploadFlow = () => {
           progress: 60,
           status: 'uploading'
         });
-      } else if (!isGuest && (data as any)?.createDocument?.response.status) {
+      } else if (!isGuest && (data as any)?.createDocument?.response.success) {
         backendId = (data as any).createDocument.document.id;
         
         updateFile(tempId, {

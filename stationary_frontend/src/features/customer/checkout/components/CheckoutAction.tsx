@@ -38,7 +38,7 @@ export const CheckoutAction = () => {
     const [error, setError] = useState<string | null>(null);
     const [createOrder, { loading: isProcessing }] = useMutation<CreateOrderData, { shopId: string; items: OrderItemInput[]; payment: { paymentMethod: string; phoneNumber: string } }>(CREATE_ORDER, {
         onCompleted: (data) => {
-            if (data.createOrder.response.status) {
+            if (data.createOrder.response.success) {
                 // Show payment tracker instead of success message
                 setPaymentId(data.createOrder.payment?.id || null);
                 setShowPaymentTracker(true);

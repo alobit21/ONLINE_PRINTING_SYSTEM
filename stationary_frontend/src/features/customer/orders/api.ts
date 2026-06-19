@@ -37,7 +37,7 @@ export const CREATE_ORDER = gql`
     mutation CreateOrder($shopId: UUID!, $items: [OrderItemInput!]!, $payment: PaymentInput!) {
         createOrder(shopId: $shopId, items: $items, payment: $payment) {
             response {
-                status
+                success
                 message
             }
             order {
@@ -61,7 +61,7 @@ export const CREATE_GUEST_ORDER = gql`
     mutation CreateGuestOrder($shopId: UUID!, $guestCustomer: GuestCustomerInput!, $items: [OrderItemInput!]!, $payment: PaymentInput) {
         createGuestOrder(shopId: $shopId, guestCustomer: $guestCustomer, items: $items, payment: $payment) {
             response {
-                status
+                success
                 message
             }
             order {
@@ -124,7 +124,7 @@ export const UPDATE_ORDER_STATUS = gql`
     mutation UpdateOrderStatus($orderId: UUID!, $status: String!) {
         updateOrderStatus(orderId: $orderId, status: $status) {
             response {
-                status
+                success
                 message
             }
             order {

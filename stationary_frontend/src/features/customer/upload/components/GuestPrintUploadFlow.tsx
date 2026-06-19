@@ -96,7 +96,7 @@ export const GuestPrintUploadFlow = () => {
 
       console.log("Guest document response:", data);
 
-      if (data?.createGuestDocument?.response.status) {
+      if (data?.createGuestDocument?.response.success) {
         const backendId = data.createGuestDocument.document.id;
         console.log("Document created with ID:", backendId);
         

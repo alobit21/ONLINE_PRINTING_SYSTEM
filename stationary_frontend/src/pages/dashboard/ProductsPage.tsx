@@ -51,7 +51,7 @@ export function ProductsPage() {
     const [formPrice, setFormPrice] = useState('');
     const [formErrors, setFormErrors] = useState<{ serviceType?: string; price?: string }>({});
 
-    const { data: myShopsData } = useQuery<{ myShops: { response: { status: boolean }; data: Array<{ id: string }> } }>(
+    const { data: myShopsData } = useQuery<{ myShops: { response: { success: boolean }; data: Array<{ id: string }> } }>(
         GET_MY_SHOPS,
         { fetchPolicy: 'network-only' }
     );
@@ -71,7 +71,7 @@ export function ProductsPage() {
     const [updatePricing, { loading: updating }] = useMutation<UpdatePricingData>(UPDATE_PRICING, {
         onCompleted: (data) => {
             const res = data?.updatePricing?.response;
-            if (res?.status) {
+            if (res?.success) {
                 setToast({ type: 'success', message: 'Service added/updated successfully.' });
                 setDialogOpen(false);
                 refetchPricing();
@@ -213,7 +213,7 @@ export function ProductsPage() {
                         <span>Loading services…</span>
                     </CardContent>
                 </Card>
-            ) : pricingError || response?.status === false ? (
+            ) : pricingError || response?.success === false ? (
                 <Card className="border border-red-700 bg-red-900/50">
                     <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-400">
                         <AlertCircle className="h-10 w-10" />
