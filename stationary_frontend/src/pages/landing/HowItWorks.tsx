@@ -36,21 +36,21 @@ export const HowItWorks = () => {
   ];
 
   return (
-    <section className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
+    <section className="bg-hp-primary py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
 
         {/* Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
 
-          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
+          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-blue-200 mb-4">
             The Process
           </div>
 
-          <h2 className="text-[56px] font-medium leading-none text-ink mb-6">
+          <h2 className="text-[56px] font-medium leading-none text-white mb-6">
             Simple workflow from upload to collection
           </h2>
 
-          <p className="text-lg text-charcoal leading-relaxed">
+          <p className="text-lg text-blue-50 leading-relaxed">
             A streamlined 6-step process that connects your documents
             directly to professional print shops near you.
           </p>
