@@ -1,68 +1,63 @@
-import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const CallToAction = () => {
   return (
     <section className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
-
-        {/* CTA BOX */}
-        <div className="bg-gray-900 text-white rounded-[16px] p-16 lg:p-24 text-center">
-
-          {/* Heading */}
-          <h2 className="text-[56px] font-medium leading-none mb-6">
-            Start printing smarter today
-          </h2>
-
-          {/* Subtext */}
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-12 leading-relaxed">
-            Upload your documents, choose a print option, and connect instantly
-            with verified print shops near you.
-          </p>
-
-          {/* PRIMARY CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-
-            <Link
-              to="/register"
-              className="
-                bg-hp-primary hover:bg-hp-primary/90
-                text-white
-                px-10 py-4
-                rounded-md
-                text-sm font-medium uppercase tracking-[0.7px]
-                flex items-center gap-3
-              "
-            >
-              Upload document
-              <ArrowRight size={18} />
-            </Link>
-
-            {/* SECONDARY CTA */}
-            <Link
-              to="/register?role=shop"
-              className="
-                border border-white hover:bg-white/10
-                text-white
-                px-10 py-4
-                rounded-md
-                text-sm font-medium uppercase tracking-[0.7px]
-              "
-            >
-              Register shop
-            </Link>
-
+        
+        {/* Card Container */}
+        <div className="relative bg-black rounded-[16px] overflow-hidden flex min-h-[440px] md:min-h-[480px]">
+          
+          {/* Background Image Container */}
+          <div className="absolute inset-0 w-full h-full">
+            <img 
+              src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1600" 
+              alt="People working in office" 
+              className="w-full h-full object-cover object-center md:object-right"
+            />
           </div>
 
-          {/* TRUST LINE */}
-          <div className="mt-12 text-xs text-steel uppercase tracking-[0.7px]">
-            Secure upload · Verified print partners · Real-time order tracking
-          </div>
+          {/* Gradient Overlays for Fade Effect */}
+          {/* Mobile Overlay: mostly black, fading at top */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-black/20 md:hidden"></div>
+          
+          {/* Desktop Overlay: Solid black on left, fading to right */}
+          <div className="absolute inset-y-0 left-0 w-full md:w-[45%] bg-black hidden md:block"></div>
+          <div className="absolute inset-y-0 left-[45%] w-[30%] bg-gradient-to-r from-black to-transparent hidden md:block"></div>
 
+          {/* Content Container */}
+          <div className="relative z-10 w-full md:w-[60%] lg:w-[50%] p-10 md:p-16 lg:p-20 flex flex-col justify-center text-left mt-auto md:mt-0">
+            
+            {/* Kicker / Subtitle */}
+            <span className="text-[14px] font-medium text-white mb-4 tracking-[0.2px]">
+              Sationary Print Marketplace
+            </span>
+
+            {/* Headline */}
+            <h2 className="text-[32px] md:text-[42px] lg:text-[46px] font-medium text-white leading-[1.1] tracking-[-1px] mb-6">
+              Start printing smarter today
+            </h2>
+
+            {/* Paragraph */}
+            <p className="text-[15px] md:text-base text-gray-300 mb-10 leading-relaxed max-w-[420px]">
+              Upload your documents, choose a print option, and connect instantly with verified print shops near you.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                to="/register"
+                className="bg-white text-black hover:bg-gray-100 px-6 h-10 flex items-center justify-center rounded-[4px] text-[14px] font-semibold transition-colors w-max"
+              >
+                Learn More
+              </Link>
+            </div>
+
+          </div>
+          
         </div>
 
       </div>
     </section>
   );
 };
-

@@ -97,9 +97,9 @@ export const SolutionSection = () => {
             <div className="rounded-[16px] border border-fog dark:border-charcoal bg-canvas p-4 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
 
               <img
-                src="/images/solution.png"
-                alt="Solution Dashboard"
-                className="w-full h-auto object-contain rounded-[16px]"
+                src="https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=1200"
+                alt="Modern office printing solution"
+                className="w-full h-full object-cover rounded-[12px] aspect-[4/3]"
               />
 
             </div>
