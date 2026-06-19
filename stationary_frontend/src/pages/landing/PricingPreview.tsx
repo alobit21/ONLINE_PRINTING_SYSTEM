@@ -67,87 +67,97 @@ export const PricingPreview = () => {
     const plans = activeRole === 'customer' ? customerPlans : shopPlans;
 
     return (
-        <section id="pricing" className="section-padding bg-slate-50 overflow-hidden text-center">
+        <section id="pricing" className="bg-cloud py-20 lg:py-[80px] overflow-hidden text-center transition-colors duration-300">
             <div className="section-container">
-                <div className="heading-centered">
-                    <h2 className="text-brand-600 font-black tracking-widest uppercase text-xs mb-4">Pricing Tables</h2>
-                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-8 leading-tight">
-                        Transparent for everyone.
+                <div className="max-w-3xl mx-auto mb-16">
+                    <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">Pricing Tables</div>
+                    <h3 className="text-[42px] lg:text-[56px] font-medium text-ink mb-6 leading-[1.1] tracking-[-1px]">
+                        Transparent for everyone
                     </h3>
 
-                    <div className="inline-flex p-1.5 bg-white border border-slate-200 rounded-[1.5rem] shadow-sm mt-8">
+                    <div className="inline-flex border border-fog dark:border-charcoal rounded-full overflow-hidden mt-6">
                         <button
                             onClick={() => setActiveRole('customer')}
-                            className={`px-10 py-3 rounded-2xl text-sm font-black transition-all duration-300 ${activeRole === 'customer' ? 'bg-brand-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800'
-                                }`}
+                            className={`px-6 py-2 text-sm font-medium transition-colors ${
+                                activeRole === 'customer' 
+                                    ? 'bg-ink text-canvas' 
+                                    : 'bg-canvas text-charcoal'
+                            }`}
                         >
                             For Customers
                         </button>
                         <button
                             onClick={() => setActiveRole('shop')}
-                            className={`px-10 py-3 rounded-2xl text-sm font-black transition-all duration-300 ${activeRole === 'shop' ? 'bg-brand-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800'
-                                }`}
+                            className={`px-6 py-2 text-sm font-medium border-l border-fog dark:border-charcoal transition-colors ${
+                                activeRole === 'shop' 
+                                    ? 'bg-ink text-canvas' 
+                                    : 'bg-canvas text-charcoal'
+                            }`}
                         >
                             For Shops
                         </button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 mt-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                     {plans.map((plan, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className={`relative bg-white rounded-[3rem] p-12 border transition-all duration-500 ${plan.popular ? 'border-brand-500 shadow-[0_40px_80px_-20px_rgba(99,102,241,0.2)] scale-105 z-10' : 'border-slate-100 shadow-xl'
-                                }`}
+                            className={`relative bg-canvas rounded-[16px] p-8 border transition-all duration-300 ${
+                                plan.popular 
+                                    ? 'border-hp-primary shadow-[0_8px_32px_-12px_rgba(2,74,216,0.3)] z-10 -translate-y-2' 
+                                    : 'border-fog dark:border-charcoal shadow-[0_2px_8px_rgba(26,26,26,0.08)]'
+                            }`}
                         >
                             {plan.popular && (
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.3em] px-6 py-2.5 rounded-full shadow-xl">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-hp-primary text-canvas text-xs font-semibold uppercase tracking-[0.7px] px-4 py-1.5 rounded-full">
                                     Most Popular
                                 </div>
                             )}
 
-                            <div className="mb-8">
-                                <h4 className="text-2xl font-black text-slate-900 mb-3">{plan.name}</h4>
-                                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">{plan.description}</p>
+                            <div className="mb-6">
+                                <h4 className="text-2xl font-medium text-ink mb-2">{plan.name}</h4>
+                                <p className="text-charcoal text-sm leading-relaxed">{plan.description}</p>
                             </div>
 
-                            <div className="flex items-baseline justify-center gap-1 mb-10">
-                                <span className="text-6xl font-black text-slate-900 leading-none">{plan.price}</span>
-                                {plan.period && <span className="text-slate-400 font-black text-lg">/{plan.period}</span>}
+                            <div className="flex items-baseline justify-center gap-1 mb-8">
+                                <span className="text-[44px] font-medium text-ink leading-none">{plan.price}</span>
+                                {plan.period && <span className="text-charcoal font-medium">/{plan.period}</span>}
                             </div>
 
-                            <div className="space-y-5 mb-12 text-left">
+                            <div className="space-y-4 mb-10 text-left">
                                 {plan.features.map((feature, i) => (
-                                    <div key={i} className="flex items-center gap-4">
-                                        <div className="bg-brand-50 p-1 rounded-full text-brand-600 flex-shrink-0">
-                                            <Check size={14} strokeWidth={4} />
+                                    <div key={i} className="flex items-start gap-3">
+                                        <div className="text-hp-primary mt-1">
+                                            <Check size={16} />
                                         </div>
-                                        <span className="text-slate-700 text-sm font-bold tracking-tight">{feature}</span>
+                                        <span className="text-charcoal text-sm leading-relaxed">{feature}</span>
                                     </div>
                                 ))}
                                 {plan.notIncluded?.map((feature, i) => (
-                                    <div key={i} className="flex items-center gap-4 opacity-30">
-                                        <div className="bg-slate-50 p-1 rounded-full text-slate-400 flex-shrink-0">
-                                            <X size={14} strokeWidth={4} />
+                                    <div key={i} className="flex items-start gap-3 opacity-50">
+                                        <div className="text-steel mt-1">
+                                            <X size={16} />
                                         </div>
-                                        <span className="text-slate-400 text-sm font-bold line-through">{feature}</span>
+                                        <span className="text-steel text-sm leading-relaxed line-through">{feature}</span>
                                     </div>
                                 ))}
                             </div>
 
                             <Link
                                 to="/register"
-                                className={`w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-black transition-all duration-300 transform hover:scale-[1.03] ${plan.popular
-                                        ? 'bg-brand-600 text-white hover:bg-brand-700 shadow-2xl shadow-brand-500/20'
-                                        : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
-                                    }`}
+                                className={`w-full py-3 rounded-[4px] flex items-center justify-center gap-2 text-sm font-semibold tracking-[0.7px] transition-colors ${
+                                    plan.popular
+                                        ? 'bg-hp-primary text-canvas hover:bg-hp-primary/90'
+                                        : 'bg-ink text-canvas hover:bg-ink/90'
+                                }`}
                             >
                                 {plan.cta}
-                                <ArrowRight size={20} strokeWidth={3} />
+                                <ArrowRight size={16} />
                             </Link>
                         </motion.div>
                     ))}

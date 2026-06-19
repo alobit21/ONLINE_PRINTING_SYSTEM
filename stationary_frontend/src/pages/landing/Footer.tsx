@@ -35,7 +35,7 @@ export const Footer = () => {
     ];
 
     return (
-        <footer className="bg-gray-950 pt-24 pb-12 text-gray-300 transition-colors duration-300">
+        <footer className="bg-ink pt-24 pb-12 text-on-primary transition-colors duration-300">
             <div className="section-container">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 mb-24">
                     <div className="lg:col-span-2">
@@ -47,7 +47,7 @@ export const Footer = () => {
                                 Sationary<span className="text-hp-primary">.</span>
                             </span>
                         </Link>
-                        <p className="text-gray-300 font-normal mb-10 max-w-sm leading-relaxed">
+                        <p className="text-canvas/80 font-normal mb-10 max-w-sm leading-relaxed">
                             The professional cloud-printing marketplace connecting modern individuals
                             with premium local production facilities.
                         </p>
@@ -61,7 +61,7 @@ export const Footer = () => {
                                 <a
                                     key={i}
                                     href={social.href}
-                                    className="bg-gray-800 hover:bg-hp-primary p-3 rounded text-white transition-all transform hover:-translate-y-1 shadow-sm"
+                                    className="bg-charcoal hover:bg-hp-primary p-3 rounded-[4px] text-canvas transition-all transform hover:-translate-y-1 shadow-sm"
                                 >
                                     {social.icon}
                                 </a>
@@ -71,13 +71,13 @@ export const Footer = () => {
 
                     {footerLinks.map((section) => (
                         <div key={section.title}>
-                            <h4 className="text-white font-medium uppercase text-xs tracking-[0.2em] mb-8">{section.title}</h4>
+                            <h4 className="text-canvas font-medium uppercase text-xs tracking-[0.2em] mb-8">{section.title}</h4>
                             <ul className="space-y-4">
                                 {section.links.map((link) => (
                                     <li key={link.name}>
                                         <a
                                             href={link.href}
-                                            className="text-gray-400 hover:text-white transition-colors text-sm font-normal"
+                                            className="text-canvas/70 hover:text-canvas transition-colors text-sm font-normal"
                                         >
                                             {link.name}
                                         </a>
@@ -88,12 +88,12 @@ export const Footer = () => {
                     ))}
                 </div>
 
-                <div className="border-t border-gray-800 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[12px] font-normal uppercase text-gray-400">
+                <div className="border-t border-charcoal pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[12px] font-normal uppercase text-canvas/70">
                     <p>© {currentYear} SATIONARY INC. ALL RIGHTS RESERVED.</p>
                     <div className="flex gap-10">
-                        <a href="#" className="hover:text-white transition-colors">Privacy</a>
-                        <a href="#" className="hover:text-white transition-colors">Terms</a>
-                        <a href="#" className="hover:text-white transition-colors">Security</a>
+                        <a href="#" className="hover:text-canvas transition-colors">Privacy</a>
+                        <a href="#" className="hover:text-canvas transition-colors">Terms</a>
+                        <a href="#" className="hover:text-canvas transition-colors">Security</a>
                     </div>
                 </div>
             </div>

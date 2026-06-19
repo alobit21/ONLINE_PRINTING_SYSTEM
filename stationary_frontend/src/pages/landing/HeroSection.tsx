@@ -19,33 +19,13 @@ export const HeroSection = () => {
                 />
               </div>
               
-              {/* Floating Notification */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="absolute bottom-5 right-5 bg-canvas rounded-[16px] px-4 py-3 hidden sm:flex items-center gap-3 min-w-[230px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-fog dark:border-charcoal"
-              >
-                <div className="rounded-full bg-hp-primary/10 flex items-center justify-center shrink-0 w-8 h-8">
-                  <Check size={16} className="text-hp-primary" />
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-ink">
-                    Order #1234 — Ready for Pickup
-                  </div>
-                  <div className="text-xs text-charcoal mt-0.5">
-                    Notified via SMS · 2 min ago
-                  </div>
-                </div>
-              </motion.div>
+
             </div>
             
             {/* Copy Column */}
             <div className="flex-1 flex flex-col justify-center gap-6 mt-8 lg:mt-0 lg:pl-12 lg:pr-4">
-              <div className="inline-flex">
-                <span className="text-[12px] font-semibold text-hp-primary border border-hp-primary rounded-full px-3 py-1 tracking-[0.6px]">
-                  FAST · RELIABLE · LOCAL PRINT
-                </span>
+              <div className="text-sm font-semibold text-hp-primary uppercase tracking-[0.7px]">
+                Fast · Reliable · Local Print
               </div>
               
               <h1 className="font-medium text-ink text-[36px] sm:text-[42px] lg:text-[68px] leading-[1.15] lg:leading-[1.1] tracking-[-1px]">
@@ -73,11 +53,9 @@ export const HeroSection = () => {
                 </Link>
               </div>
               
-              <div className="inline-flex items-center gap-2 pt-2">
-                <div className="w-2 h-2 rounded-full bg-hp-primary shrink-0"></div>
-                <span className="text-xs font-medium text-charcoal border border-fog dark:border-charcoal rounded-full px-3 py-1 bg-canvas">
-                  500+ orders printed weekly
-                </span>
+              <div className="flex items-center gap-2 pt-2 text-charcoal">
+                <div className="w-1.5 h-1.5 rounded-full bg-hp-primary"></div>
+                <span className="text-sm font-medium">500+ orders printed weekly</span>
               </div>
             </div>
             

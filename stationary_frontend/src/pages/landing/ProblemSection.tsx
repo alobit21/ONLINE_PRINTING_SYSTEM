@@ -83,14 +83,7 @@ export const ProblemSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="
-                  bg-canvas
-                  rounded-2xl
-                  border
-                  border-fog dark:border-charcoal
-                  p-8
-                  shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
-                "
+                className="flex flex-col"
               >
                 <div
                   className="

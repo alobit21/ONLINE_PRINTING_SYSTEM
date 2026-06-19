@@ -42,7 +42,7 @@ export const LandingHeader = () => {
 
                 <div className="flex items-center gap-2 sm:gap-3">
                     <ThemeToggle />
-                    <div className="hidden lg:flex items-center gap-2 bg-cloud border border-fog rounded-full px-3 py-1.5 w-[180px]">
+                    <div className="hidden lg:flex items-center gap-2 bg-cloud border border-fog rounded-[4px] px-3 py-1.5 w-[180px]">
                         <Search size={14} className="text-steel" />
                         <span className="text-sm text-steel">Search...</span>
                     </div>

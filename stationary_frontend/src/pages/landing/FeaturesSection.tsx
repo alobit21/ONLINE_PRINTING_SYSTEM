@@ -118,14 +118,7 @@ export const FeaturesSection = () => {
             return (
               <div
                 key={item.title}
-                className="
-                  bg-canvas
-                  border
-                  border-fog dark:border-charcoal
-                  rounded-[16px]
-                  p-8
-                  shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
-                "
+                className="flex flex-col"
               >
 
                 <div className="text-hp-primary mb-6">

@@ -64,14 +64,7 @@ export const SolutionSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.08 }}
-                    className="
-                      bg-canvas
-                      border
-                      border-fog dark:border-charcoal
-                      rounded-[16px]
-                      p-6
-                      shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
-                    "
+                    className="flex flex-col"
                   >
                     <div className="mb-4 text-hp-primary">
                       <Icon size={22} />
@@ -93,16 +86,11 @@ export const SolutionSection = () => {
           {/* RIGHT VISUAL */}
           <div className="relative">
 
-            {/* HP-style chevron-safe frame */}
-            <div className="rounded-[16px] border border-fog dark:border-charcoal bg-canvas p-4 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-
               <img
                 src="https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=1200"
                 alt="Modern office printing solution"
-                className="w-full h-full object-cover rounded-[12px] aspect-[4/3]"
+                className="w-full h-full object-cover rounded-[16px] aspect-[4/3]"
               />
-
-            </div>
 
           </div>
 
