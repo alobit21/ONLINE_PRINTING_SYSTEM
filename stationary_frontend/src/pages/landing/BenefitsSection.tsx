@@ -48,13 +48,13 @@ export const BenefitsSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
           {/* CUSTOMER */}
-          <div className="bg-canvas border border-fog dark:border-charcoal rounded-[16px] p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <div className="flex flex-col gap-6">
 
-            <h3 className="text-lg font-medium text-ink mb-6">
+            <h3 className="text-[28px] font-medium text-ink">
               For Customers
             </h3>
 
-            <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            <div className="grid md:grid-cols-2 gap-4">
 
               {customerBenefits.map((item) => (
                 <div key={item} className="flex items-start gap-3">
@@ -83,13 +83,13 @@ export const BenefitsSection = () => {
           </div>
 
           {/* SHOP */}
-          <div className="bg-canvas border border-fog dark:border-charcoal rounded-[16px] p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <div className="flex flex-col gap-6">
 
-            <h3 className="text-lg font-medium text-ink mb-6">
+            <h3 className="text-[28px] font-medium text-ink">
               For Print Shops
             </h3>
 
-            <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            <div className="grid md:grid-cols-2 gap-4">
 
               {shopBenefits.map((item) => (
                 <div key={item} className="flex items-start gap-3">

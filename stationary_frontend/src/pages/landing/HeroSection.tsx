@@ -4,20 +4,13 @@ import { Check } from 'lucide-react';
 
 export const HeroSection = () => {
   return (
-    <section className="bg-cloud pt-[100px] lg:pt-[136px] pb-12 overflow-hidden transition-colors duration-300">
-        <div className="relative flex items-stretch px-0 min-h-[600px] w-full max-w-[1440px] mx-auto overflow-hidden">
+    <section className="bg-canvas pt-[100px] lg:pt-[136px] pb-12 overflow-hidden transition-colors duration-300">
+        <div className="relative flex items-center px-4 sm:px-6 lg:px-8 min-h-[600px] w-full max-w-[1440px] mx-auto gap-12">
           
-          {/* Left Stripe */}
-          <div
-            className="hidden lg:block shrink-0 self-stretch w-[72px] bg-hp-primary"
-            style={{ clipPath: 'polygon(0 0, 100% 0, 40% 100%, 0 100%)' }}
-          ></div>
-          
-          {/* Main Card */}
-          <div className="flex-1 bg-canvas rounded-[16px] flex flex-col lg:flex-row overflow-hidden my-6 mx-4 lg:mx-0 p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <div className="flex-1 flex flex-col lg:flex-row items-center w-full gap-12">
             
             {/* Visual Column */}
-            <div className="relative flex-1 min-h-[300px] lg:min-h-[480px]">
+            <div className="relative flex-1 w-full min-h-[300px] lg:min-h-[480px]">
               <div className="rounded-[16px] overflow-hidden w-full h-full lg:min-h-[480px]">
                 <img
                   src="https://storage.googleapis.com/banani-generated-images/generated-images/9991fb2d-301d-4a5e-aab6-b86785b9494d.jpg"
@@ -31,7 +24,7 @@ export const HeroSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="absolute bottom-5 right-5 bg-canvas rounded-[16px] px-4 py-3 flex items-center gap-3 min-w-[230px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-fog dark:border-charcoal"
+                className="absolute bottom-5 right-5 bg-canvas rounded-[16px] px-4 py-3 hidden sm:flex items-center gap-3 min-w-[230px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-fog dark:border-charcoal"
               >
                 <div className="rounded-full bg-hp-primary/10 flex items-center justify-center shrink-0 w-8 h-8">
                   <Check size={16} className="text-hp-primary" />
@@ -55,7 +48,7 @@ export const HeroSection = () => {
                 </span>
               </div>
               
-              <h1 className="font-medium text-ink text-[42px] lg:text-[68px] leading-[1.1] tracking-[-1px]">
+              <h1 className="font-medium text-ink text-[36px] sm:text-[42px] lg:text-[68px] leading-[1.15] lg:leading-[1.1] tracking-[-1px]">
                 Print Documents Without Leaving Your Desk
               </h1>
               
@@ -89,12 +82,6 @@ export const HeroSection = () => {
             </div>
             
           </div>
-          
-          {/* Right Stripe */}
-          <div
-            className="hidden lg:block shrink-0 self-stretch w-[72px] bg-hp-primary"
-            style={{ clipPath: 'polygon(60% 0, 100% 0, 100% 100%, 0 100%)' }}
-          ></div>
           
         </div>
     </section>

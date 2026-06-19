@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Printer, ShoppingBag, Search } from 'lucide-react';
+import { Printer, ShoppingBag, Search, Menu } from 'lucide-react';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 
 export const LandingHeader = () => {
@@ -40,7 +40,7 @@ export const LandingHeader = () => {
                     <Link to="/track" className="text-sm font-medium text-charcoal hover:text-ink transition">Track Order</Link>
                 </nav>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                     <ThemeToggle />
                     <div className="hidden lg:flex items-center gap-2 bg-cloud border border-fog rounded-full px-3 py-1.5 w-[180px]">
                         <Search size={14} className="text-steel" />
@@ -48,10 +48,14 @@ export const LandingHeader = () => {
                     </div>
                     <Link
                         to="/checkout"
-                        className="bg-hp-primary hover:bg-hp-primary/90 text-canvas text-sm font-semibold px-4 rounded-[4px] flex items-center h-9 tracking-[0.7px] transition"
+                        className="bg-hp-primary hover:bg-hp-primary/90 text-canvas text-xs sm:text-sm font-semibold px-3 sm:px-4 rounded-[4px] flex items-center h-8 sm:h-9 tracking-[0.7px] transition"
                     >
-                        START PRINTING
+                        <span className="hidden sm:inline">START PRINTING</span>
+                        <span className="sm:hidden">PRINT</span>
                     </Link>
+                    <button className="md:hidden text-ink p-1">
+                        <Menu size={24} />
+                    </button>
                 </div>
             </div>
         </header>
