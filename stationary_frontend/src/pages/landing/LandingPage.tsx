@@ -8,7 +8,7 @@ import { FeaturesSection } from './FeaturesSection';
 import { BenefitsSection } from './BenefitsSection';
 import { CallToAction } from './CallToAction';
 import { Footer } from './Footer';
-import { ThemeToggle } from '../../components/ui/ThemeToggle';
+
 
 export const LandingPage = () => {
     useEffect(() => {
@@ -28,7 +28,7 @@ export const LandingPage = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-canvas text-ink transition-colors duration-300">
-            <ThemeToggle />
+
             <LandingHeader />
             <main className="flex-grow">
                 <HeroSection />

@@ -11,7 +11,7 @@ import AdminLayout from './components/admin/admin-layout';
 import { GuestWorkflowManager } from './features/customer/guest/GuestWorkflowManager';
 import { GuestOrdersPage } from './features/customer/guest/GuestOrdersPage';
 import { GuestLayout } from './layouts/GuestLayout';
-import { ThemeToggle } from './components/ui/ThemeToggle';
+
 
 import { LandingPage } from './pages/landing/LandingPage';
 
@@ -46,7 +46,7 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
         <div className="min-h-screen bg-slate-50 dark:bg-gray-900 font-sans antialiased transition-colors duration-200">
-          <ThemeToggle />
+
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />

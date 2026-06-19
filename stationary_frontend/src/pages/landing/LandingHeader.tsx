@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Printer, ShoppingBag, Search } from 'lucide-react';
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 
 export const LandingHeader = () => {
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-canvas border-b border-fog dark:border-charcoal transition-colors duration-300">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-canvas border-b border-fog transition-colors duration-300">
             {/* Utility Strip */}
             <div className="w-full bg-ink flex items-center justify-between px-8 h-[36px] hidden md:flex">
                 <div className="flex items-center gap-6">
@@ -40,7 +41,8 @@ export const LandingHeader = () => {
                 </nav>
 
                 <div className="flex items-center gap-3">
-                    <div className="hidden lg:flex items-center gap-2 bg-cloud dark:bg-fog border border-fog dark:border-charcoal rounded-full px-3 py-1.5 w-[180px]">
+                    <ThemeToggle />
+                    <div className="hidden lg:flex items-center gap-2 bg-cloud border border-fog rounded-full px-3 py-1.5 w-[180px]">
                         <Search size={14} className="text-steel" />
                         <span className="text-sm text-steel">Search...</span>
                     </div>

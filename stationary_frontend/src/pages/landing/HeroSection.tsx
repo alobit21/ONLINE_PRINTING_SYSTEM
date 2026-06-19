@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 
 export const HeroSection = () => {
   return (
-    <section className="bg-cloud dark:bg-ink pt-[100px] lg:pt-[136px] pb-12 overflow-hidden transition-colors duration-300">
+    <section className="bg-cloud pt-[100px] lg:pt-[136px] pb-12 overflow-hidden transition-colors duration-300">
         <div className="relative flex items-stretch px-0 min-h-[600px] w-full max-w-[1440px] mx-auto overflow-hidden">
           
           {/* Left Stripe */}

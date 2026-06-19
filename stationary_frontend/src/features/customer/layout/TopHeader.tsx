@@ -1,4 +1,4 @@
-import { Bell, User, Home, ClipboardList, Wallet, FileUp, LogOut, Menu, Settings, HelpCircle, Moon, Sun, Phone } from 'lucide-react';
+import { Bell, User, Home, ClipboardList, Wallet, FileUp, LogOut, Menu, Settings, HelpCircle, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../stores/authStore';
 import { useCustomerStore } from '../../../stores/customerStore';
@@ -6,13 +6,13 @@ import { cn } from '../../../lib/utils';
 import { useState } from 'react';
 import { GuestVerificationModal } from '../guest/GuestVerificationModal';
 import { useGuestVerification } from '../../../hooks/useGuestVerification';
+import { ThemeToggle } from '../../../components/ui/ThemeToggle';
 
 export const TopHeader = () => {
     const { user, logout } = useAuthStore();
     const { files, resetWorkflow } = useCustomerStore();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
     const { requireVerification, getVerificationModalProps } = useGuestVerification();
 
     // Check if user is logged in or guest
@@ -73,11 +73,7 @@ export const TopHeader = () => {
         }
     };
 
-    const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
-        // Add theme toggle logic here
-        document.documentElement.classList.toggle('dark');
-    };
+
 
     return (
         <>
@@ -142,17 +138,7 @@ export const TopHeader = () => {
                             </button>
 
                             {/* Theme Toggle */}
-                            <button
-                                onClick={toggleTheme}
-                                className="p-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors group"
-                                title="Toggle theme"
-                            >
-                                {isDarkMode ? (
-                                    <Sun className="h-5 w-5 group-hover:rotate-180 transition-transform duration-500" />
-                                ) : (
-                                    <Moon className="h-5 w-5 group-hover:rotate-12 transition-transform duration-500" />
-                                )}
-                            </button>
+                            <ThemeToggle />
 
                             {/* User Menu */}
                             <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700">

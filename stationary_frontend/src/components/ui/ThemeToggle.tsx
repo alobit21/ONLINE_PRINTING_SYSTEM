@@ -10,14 +10,12 @@ export const ThemeToggle = () => {
       onClick={toggle}
       whileTap={{ scale: 0.92 }}
       className="
-        fixed top-5 right-5 z-50
-        p-3 rounded-full
-        backdrop-blur-xl
-        bg-white/80 dark:bg-gray-900/70
-        border border-gray-200/60 dark:border-gray-700/60
-        shadow-lg hover:shadow-xl
+        p-2 rounded-full
+        bg-cloud dark:bg-fog
+        border border-fog dark:border-charcoal
+        shadow-sm hover:shadow
         transition-all duration-300
-        focus:outline-none focus:ring-2 focus:ring-brand-500
+        focus:outline-none focus:ring-2 focus:ring-hp-primary
       "
       aria-label="Toggle theme"
     >

@@ -7,7 +7,7 @@ export const CallToAction = () => {
       <div className="section-container">
 
         {/* CTA BOX */}
-        <div className="bg-ink text-canvas rounded-[16px] p-16 lg:p-24 text-center">
+        <div className="bg-gray-900 text-white rounded-[16px] p-16 lg:p-24 text-center">
 
           {/* Heading */}
           <h2 className="text-[56px] font-medium leading-none mb-6">
@@ -15,7 +15,7 @@ export const CallToAction = () => {
           </h2>
 
           {/* Subtext */}
-          <p className="text-lg text-cloud max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-12 leading-relaxed">
             Upload your documents, choose a print option, and connect instantly
             with verified print shops near you.
           </p>
@@ -27,7 +27,7 @@ export const CallToAction = () => {
               to="/register"
               className="
                 bg-hp-primary hover:bg-hp-primary/90
-                text-canvas
+                text-white
                 px-10 py-4
                 rounded-md
                 text-sm font-medium uppercase tracking-[0.7px]
@@ -42,8 +42,8 @@ export const CallToAction = () => {
             <Link
               to="/register?role=shop"
               className="
-                border border-canvas hover:bg-canvas/10
-                text-canvas
+                border border-white hover:bg-white/10
+                text-white
                 px-10 py-4
                 rounded-md
                 text-sm font-medium uppercase tracking-[0.7px]
