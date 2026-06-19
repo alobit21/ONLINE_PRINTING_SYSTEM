@@ -24,6 +24,7 @@ interface PrintConfiguration {
 
 export const GuestPrintUploadFlow = () => {
   const { addFiles, files, updateFile } = useCustomerStore();
+  const [previewFileId, setPreviewFileId] = useState<string | null>(null);
   const [config] = useState<PrintConfiguration>({
     isColor: false,
     paperSize: 'A4',
@@ -65,6 +66,11 @@ export const GuestPrintUploadFlow = () => {
       const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       console.log("Created temp ID:", tempId);
       
+      let previewUrl = undefined;
+      if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+        previewUrl = URL.createObjectURL(file);
+      }
+      
       // Add temporary file to store
       addFiles([{
         id: tempId,
@@ -72,8 +78,12 @@ export const GuestPrintUploadFlow = () => {
         size: file.size,
         type: file.type,
         progress: 0,
-        status: 'uploading'
+        status: 'uploading',
+        preview: previewUrl
       }]);
+      
+      // Auto-select the newly uploaded file for preview
+      setPreviewFileId(tempId);
 
       await performUpload(tempId, file);
     }
@@ -105,6 +115,9 @@ export const GuestPrintUploadFlow = () => {
           progress: 80,
           status: 'analyzing'
         });
+        
+        // Update the previewFileId if it was pointing to the tempId
+        setPreviewFileId(current => current === tempId ? backendId : current);
 
         // Step 2: Simulate document analysis (skip REST API for now)
         setTimeout(() => {
@@ -138,10 +151,15 @@ export const GuestPrintUploadFlow = () => {
   };
 
   const readyFiles = files.filter(f => f.status === 'ready');
+  const hasFiles = files.length > 0;
+  
+  // Determine which file to preview
+  const fileToPreview = files.find(f => f.id === previewFileId) || readyFiles[0] || files[0];
 
   return (
-    <div className="space-y-8">
-      {/* Upload Zone */}
+    <div className={`grid gap-8 items-start transition-all duration-500 ${hasFiles ? 'lg:grid-cols-2' : 'max-w-2xl mx-auto'}`}>
+      <div className="space-y-8">
+        {/* Upload Zone */}
       <div className="bg-canvas border-2 border-dashed border-fog hover:border-hp-primary rounded-[16px] transition-colors shadow-sm">
         <div className="p-12 text-center">
           <div className="space-y-4">
@@ -194,7 +212,15 @@ export const GuestPrintUploadFlow = () => {
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-ink">Uploaded Files</h3>
           {files.map(file => (
-            <div key={file.id} className="p-4 bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)]">
+            <div 
+              key={file.id} 
+              onClick={() => setPreviewFileId(file.id)}
+              className={`p-4 bg-canvas border rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] cursor-pointer transition-colors ${
+                (previewFileId === file.id || (!previewFileId && file.id === fileToPreview?.id))
+                  ? 'border-hp-primary ring-1 ring-hp-primary'
+                  : 'border-fog hover:border-hp-primary/50'
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <FileText className="w-8 h-8 text-steel" />
@@ -236,6 +262,67 @@ export const GuestPrintUploadFlow = () => {
           >
             Continue to Configuration
           </button>
+        </div>
+      )}
+      </div>
+
+      {/* Right side document preview panel */}
+      {hasFiles && (
+        <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden flex flex-col min-h-[600px] sticky top-[140px] animate-fade-in">
+          <div className="bg-cloud border-b border-fog p-4 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-ink flex items-center gap-2">
+              <FileText className="w-4 h-4 text-hp-primary" />
+              Document Preview
+            </h3>
+            <span className="text-[10px] font-bold bg-hp-primary text-canvas px-2 py-1 rounded-[4px] uppercase tracking-[0.7px]">Preview Mode</span>
+          </div>
+          <div className="flex-1 bg-fog/30 p-8 flex items-center justify-center relative">
+            {fileToPreview ? (
+              <div className="w-full h-full flex flex-col relative items-center justify-center">
+                {fileToPreview.preview ? (
+                  fileToPreview.type.startsWith('image/') ? (
+                    <img 
+                      src={fileToPreview.preview} 
+                      alt="Preview" 
+                      className="max-w-[90%] max-h-[500px] object-contain shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog"
+                    />
+                  ) : fileToPreview.type === 'application/pdf' ? (
+                    <object 
+                      data={fileToPreview.preview} 
+                      type="application/pdf" 
+                      className="w-full max-w-[90%] h-[500px] shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog"
+                    >
+                      <p>Your browser does not support PDFs. <a href={fileToPreview.preview} target="_blank" rel="noreferrer" className="text-hp-primary">Download the PDF</a>.</p>
+                    </object>
+                  ) : (
+                    <div className="bg-canvas w-[90%] sm:w-[70%] aspect-[1/1.4] shadow-xl rounded-[4px] flex flex-col relative border border-fog items-center justify-center p-8 text-center">
+                      <FileText className="w-16 h-16 text-steel mb-4" />
+                      <p className="text-ink font-medium">Document Preview not available</p>
+                      <p className="text-charcoal text-sm mt-2">File type: {fileToPreview.type || fileToPreview.name.split('.').pop()}</p>
+                      <p className="text-steel text-xs mt-1">{fileToPreview.name}</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="bg-canvas w-[90%] sm:w-[70%] aspect-[1/1.4] shadow-xl rounded-[4px] flex flex-col relative border border-fog items-center justify-center p-8 text-center">
+                    <FileText className="w-16 h-16 text-steel mb-4" />
+                    <p className="text-ink font-medium text-lg">Preview not available</p>
+                    <p className="text-charcoal text-sm mt-2 text-center max-w-sm">This file was uploaded in a previous session or its temporary preview URL has expired. Please re-upload the file to see the preview.</p>
+                    <p className="text-steel text-xs mt-4 bg-cloud px-3 py-1 rounded-full">{fileToPreview.name}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                <div className="w-16 h-16 bg-cloud rounded-full flex items-center justify-center animate-pulse">
+                  <Loader2 className="w-8 h-8 text-hp-primary animate-spin" />
+                </div>
+                <div>
+                  <p className="text-ink font-medium">Processing Document...</p>
+                  <p className="text-steel text-sm mt-1">Generating preview</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
