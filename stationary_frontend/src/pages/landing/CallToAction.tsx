@@ -6,7 +6,7 @@ export const CallToAction = () => {
       <div className="section-container">
         
         {/* Card Container */}
-        <div className="relative bg-black rounded-[16px] overflow-hidden flex min-h-[440px] md:min-h-[480px]">
+        <div className="relative bg-black dark:bg-canvas rounded-[16px] overflow-hidden flex min-h-[440px] md:min-h-[480px]">
           
           {/* Background Image Container */}
           <div className="absolute inset-0 w-full h-full">
@@ -19,11 +19,11 @@ export const CallToAction = () => {
 
           {/* Gradient Overlays for Fade Effect */}
           {/* Mobile Overlay: mostly black, fading at top */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-black/20 md:hidden"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black dark:from-canvas via-black/90 dark:via-canvas/90 to-black/20 dark:to-canvas/20 md:hidden"></div>
           
           {/* Desktop Overlay: Solid black on left, fading to right */}
-          <div className="absolute inset-y-0 left-0 w-full md:w-[45%] bg-black hidden md:block"></div>
-          <div className="absolute inset-y-0 left-[45%] w-[30%] bg-gradient-to-r from-black to-transparent hidden md:block"></div>
+          <div className="absolute inset-y-0 left-0 w-full md:w-[45%] bg-black dark:bg-canvas hidden md:block"></div>
+          <div className="absolute inset-y-0 left-[45%] w-[30%] bg-gradient-to-r from-black dark:from-canvas to-transparent hidden md:block"></div>
 
           {/* Content Container */}
           <div className="relative z-10 w-full md:w-[60%] lg:w-[50%] p-10 md:p-16 lg:p-20 flex flex-col justify-center text-left mt-auto md:mt-0">
