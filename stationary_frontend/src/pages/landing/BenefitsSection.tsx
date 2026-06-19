@@ -23,21 +23,21 @@ export const BenefitsSection = () => {
   ];
 
   return (
-    <section className="bg-[#ffffff] py-20 lg:py-[80px]">
+    <section className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
 
         {/* HEADER */}
         <div className="text-center max-w-3xl mx-auto mb-16">
 
-          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-brand-600 mb-4">
+          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
             Why Sationary
           </div>
 
-          <h2 className="text-[56px] font-medium leading-none text-[#1a1a1a] mb-6">
+          <h2 className="text-[56px] font-medium leading-none text-ink mb-6">
             Built for users and print shops
           </h2>
 
-          <p className="text-lg text-[#3d3d3d] leading-relaxed">
+          <p className="text-lg text-charcoal leading-relaxed">
             A balanced system that improves the printing experience
             for both customers and service providers.
           </p>
@@ -48,9 +48,9 @@ export const BenefitsSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
           {/* CUSTOMER */}
-          <div className="bg-white border border-[#e8e8e8] rounded-2xl p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)]">
+          <div className="bg-canvas border border-fog dark:border-charcoal rounded-[16px] p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
 
-            <h3 className="text-lg font-medium text-[#1a1a1a] mb-6">
+            <h3 className="text-lg font-medium text-ink mb-6">
               For Customers
             </h3>
 
@@ -59,11 +59,11 @@ export const BenefitsSection = () => {
               {customerBenefits.map((item) => (
                 <div key={item} className="flex items-start gap-3">
 
-                  <div className="text-brand-600 mt-1">
+                  <div className="text-hp-primary mt-1">
                     <Check size={14} />
                   </div>
 
-                  <span className="text-sm text-[#3d3d3d] leading-relaxed">
+                  <span className="text-sm text-charcoal leading-relaxed">
                     {item}
                   </span>
 
@@ -72,7 +72,7 @@ export const BenefitsSection = () => {
 
             </div>
 
-            <div className="rounded-2xl border border-[#e8e8e8] overflow-hidden">
+            <div className="rounded-[16px] border border-fog dark:border-charcoal overflow-hidden">
               <img
                 src={customerApp}
                 alt="Customer app preview"
@@ -83,9 +83,9 @@ export const BenefitsSection = () => {
           </div>
 
           {/* SHOP */}
-          <div className="bg-white border border-[#e8e8e8] rounded-2xl p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)]">
+          <div className="bg-canvas border border-fog dark:border-charcoal rounded-[16px] p-8 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
 
-            <h3 className="text-lg font-medium text-[#1a1a1a] mb-6">
+            <h3 className="text-lg font-medium text-ink mb-6">
               For Print Shops
             </h3>
 
@@ -94,11 +94,11 @@ export const BenefitsSection = () => {
               {shopBenefits.map((item) => (
                 <div key={item} className="flex items-start gap-3">
 
-                  <div className="text-brand-600 mt-1">
+                  <div className="text-hp-primary mt-1">
                     <Check size={14} />
                   </div>
 
-                  <span className="text-sm text-[#3d3d3d] leading-relaxed">
+                  <span className="text-sm text-charcoal leading-relaxed">
                     {item}
                   </span>
 
@@ -107,7 +107,7 @@ export const BenefitsSection = () => {
 
             </div>
 
-            <div className="rounded-2xl border border-[#e8e8e8] overflow-hidden">
+            <div className="rounded-[16px] border border-fog dark:border-charcoal overflow-hidden">
               <img
                 src={shopOwner}
                 alt="Shop dashboard preview"

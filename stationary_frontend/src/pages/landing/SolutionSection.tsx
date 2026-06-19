@@ -31,7 +31,7 @@ export const SolutionSection = () => {
   ];
 
   return (
-    <section id="solution" className="bg-[#ffffff] py-20 lg:py-[80px]">
+    <section id="solution" className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
 
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
@@ -39,15 +39,15 @@ export const SolutionSection = () => {
           {/* LEFT CONTENT */}
           <div>
 
-            <div className="text-sm font-semibold uppercase tracking-[0.7px] text-brand-600 mb-4">
+            <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
               The Solution
             </div>
 
-            <h2 className="text-[56px] font-medium leading-none text-[#1a1a1a] mb-6">
+            <h2 className="text-[56px] font-medium leading-none text-ink mb-6">
               A smarter way to handle every print job
             </h2>
 
-            <p className="text-lg text-[#3d3d3d] leading-relaxed mb-12 max-w-xl">
+            <p className="text-lg text-charcoal leading-relaxed mb-12 max-w-xl">
               We connect users needing reliable printing with professional shops,
               creating a faster and more transparent ordering process.
             </p>
@@ -65,23 +65,23 @@ export const SolutionSection = () => {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.08 }}
                     className="
-                      bg-white
+                      bg-canvas
                       border
-                      border-[#e8e8e8]
-                      rounded-2xl
+                      border-fog dark:border-charcoal
+                      rounded-[16px]
                       p-6
-                      shadow-[0_2px_8px_rgba(26,26,26,0.08)]
+                      shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
                     "
                   >
-                    <div className="mb-4 text-brand-600">
+                    <div className="mb-4 text-hp-primary">
                       <Icon size={22} />
                     </div>
 
-                    <h3 className="text-lg font-medium text-[#1a1a1a] mb-2">
+                    <h3 className="text-lg font-medium text-ink mb-2">
                       {item.title}
                     </h3>
 
-                    <p className="text-sm text-[#3d3d3d] leading-relaxed">
+                    <p className="text-sm text-charcoal leading-relaxed">
                       {item.description}
                     </p>
                   </motion.div>
@@ -94,12 +94,12 @@ export const SolutionSection = () => {
           <div className="relative">
 
             {/* HP-style chevron-safe frame */}
-            <div className="rounded-2xl border border-[#e8e8e8] bg-white p-4 shadow-[0_2px_8px_rgba(26,26,26,0.08)]">
+            <div className="rounded-[16px] border border-fog dark:border-charcoal bg-canvas p-4 shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
 
               <img
                 src="/images/solution.png"
                 alt="Solution Dashboard"
-                className="w-full h-auto object-contain rounded-2xl"
+                className="w-full h-auto object-contain rounded-[16px]"
               />
 
             </div>

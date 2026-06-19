@@ -54,36 +54,36 @@ export const FeaturesSection = () => {
   const features = activeTab === 'customer' ? customerFeatures : shopFeatures;
 
   return (
-    <section className="bg-[#ffffff] py-20 lg:py-[80px]">
+    <section className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
 
         {/* HEADER */}
         <div className="text-center max-w-3xl mx-auto mb-16">
 
-          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-brand-600 mb-4">
+          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
             Core ecosystem
           </div>
 
-          <h2 className="text-[56px] font-medium leading-none text-[#1a1a1a] mb-6">
+          <h2 className="text-[56px] font-medium leading-none text-ink mb-6">
             Features built for scale
           </h2>
 
-          <p className="text-lg text-[#3d3d3d] leading-relaxed">
+          <p className="text-lg text-charcoal leading-relaxed">
             A unified platform connecting users and print shops through a single workflow system.
           </p>
 
           {/* SIMPLE TABS (NO ANIMATION) */}
           <div className="flex justify-center mt-10">
 
-            <div className="inline-flex border border-[#e8e8e8] rounded-full overflow-hidden">
+            <div className="inline-flex border border-fog dark:border-charcoal rounded-full overflow-hidden">
 
               <button
                 onClick={() => setActiveTab('customer')}
                 className={`
                   px-6 py-2 text-sm font-medium
                   ${activeTab === 'customer'
-                    ? 'bg-[#1a1a1a] text-white'
-                    : 'bg-white text-[#3d3d3d]'
+                    ? 'bg-ink text-canvas'
+                    : 'bg-canvas text-charcoal'
                   }
                 `}
               >
@@ -93,10 +93,10 @@ export const FeaturesSection = () => {
               <button
                 onClick={() => setActiveTab('shop')}
                 className={`
-                  px-6 py-2 text-sm font-medium border-l border-[#e8e8e8]
+                  px-6 py-2 text-sm font-medium border-l border-fog dark:border-charcoal
                   ${activeTab === 'shop'
-                    ? 'bg-[#1a1a1a] text-white'
-                    : 'bg-white text-[#3d3d3d]'
+                    ? 'bg-ink text-canvas'
+                    : 'bg-canvas text-charcoal'
                   }
                 `}
               >
@@ -119,24 +119,24 @@ export const FeaturesSection = () => {
               <div
                 key={item.title}
                 className="
-                  bg-white
+                  bg-canvas
                   border
-                  border-[#e8e8e8]
-                  rounded-2xl
+                  border-fog dark:border-charcoal
+                  rounded-[16px]
                   p-8
-                  shadow-[0_2px_8px_rgba(26,26,26,0.08)]
+                  shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
                 "
               >
 
-                <div className="text-brand-600 mb-6">
+                <div className="text-hp-primary mb-6">
                   <Icon size={22} />
                 </div>
 
-                <h3 className="text-lg font-medium text-[#1a1a1a] mb-2">
+                <h3 className="text-lg font-medium text-ink mb-2">
                   {item.title}
                 </h3>
 
-                <p className="text-sm text-[#3d3d3d] leading-relaxed">
+                <p className="text-sm text-charcoal leading-relaxed">
                   {item.description}
                 </p>
 

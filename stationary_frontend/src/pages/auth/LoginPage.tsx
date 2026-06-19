@@ -20,14 +20,14 @@ export const LoginPage = () => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-12 sm:px-6 lg:px-8">
-            <Card className="w-full max-w-md shadow-2xl border-0 bg-gray-800/90 backdrop-blur-sm">
+        <div className="flex min-h-screen items-center justify-center bg-canvas transition-colors duration-300 px-4 py-12 sm:px-6 lg:px-8">
+            <Card className="w-full max-w-md shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)] border border-fog dark:border-charcoal bg-canvas rounded-[16px]">
                 <CardHeader className="space-y-4 text-center">
                     {/* Logo */}
                     <div className="flex justify-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 shadow-lg">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-[16px] bg-hp-primary shadow-[0_2px_8px_rgba(26,26,26,0.08)]">
                             <svg
-                                className="h-8 w-8 text-white"
+                                className="h-8 w-8 text-canvas"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -36,17 +36,17 @@ export const LoginPage = () => {
                             </svg>
                         </div>
                     </div>
-                    <CardTitle className="text-2xl font-bold tracking-tight text-white">
+                    <CardTitle className="text-2xl font-medium tracking-tight text-ink">
                         Welcome Back
                     </CardTitle>
-                    <CardDescription className="text-gray-400">
+                    <CardDescription className="text-charcoal">
                         Enter your email to sign in to your account
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <CardContent className="grid gap-4">
                         {error && (
-                            <div className="bg-red-900/50 text-red-400 p-3 rounded-md text-sm font-medium border border-red-700/50 animate-in fade-in slide-in-from-top-1">
+                            <div className="bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-400 p-3 rounded-md text-sm font-medium border border-red-200 dark:border-red-700/50 animate-in fade-in slide-in-from-top-1">
                                 {error}
                             </div>
                         )}
@@ -79,12 +79,12 @@ export const LoginPage = () => {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-4">
-                        <Button className="w-full bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20 shadow-lg transition-all duration-200" type="submit" isLoading={isLoading}>
+                        <Button className="w-full bg-hp-primary hover:bg-hp-primary/90 text-canvas rounded-[4px] uppercase tracking-[0.7px] font-semibold transition-all duration-200" type="submit" isLoading={isLoading}>
                             Sign In
                         </Button>
-                        <p className="text-center text-sm text-gray-400">
+                        <p className="text-center text-sm text-charcoal">
                             Don't have an account?{' '}
-                            <Link to="/register" className="font-semibold text-brand-400 hover:text-brand-300 hover:underline transition-all">
+                            <Link to="/register" className="font-semibold text-hp-primary hover:underline transition-all">
                                 Sign up
                             </Link>
                         </p>

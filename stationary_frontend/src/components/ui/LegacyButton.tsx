@@ -17,11 +17,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, variant = 'primary', size = 'md', isLoading, disabled, children, ...props }, ref) => {
 
         const variants = {
-            primary: 'bg-brand-600 text-white hover:bg-brand-700 shadow-sm focus-visible:ring-brand-500',
-            secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200/80 shadow-sm focus-visible:ring-slate-500',
-            outline: 'border border-slate-200 bg-transparent hover:bg-slate-100 text-slate-900 focus-visible:ring-slate-500',
-            ghost: 'hover:bg-slate-100 hover:text-slate-900 text-slate-600 focus-visible:ring-slate-500',
-            danger: 'bg-red-500 text-white hover:bg-red-600 shadow-sm focus-visible:ring-red-500',
+            primary: 'bg-hp-primary text-canvas hover:bg-hp-primary/90 shadow-[0_2px_8px_rgba(26,26,26,0.08)] focus-visible:ring-hp-primary',
+            secondary: 'bg-cloud text-ink hover:bg-fog shadow-[0_2px_8px_rgba(26,26,26,0.08)] focus-visible:ring-fog',
+            outline: 'border border-fog dark:border-charcoal bg-transparent hover:bg-cloud text-ink focus-visible:ring-fog',
+            ghost: 'hover:bg-cloud hover:text-ink text-charcoal focus-visible:ring-fog',
+            danger: 'bg-red-500 text-canvas hover:bg-red-600 shadow-[0_2px_8px_rgba(26,26,26,0.08)] focus-visible:ring-red-500',
         };
 
         const sizes = {
@@ -36,7 +36,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 ref={ref}
                 disabled={isLoading || disabled}
                 className={cn(
-                    'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+                    'inline-flex items-center justify-center rounded-[4px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-50',
                     variants[variant],
                     sizes[size],
                     className

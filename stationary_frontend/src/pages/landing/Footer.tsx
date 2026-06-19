@@ -35,19 +35,19 @@ export const Footer = () => {
     ];
 
     return (
-        <footer className="bg-slate-900 dark:bg-gray-100 pt-24 pb-12 text-slate-400 dark:text-gray-600">
+        <footer className="bg-ink pt-24 pb-12 text-cloud transition-colors duration-300">
             <div className="section-container">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 mb-24">
                     <div className="lg:col-span-2">
                         <Link to="/" className="flex items-center gap-3 mb-10 group">
-                            <div className="bg-brand-600 p-2.5 rounded-xl text-white group-hover:scale-110 transition-transform">
+                            <div className="bg-hp-primary p-2.5 rounded text-canvas group-hover:scale-110 transition-transform">
                                 <Printer size={28} />
                             </div>
-                            <span className="text-2xl font-black tracking-tighter text-white dark:text-gray-900 uppercase">
-                                Sationary<span className="text-brand-500 dark:text-brand-600">.</span>
+                            <span className="text-2xl font-medium tracking-tight text-canvas uppercase">
+                                Sationary<span className="text-hp-primary">.</span>
                             </span>
                         </Link>
-                        <p className="text-slate-400 dark:text-gray-600 font-semibold mb-10 max-w-sm leading-relaxed">
+                        <p className="text-cloud font-normal mb-10 max-w-sm leading-relaxed">
                             The professional cloud-printing marketplace connecting modern individuals
                             with premium local production facilities.
                         </p>
@@ -61,7 +61,7 @@ export const Footer = () => {
                                 <a
                                     key={i}
                                     href={social.href}
-                                    className="bg-slate-800 dark:bg-gray-200 hover:bg-brand-600 p-3 rounded-xl text-white dark:text-gray-900 transition-all transform hover:-translate-y-1 shadow-lg"
+                                    className="bg-ink-soft hover:bg-hp-primary p-3 rounded text-canvas transition-all transform hover:-translate-y-1 shadow-sm"
                                 >
                                     {social.icon}
                                 </a>
@@ -71,13 +71,13 @@ export const Footer = () => {
 
                     {footerLinks.map((section) => (
                         <div key={section.title}>
-                            <h4 className="text-white dark:text-gray-900 font-black uppercase text-xs tracking-[0.2em] mb-8">{section.title}</h4>
+                            <h4 className="text-canvas font-medium uppercase text-xs tracking-[0.2em] mb-8">{section.title}</h4>
                             <ul className="space-y-4">
                                 {section.links.map((link) => (
                                     <li key={link.name}>
                                         <a
                                             href={link.href}
-                                            className="text-slate-400 dark:text-gray-600 hover:text-white dark:hover:text-gray-900 transition-colors text-sm font-bold tracking-tight"
+                                            className="text-cloud hover:text-canvas transition-colors text-sm font-normal"
                                         >
                                             {link.name}
                                         </a>
@@ -88,12 +88,12 @@ export const Footer = () => {
                     ))}
                 </div>
 
-                <div className="border-t border-slate-800 dark:border-gray-300 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-gray-600">
+                <div className="border-t border-ink-soft pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[12px] font-normal uppercase text-steel">
                     <p>© {currentYear} SATIONARY INC. ALL RIGHTS RESERVED.</p>
                     <div className="flex gap-10">
-                        <a href="#" className="hover:text-white dark:hover:text-gray-900 transition-colors">Privacy</a>
-                        <a href="#" className="hover:text-white dark:hover:text-gray-900 transition-colors">Terms</a>
-                        <a href="#" className="hover:text-white dark:hover:text-gray-900 transition-colors">Security</a>
+                        <a href="#" className="hover:text-canvas transition-colors">Privacy</a>
+                        <a href="#" className="hover:text-canvas transition-colors">Terms</a>
+                        <a href="#" className="hover:text-canvas transition-colors">Security</a>
                     </div>
                 </div>
             </div>

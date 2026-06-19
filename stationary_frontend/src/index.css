@@ -72,6 +72,19 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* HP Design System */
+    --canvas: 255 255 255;
+    --paper: 255 255 255;
+    --cloud: 247 247 247;
+    --fog: 232 232 232;
+    --steel: 194 194 194;
+    --graphite: 99 99 99;
+    --charcoal: 61 61 61;
+    --ink-soft: 41 41 41;
+    --ink: 26 26 26;
+    --ink-deep: 0 0 0;
+    --hp-primary: 2 74 216;
   }
 
   * {
@@ -146,7 +159,21 @@
     --success: #34d399;
     --warning: #fbbf24;
     --error: #f87171;
+    --error: #f87171;
     --info: #60a5fa;
+
+    /* HP Design System Dark Mode */
+    --canvas: 26 26 26;
+    --paper: 41 41 41;
+    --cloud: 0 0 0;
+    --fog: 41 41 41;
+    --steel: 99 99 99;
+    --graphite: 194 194 194;
+    --charcoal: 232 232 232;
+    --ink-soft: 247 247 247;
+    --ink: 255 255 255;
+    --ink-deep: 255 255 255;
+    --hp-primary: 41 110 249;
   }
 }
 

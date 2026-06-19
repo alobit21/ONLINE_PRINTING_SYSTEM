@@ -36,21 +36,21 @@ export const HowItWorks = () => {
   ];
 
   return (
-    <section className="bg-[#ffffff] py-20 lg:py-[80px]">
+    <section className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
 
         {/* Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
 
-          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-brand-600 mb-4">
+          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
             The Process
           </div>
 
-          <h2 className="text-[56px] font-medium leading-none text-[#1a1a1a] mb-6">
+          <h2 className="text-[56px] font-medium leading-none text-ink mb-6">
             Simple workflow from upload to collection
           </h2>
 
-          <p className="text-lg text-[#3d3d3d] leading-relaxed">
+          <p className="text-lg text-charcoal leading-relaxed">
             A streamlined 6-step process that connects your documents
             directly to professional print shops near you.
           </p>
@@ -67,32 +67,32 @@ export const HowItWorks = () => {
               <div
                 key={step.title}
                 className="
-                  bg-white
+                  bg-canvas
                   border
-                  border-[#e8e8e8]
-                  rounded-2xl
+                  border-fog dark:border-charcoal
+                  rounded-[16px]
                   p-8
-                  shadow-[0_2px_8px_rgba(26,26,26,0.08)]
+                  shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
                 "
               >
 
                 {/* Step number (subtle, not decorative UI) */}
-                <div className="text-sm text-[#636363] mb-4">
+                <div className="text-sm text-graphite mb-4">
                   Step {index + 1}
                 </div>
 
                 {/* Icon */}
-                <div className="mb-4 text-brand-600">
+                <div className="mb-4 text-hp-primary">
                   <Icon size={22} />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg font-medium text-[#1a1a1a] mb-2">
+                <h3 className="text-lg font-medium text-ink mb-2">
                   {step.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-[#3d3d3d] leading-relaxed">
+                <p className="text-sm text-charcoal leading-relaxed">
                   {step.description}
                 </p>
 

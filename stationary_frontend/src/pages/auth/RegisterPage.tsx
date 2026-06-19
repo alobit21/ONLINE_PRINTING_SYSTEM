@@ -19,18 +19,17 @@ export const RegisterPage = () => {
     const onSubmit = (data: RegisterInput) => registerUser(data);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-950 dark:bg-gray-50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-canvas transition-colors duration-300 px-4">
 
             {/* subtle background glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_60%)] pointer-events-none" />
 
-            <Card className="relative w-full max-w-md bg-gray-900/80 dark:bg-white/80 backdrop-blur-xl border border-gray-800/50 dark:border-gray-200/50 shadow-2xl rounded-3xl">
+            <Card className="relative w-full max-w-md bg-canvas border border-fog dark:border-charcoal shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)] rounded-[16px]">
 
                 <CardHeader className="text-center space-y-2">
-                    <CardTitle className="text-3xl font-black text-white dark:text-gray-900">
+                    <CardTitle className="text-3xl font-medium text-ink">
                         Create Account
                     </CardTitle>
-                    <CardDescription className="text-gray-400 dark:text-gray-600">
+                    <CardDescription className="text-charcoal">
                         Join the smart printing marketplace
                     </CardDescription>
                 </CardHeader>
@@ -40,7 +39,7 @@ export const RegisterPage = () => {
 
                         {/* error */}
                         {error && (
-                            <div className="p-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
+                            <div className="p-3 rounded-md border border-red-200 dark:border-red-700/50 bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-400 text-sm">
                                 {error}
                             </div>
                         )}
@@ -67,22 +66,22 @@ export const RegisterPage = () => {
 
                         {/* role selection */}
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-300 dark:text-gray-700">
+                            <label className="text-sm font-medium text-ink">
                                 Join as
                             </label>
 
                             <div className="grid grid-cols-2 gap-3">
 
-                                <label className="cursor-pointer p-4 rounded-2xl border border-gray-700 dark:border-gray-300 bg-gray-800/60 dark:bg-white/60 hover:scale-[1.02] transition group has-[:checked]:border-brand-600 has-[:checked]:bg-brand-600/10">
+                                <label className="cursor-pointer p-4 rounded-[16px] border border-fog dark:border-charcoal bg-cloud hover:scale-[1.02] transition group has-[:checked]:border-hp-primary has-[:checked]:bg-hp-primary/10">
                                     <input type="radio" value="CUSTOMER" {...register("role")} className="hidden" />
-                                    <div className="text-sm font-bold text-white dark:text-gray-900 group-has-[:checked]:text-brand-500">
+                                    <div className="text-sm font-medium text-ink group-has-[:checked]:text-hp-primary">
                                         Customer
                                     </div>
                                 </label>
 
-                                <label className="cursor-pointer p-4 rounded-2xl border border-gray-700 dark:border-gray-300 bg-gray-800/60 dark:bg-white/60 hover:scale-[1.02] transition group has-[:checked]:border-brand-600 has-[:checked]:bg-brand-600/10">
+                                <label className="cursor-pointer p-4 rounded-[16px] border border-fog dark:border-charcoal bg-cloud hover:scale-[1.02] transition group has-[:checked]:border-hp-primary has-[:checked]:bg-hp-primary/10">
                                     <input type="radio" value="SHOP_OWNER" {...register("role")} className="hidden" />
-                                    <div className="text-sm font-bold text-white dark:text-gray-900 group-has-[:checked]:text-brand-500">
+                                    <div className="text-sm font-medium text-ink group-has-[:checked]:text-hp-primary">
                                         Shop Owner
                                     </div>
                                 </label>
@@ -105,14 +104,14 @@ export const RegisterPage = () => {
                         <Button
                             type="submit"
                             isLoading={isLoading}
-                            className="w-full bg-brand-600 hover:bg-brand-700 text-white rounded-2xl py-3 font-bold transition active:scale-[0.98]"
+                            className="w-full bg-hp-primary hover:bg-hp-primary/90 text-canvas rounded-[4px] uppercase tracking-[0.7px] py-3 font-semibold transition active:scale-[0.98]"
                         >
                             Create Account
                         </Button>
 
-                        <p className="text-sm text-center text-gray-400 dark:text-gray-600">
+                        <p className="text-sm text-center text-charcoal">
                             Already have an account?{' '}
-                            <Link className="text-brand-500 font-semibold hover:underline" to="/login">
+                            <Link className="text-hp-primary font-semibold hover:underline" to="/login">
                                 Sign in
                             </Link>
                         </p>

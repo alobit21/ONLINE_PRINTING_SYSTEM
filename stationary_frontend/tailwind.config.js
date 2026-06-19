@@ -59,6 +59,21 @@ export default {
     				'3': 'hsl(var(--chart-3))',
     				'4': 'hsl(var(--chart-4))',
     				'5': 'hsl(var(--chart-5))'
+    			},
+    			canvas: 'rgb(var(--canvas) / <alpha-value>)',
+    			paper: 'rgb(var(--paper) / <alpha-value>)',
+    			cloud: 'rgb(var(--cloud) / <alpha-value>)',
+    			fog: 'rgb(var(--fog) / <alpha-value>)',
+    			steel: 'rgb(var(--steel) / <alpha-value>)',
+    			graphite: 'rgb(var(--graphite) / <alpha-value>)',
+    			charcoal: 'rgb(var(--charcoal) / <alpha-value>)',
+    			ink: {
+    				DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+    				soft: 'rgb(var(--ink-soft) / <alpha-value>)',
+    				deep: 'rgb(var(--ink-deep) / <alpha-value>)'
+    			},
+    			hp: {
+    				primary: 'rgb(var(--hp-primary) / <alpha-value>)'
     			}
     		},
     		fontFamily: {

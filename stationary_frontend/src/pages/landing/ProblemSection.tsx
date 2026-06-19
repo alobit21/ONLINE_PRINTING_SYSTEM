@@ -31,13 +31,13 @@ export const ProblemSection = () => {
   return (
     <section
       id="challenges"
-      className="bg-[#f7f7f7] py-20 lg:py-[80px]"
+      className="bg-cloud py-20 lg:py-[80px] transition-colors duration-300"
     >
       <div className="section-container">
 
         {/* Heading */}
         <div className="max-w-4xl mb-16">
-          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-brand-600 mb-4">
+          <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
             Customer Challenges
           </div>
 
@@ -48,7 +48,7 @@ export const ProblemSection = () => {
               lg:text-[56px]
               font-medium
               leading-none
-              text-[#1a1a1a]
+              text-ink
               mb-6
             "
           >
@@ -59,7 +59,7 @@ export const ProblemSection = () => {
             className="
               text-lg
               leading-relaxed
-              text-[#3d3d3d]
+              text-charcoal
               max-w-3xl
             "
           >
@@ -84,12 +84,12 @@ export const ProblemSection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
                 className="
-                  bg-white
+                  bg-canvas
                   rounded-2xl
                   border
-                  border-[#e8e8e8]
+                  border-fog dark:border-charcoal
                   p-8
-                  shadow-[0_2px_8px_rgba(26,26,26,0.08)]
+                  shadow-[0_2px_8px_rgba(26,26,26,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.5)]
                 "
               >
                 <div
@@ -101,13 +101,13 @@ export const ProblemSection = () => {
                     items-center
                     justify-center
                     border
-                    border-[#e8e8e8]
+                    border-fog dark:border-charcoal
                     mb-6
                   "
                 >
                   <Icon
                     size={24}
-                    className="text-brand-600"
+                    className="text-hp-primary"
                   />
                 </div>
 
@@ -115,7 +115,7 @@ export const ProblemSection = () => {
                   className="
                     text-2xl
                     font-medium
-                    text-[#1a1a1a]
+                    text-ink
                     mb-4
                   "
                 >
@@ -126,7 +126,7 @@ export const ProblemSection = () => {
                   className="
                     text-base
                     leading-relaxed
-                    text-[#3d3d3d]
+                    text-charcoal
                   "
                 >
                   {challenge.description}

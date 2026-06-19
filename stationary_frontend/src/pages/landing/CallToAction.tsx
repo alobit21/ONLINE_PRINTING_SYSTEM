@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 export const CallToAction = () => {
   return (
-    <section className="bg-[#ffffff] py-20 lg:py-[80px]">
+    <section className="bg-canvas py-20 lg:py-[80px] transition-colors duration-300">
       <div className="section-container">
 
         {/* CTA BOX */}
-        <div className="bg-[#1a1a1a] text-white rounded-2xl p-16 lg:p-24 text-center">
+        <div className="bg-ink text-canvas rounded-[16px] p-16 lg:p-24 text-center">
 
           {/* Heading */}
           <h2 className="text-[56px] font-medium leading-none mb-6">
@@ -15,7 +15,7 @@ export const CallToAction = () => {
           </h2>
 
           {/* Subtext */}
-          <p className="text-lg text-[#cfcfcf] max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg text-cloud max-w-2xl mx-auto mb-12 leading-relaxed">
             Upload your documents, choose a print option, and connect instantly
             with verified print shops near you.
           </p>
@@ -26,8 +26,8 @@ export const CallToAction = () => {
             <Link
               to="/register"
               className="
-                bg-[#024ad8]
-                text-white
+                bg-hp-primary hover:bg-hp-primary/90
+                text-canvas
                 px-10 py-4
                 rounded-md
                 text-sm font-medium uppercase tracking-[0.7px]
@@ -42,8 +42,8 @@ export const CallToAction = () => {
             <Link
               to="/register?role=shop"
               className="
-                border border-white
-                text-white
+                border border-canvas hover:bg-canvas/10
+                text-canvas
                 px-10 py-4
                 rounded-md
                 text-sm font-medium uppercase tracking-[0.7px]
@@ -55,7 +55,7 @@ export const CallToAction = () => {
           </div>
 
           {/* TRUST LINE */}
-          <div className="mt-12 text-xs text-[#9a9a9a] uppercase tracking-[0.7px]">
+          <div className="mt-12 text-xs text-steel uppercase tracking-[0.7px]">
             Secure upload · Verified print partners · Real-time order tracking
           </div>
 
