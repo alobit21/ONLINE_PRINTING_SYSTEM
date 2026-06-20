@@ -63,10 +63,14 @@ export const HowItWorks = () => {
           {steps.map((step, index) => {
             const Icon = step.icon;
 
+            const alignmentClass = index % 2 === 0 
+                ? "items-start text-left" 
+                : "items-end text-right sm:items-start sm:text-left";
+
             return (
               <div
                 key={step.title}
-                className="flex flex-col relative"
+                className={`flex flex-col relative ${alignmentClass}`}
               >
                 
                 {/* Responsive connecting arrows */}
