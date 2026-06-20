@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Printer, ShoppingBag, Search, Menu } from 'lucide-react';
+import { Printer, ShoppingBag, Search, Menu, X } from 'lucide-react';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 
 export const LandingHeader = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-canvas border-b border-fog transition-colors duration-300">
             {/* Utility Strip */}
@@ -53,11 +56,59 @@ export const LandingHeader = () => {
                         <span className="hidden sm:inline">START PRINTING</span>
                         <span className="sm:hidden">PRINT</span>
                     </Link>
-                    <button className="md:hidden text-ink p-1">
-                        <Menu size={24} />
+                    <button 
+                        className="md:hidden text-ink p-1 hover:bg-cloud rounded-md transition-colors"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                 </div>
             </div>
+
+            {/* Mobile Dropdown Menu */}
+            {isMenuOpen && (
+                <div className="md:hidden bg-canvas border-b border-fog shadow-lg animate-fade-in absolute w-full left-0 top-[64px]">
+                    <nav className="flex flex-col py-4 px-6 gap-4">
+                        <Link 
+                            to="/checkout" 
+                            className="text-base font-medium text-ink hover:text-hp-primary transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Upload & Print
+                        </Link>
+                        <a 
+                            href="/#pricing" 
+                            className="text-base font-medium text-charcoal hover:text-ink transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Pricing
+                        </a>
+                        <a 
+                            href="/#how-it-works" 
+                            className="text-base font-medium text-charcoal hover:text-ink transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            How It Works
+                        </a>
+                        <Link 
+                            to="/track" 
+                            className="text-base font-medium text-charcoal hover:text-ink transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Track Order
+                        </Link>
+                        <div className="h-[1px] w-full bg-fog my-2"></div>
+                        <Link 
+                            to="/login" 
+                            className="text-base font-medium text-charcoal hover:text-ink transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Sign in
+                        </Link>
+                    </nav>
+                </div>
+            )}
         </header>
     );
 };
