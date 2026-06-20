@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Home } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useCustomerStore } from '../../../stores/customerStore';
 import type { WorkflowStep } from '../../../stores/customerStore';
 import { GuestPrintUploadFlow } from '../upload/components/GuestPrintUploadFlow';
@@ -48,6 +49,48 @@ export const GuestWorkflowManager = () => {
         return stepFlow.indexOf(currentStep as WorkflowStep) + 1;
     };
 
+    const renderBreadcrumbs = () => {
+        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'optimize', 'shop', 'checkout'];
+        const stepLabels: Record<string, string> = {
+            'upload': 'Upload',
+            'analysis': 'Analysis',
+            'optimize': 'Configuration',
+            'shop': 'Shop Selection',
+            'checkout': 'Payment'
+        };
+
+        const currentIndex = stepFlow.indexOf(currentStep as WorkflowStep);
+        const visibleSteps = stepFlow.slice(0, currentIndex + 1);
+
+        return (
+            <div className="flex items-center gap-2 text-sm text-steel mb-6 pb-4 border-b border-fog/50 max-w-5xl mx-auto px-4 w-full overflow-x-auto whitespace-nowrap">
+                {visibleSteps.map((step, index) => {
+                    const isLast = index === visibleSteps.length - 1;
+                    const label = stepLabels[step];
+                    
+                    return (
+                        <div key={step} className="flex items-center gap-2">
+                            {index > 0 && <ChevronRight className="w-3.5 h-3.5 opacity-50 flex-shrink-0" />}
+                            {isLast ? (
+                                <span className="text-hp-primary font-medium bg-cloud px-2 py-0.5 rounded-[4px] text-xs uppercase tracking-[0.5px]">
+                                    {label}
+                                </span>
+                            ) : (
+                                <button
+                                    onClick={() => setCurrentStep(step)}
+                                    className="hover:text-hp-primary transition-colors text-charcoal flex items-center gap-1.5"
+                                >
+                                    {index === 0 && <Home className="w-3.5 h-3.5" />}
+                                    <span className="font-medium">{label}</span>
+                                </button>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
     const renderStep = () => {
         console.log("renderStep called with currentStep:", currentStep);
         
@@ -82,7 +125,7 @@ export const GuestWorkflowManager = () => {
                                         className="px-4 py-2 text-charcoal hover:text-ink flex items-center gap-2 transition-colors"
                                     >
                                         <ArrowLeft className="w-4 h-4" />
-                                        Back to Upload
+                                        Back to Analysis
                                     </button>
                                     <button 
                                         onClick={() => setCurrentStep('shop')}
@@ -98,34 +141,12 @@ export const GuestWorkflowManager = () => {
             case 'shop':
                 return (
                     <div className="max-w-5xl mx-auto p-4 min-h-screen">
-                        <div className="flex items-center justify-between mb-6">
-                            <OrderProgress currentStep={4} />
-                            <button
-                                onClick={goBack}
-                                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 flex items-center gap-2 transition-colors"
-                            >
-                                <ArrowLeft className="w-4 h-4" />
-                                Back to Configuration
-                            </button>
-                        </div>
                         <GuestShopSelection />
                     </div>
                 );
             case 'checkout':
                 return (
                     <div className="min-h-screen">
-                        <div className="max-w-5xl mx-auto p-4">
-                            <div className="flex items-center justify-between mb-6">
-                                <div></div> {/* Empty div for spacing */}
-                                <button
-                                    onClick={goBack}
-                                    className="px-4 py-2 text-charcoal hover:text-ink flex items-center gap-2 transition-colors"
-                                >
-                                    <ArrowLeft className="w-4 h-4" />
-                                    Back to Shop Selection
-                                </button>
-                            </div>
-                        </div>
                         <GuestCheckoutForm />
                     </div>
                 );
@@ -145,6 +166,7 @@ export const GuestWorkflowManager = () => {
             
             {/* Main Content with padding to account for the 100px fixed header */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[120px] pb-8">
+                {renderBreadcrumbs()}
                 {renderStep()}
             </div>
         </div>

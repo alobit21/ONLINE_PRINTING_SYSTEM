@@ -284,14 +284,14 @@ export const GuestPrintUploadFlow = () => {
               
               // Update the global customer store step
               const { setCurrentStep: setGlobalStep } = useCustomerStore.getState();
-              console.log("Setting global step to 'optimize'");
-              setGlobalStep('optimize');
+              console.log("Setting global step to 'analysis'");
+              setGlobalStep('analysis');
               
               console.log("Global step updated");
             }}
             className="bg-hp-primary text-canvas hover:bg-hp-primary/90 px-6 py-3 rounded-[4px] font-semibold transition-colors tracking-[0.7px]"
           >
-            Continue to Configuration
+            Continue to Analysis
           </button>
         </div>
       )}

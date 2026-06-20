@@ -1,5 +1,5 @@
 import { useCustomerStore } from '../../../../stores/customerStore';
-import { FileText, Layers, Maximize, Compass, Zap, BarChart, ArrowRight } from 'lucide-react';
+import { FileText, Layers, Maximize, Compass, Zap, BarChart, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const DocumentAnalyzer = () => {
     const { files, setCurrentStep } = useCustomerStore();
@@ -70,10 +70,17 @@ export const DocumentAnalyzer = () => {
             )}
 
             {readyFiles.length > 0 && (
-                <div className="flex justify-center mt-8">
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                    <button
+                        onClick={() => setCurrentStep('upload')}
+                        className="px-6 py-3 text-charcoal hover:text-ink font-semibold transition-colors flex items-center justify-center gap-2 tracking-[0.7px]"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to Upload
+                    </button>
                     <button
                         onClick={handleContinue}
-                        className="bg-hp-primary hover:bg-hp-primary/90 text-canvas px-6 py-3 rounded-[4px] font-semibold transition-colors flex items-center gap-2 tracking-[0.7px]"
+                        className="bg-hp-primary hover:bg-hp-primary/90 text-canvas px-6 py-3 rounded-[4px] font-semibold transition-colors flex items-center justify-center gap-2 tracking-[0.7px]"
                     >
                         Continue to Configuration
                         <ArrowRight className="w-4 h-4" />
