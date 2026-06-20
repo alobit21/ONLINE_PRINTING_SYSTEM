@@ -30,7 +30,7 @@ export const CallToAction = () => {
             
             {/* Kicker / Subtitle */}
             <span className="text-[14px] font-medium text-white mb-4 tracking-[0.2px]">
-              Sationary Print Marketplace
+              Stationary Print Marketplace
             </span>
 
             {/* Headline */}

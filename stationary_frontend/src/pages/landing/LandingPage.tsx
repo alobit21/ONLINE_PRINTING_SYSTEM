@@ -12,16 +12,15 @@ import { Footer } from './Footer';
 
 export const LandingPage = () => {
     useEffect(() => {
-        document.title = "SATIONARY - Smart Online Printing Platform | Print Smarter, Faster, Closer";
 
         // Add meta description dynamically for SEO
         const metaDescription = document.querySelector('meta[name="description"]');
         if (metaDescription) {
-            metaDescription.setAttribute('content', 'Upload, analyze, and print your documents at the nearest shop. SATIONARY connects you with local print shops for fast, affordable, and high-quality printing.');
+            metaDescription.setAttribute('content', 'Upload, analyze, and print your documents at the nearest shop. STATIONARY connects you with local print shops for fast, affordable, and high-quality printing.');
         } else {
             const meta = document.createElement('meta');
             meta.name = "description";
-            meta.content = "Upload, analyze, and print your documents at the nearest shop. SATIONARY connects you with local print shops for fast, affordable, and high-quality printing.";
+            meta.content = "Upload, analyze, and print your documents at the nearest shop. STATIONARY connects you with local print shops for fast, affordable, and high-quality printing.";
             document.head.appendChild(meta);
         }
     }, []);

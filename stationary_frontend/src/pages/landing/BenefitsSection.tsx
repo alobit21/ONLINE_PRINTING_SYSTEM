@@ -30,7 +30,7 @@ export const BenefitsSection = () => {
         <div className="text-center max-w-3xl mx-auto mb-16">
 
           <div className="text-sm font-semibold uppercase tracking-[0.7px] text-hp-primary mb-4">
-            Why Sationary
+            Why Stationary
           </div>
 
           <h2 className="text-[56px] font-medium leading-none text-ink mb-6">

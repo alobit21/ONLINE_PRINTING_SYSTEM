@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ApolloProvider } from '@apollo/client/react';
 import { client } from './lib/apollo/client';
 import { LoginPage } from './pages/auth/LoginPage';
@@ -40,13 +41,45 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   return <Outlet />;
 };
 
+function PageTitleUpdater() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    let title = "STATIONARY - Smart Online Printing";
+
+    if (path === '/') {
+      title = "STATIONARY - Smart Online Printing Platform | Print Smarter, Faster, Closer";
+    } else if (path === '/login') {
+      title = "Login | STATIONARY";
+    } else if (path === '/register') {
+      title = "Register | STATIONARY";
+    } else if (path.startsWith('/checkout')) {
+      title = "Checkout | STATIONARY";
+    } else if (path.startsWith('/guest/orders')) {
+      title = "My Orders | STATIONARY";
+    } else if (path.startsWith('/dashboard/customer')) {
+      title = "Customer Dashboard | STATIONARY";
+    } else if (path.startsWith('/dashboard/shop')) {
+      title = "Shop Dashboard | STATIONARY";
+    } else if (path.startsWith('/admin')) {
+      const adminSubPath = path.replace('/admin', '');
+      const adminPageName = adminSubPath ? adminSubPath.replace('/', '').charAt(0).toUpperCase() + adminSubPath.replace('/', '').slice(1) : 'Dashboard';
+      title = `Admin ${adminPageName} | STATIONARY`;
+    }
+
+    document.title = title;
+  }, [location]);
+
+  return null;
+}
 
 function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
         <div className="min-h-screen bg-slate-50 dark:bg-gray-900 font-sans antialiased transition-colors duration-200">
-
+          <PageTitleUpdater />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />

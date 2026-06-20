@@ -44,7 +44,7 @@ export const Footer = () => {
                                 <Printer size={28} />
                             </div>
                             <span className="text-2xl font-medium tracking-tight text-ink uppercase">
-                                Sationary<span className="text-hp-primary">.</span>
+                                Stationary<span className="text-hp-primary">.</span>
                             </span>
                         </Link>
                         <p className="text-charcoal font-normal mb-10 max-w-sm leading-relaxed">
@@ -89,7 +89,7 @@ export const Footer = () => {
                 </div>
 
                 <div className="border-t border-fog dark:border-charcoal pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[12px] font-normal uppercase text-charcoal">
-                    <p>© {currentYear} SATIONARY INC. ALL RIGHTS RESERVED.</p>
+                    <p>© {currentYear} STATIONARY INC. ALL RIGHTS RESERVED.</p>
                     <div className="flex gap-10">
                         <a href="#" className="hover:text-hp-primary transition-colors">Privacy</a>
                         <a href="#" className="hover:text-hp-primary transition-colors">Terms</a>

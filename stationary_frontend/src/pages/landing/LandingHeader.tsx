@@ -29,7 +29,7 @@ export const LandingHeader = () => {
                         <Printer size={16} className="text-canvas" />
                     </div>
                     <Link to="/" className="font-semibold text-base text-ink tracking-tight">
-                        Sationary
+                        Stationary
                     </Link>
                 </div>
 
