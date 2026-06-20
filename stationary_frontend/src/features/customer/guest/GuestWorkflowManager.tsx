@@ -31,7 +31,7 @@ export const GuestWorkflowManager = () => {
 
     // Navigation helpers
     const goBack = () => {
-        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'optimize', 'shop', 'checkout'];
+        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'shop', 'checkout'];
         const currentIndex = stepFlow.indexOf(currentStep as WorkflowStep);
         if (currentIndex > 0) {
             setCurrentStep(stepFlow[currentIndex - 1]);
@@ -39,22 +39,21 @@ export const GuestWorkflowManager = () => {
     };
 
     const canGoBack = () => {
-        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'optimize', 'shop', 'checkout'];
+        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'shop', 'checkout'];
         const currentIndex = stepFlow.indexOf(currentStep as WorkflowStep);
         return currentIndex > 0;
     };
 
     const getStepNumber = () => {
-        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'optimize', 'shop', 'checkout'];
+        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'shop', 'checkout'];
         return stepFlow.indexOf(currentStep as WorkflowStep) + 1;
     };
 
     const renderBreadcrumbs = () => {
-        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'optimize', 'shop', 'checkout'];
+        const stepFlow: WorkflowStep[] = ['upload', 'analysis', 'shop', 'checkout'];
         const stepLabels: Record<string, string> = {
             'upload': 'Upload',
             'analysis': 'Analysis',
-            'optimize': 'Configuration',
             'shop': 'Shop Selection',
             'checkout': 'Payment'
         };
@@ -109,35 +108,7 @@ export const GuestWorkflowManager = () => {
                         <DocumentAnalyzer />
                     </div>
                 );
-            case 'optimize':
-                return (
-                    <div className="max-w-5xl mx-auto p-4 min-h-screen">
-                        <OrderProgress currentStep={3} />
-                        <div className="bg-cloud rounded-[16px] border border-fog p-8 text-center transition-colors duration-300">
-                            <h2 className="text-[24px] font-medium text-ink mb-4">Configuration</h2>
-                            <p className="text-charcoal mb-6">Configure your printing preferences</p>
-                            <div className="bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 p-4 rounded">
-                                <p className="text-green-800 dark:text-green-300">✅ Files uploaded successfully!</p>
-                                <p className="text-green-700 dark:text-green-400 mt-2">Ready to proceed to shop selection</p>
-                                <div className="flex flex-col sm:flex-row gap-3 mt-4 justify-center">
-                                    <button
-                                        onClick={goBack}
-                                        className="px-4 py-2 text-charcoal hover:text-ink flex items-center gap-2 transition-colors"
-                                    >
-                                        <ArrowLeft className="w-4 h-4" />
-                                        Back to Analysis
-                                    </button>
-                                    <button 
-                                        onClick={() => setCurrentStep('shop')}
-                                        className="bg-hp-primary text-canvas px-6 py-2 rounded-[4px] hover:bg-hp-primary/90 transition-colors duration-300 font-medium"
-                                    >
-                                        Continue to Shop Selection
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
+
             case 'shop':
                 return (
                     <div className="max-w-5xl mx-auto p-4 min-h-screen">

@@ -299,15 +299,26 @@ export const GuestPrintUploadFlow = () => {
 
       {/* Right side document preview panel */}
       {hasFiles && (
-        <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden flex flex-col min-h-[600px] sticky top-[140px] animate-fade-in">
+        <div className="bg-canvas border border-fog rounded-[16px] shadow-[0_2px_8px_rgba(26,26,26,0.08)] overflow-hidden flex flex-col sm:min-h-[600px] sticky top-[140px] animate-fade-in">
           <div className="bg-cloud border-b border-fog p-4 flex items-center justify-between">
             <h3 className="text-sm font-medium text-ink flex items-center gap-2">
               <FileText className="w-4 h-4 text-hp-primary" />
               Document Preview
             </h3>
-            <span className="text-[10px] font-bold bg-hp-primary text-canvas px-2 py-1 rounded-[4px] uppercase tracking-[0.7px]">Preview Mode</span>
+            {fileToPreview?.preview ? (
+              <a 
+                href={fileToPreview.preview}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[10px] font-bold bg-hp-primary hover:bg-hp-primary/90 transition-colors text-canvas px-3 py-1.5 rounded-[4px] uppercase tracking-[0.7px] cursor-pointer shadow-sm"
+              >
+                Preview Mode
+              </a>
+            ) : (
+              <span className="text-[10px] font-bold bg-hp-primary/50 text-canvas px-2 py-1 rounded-[4px] uppercase tracking-[0.7px]">Preview Mode</span>
+            )}
           </div>
-          <div className="flex-1 bg-fog/30 p-8 flex items-center justify-center relative">
+          <div className="hidden sm:flex flex-1 bg-fog/30 p-8 items-center justify-center relative">
             {fileToPreview ? (
               <div className="w-full h-full flex flex-col relative items-center justify-center">
                 {fileToPreview.preview ? (
@@ -315,13 +326,13 @@ export const GuestPrintUploadFlow = () => {
                     <img 
                       src={fileToPreview.preview} 
                       alt="Preview" 
-                      className="max-w-[90%] max-h-[500px] object-contain shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog"
+                      className="w-full max-w-full sm:max-w-[90%] max-h-[500px] object-contain shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog"
                     />
                   ) : fileToPreview.type === 'application/pdf' ? (
                     <object 
                       data={fileToPreview.preview} 
                       type="application/pdf" 
-                      className="w-full max-w-[90%] h-[500px] shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog flex items-center justify-center overflow-hidden"
+                      className="w-full max-w-full sm:max-w-[90%] h-[60vh] sm:h-[500px] shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog flex items-center justify-center overflow-hidden"
                     >
                       <div className="flex flex-col items-center justify-center w-full h-[500px] text-center p-8 bg-cloud">
                           <FileText className="w-16 h-16 text-hp-primary mb-4" />

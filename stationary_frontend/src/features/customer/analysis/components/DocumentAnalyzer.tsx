@@ -6,7 +6,7 @@ export const DocumentAnalyzer = () => {
     const readyFiles = files.filter(f => f.status === 'ready');
 
     const handleContinue = () => {
-        setCurrentStep('optimize');
+        setCurrentStep('shop');
     };
 
     return (
@@ -82,7 +82,7 @@ export const DocumentAnalyzer = () => {
                         onClick={handleContinue}
                         className="bg-hp-primary hover:bg-hp-primary/90 text-canvas px-6 py-3 rounded-[4px] font-semibold transition-colors flex items-center justify-center gap-2 tracking-[0.7px]"
                     >
-                        Continue to Configuration
+                        Continue to Shop Selection
                         <ArrowRight className="w-4 h-4" />
                     </button>
                 </div>
