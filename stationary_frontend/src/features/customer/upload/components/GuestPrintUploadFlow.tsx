@@ -178,7 +178,7 @@ export const GuestPrintUploadFlow = () => {
       <div className="space-y-8">
         {/* Upload Zone */}
       <div className="bg-canvas border-2 border-dashed border-fog hover:border-hp-primary rounded-[16px] transition-colors shadow-sm">
-        <div className="p-12 text-center">
+        <div className="p-6 sm:p-12 text-center">
           <div className="space-y-4">
             <div className="mx-auto w-16 h-16 bg-cloud rounded-full flex items-center justify-center">
               <Upload className="w-8 h-8 text-hp-primary" />

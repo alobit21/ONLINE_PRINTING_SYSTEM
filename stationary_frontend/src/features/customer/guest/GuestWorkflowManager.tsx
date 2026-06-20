@@ -62,7 +62,7 @@ export const GuestWorkflowManager = () => {
         const visibleSteps = stepFlow.slice(0, currentIndex + 1);
 
         return (
-            <div className="flex items-center gap-2 text-sm text-steel mb-6 pb-4 border-b border-fog/50 max-w-5xl mx-auto px-4 w-full overflow-x-auto whitespace-nowrap">
+            <div className="flex items-center gap-2 text-sm text-steel mb-2 sm:mb-6 pb-4 border-b border-fog/50 max-w-5xl mx-auto px-4 w-full overflow-x-auto whitespace-nowrap">
                 {visibleSteps.map((step, index) => {
                     const isLast = index === visibleSteps.length - 1;
                     const label = stepLabels[step];
@@ -96,14 +96,14 @@ export const GuestWorkflowManager = () => {
         switch (currentStep) {
             case 'upload':
                 return (
-                    <div className="max-w-5xl mx-auto p-4 min-h-screen">
+                    <div className="max-w-5xl mx-auto p-0 sm:p-4 min-h-screen">
                         <OrderProgress currentStep={1} />
                         <GuestPrintUploadFlow />
                     </div>
                 );
             case 'analysis':
                 return (
-                    <div className="max-w-5xl mx-auto p-4 min-h-screen">
+                    <div className="max-w-5xl mx-auto p-0 sm:p-4 min-h-screen">
                         <OrderProgress currentStep={2} />
                         <DocumentAnalyzer />
                     </div>
@@ -111,7 +111,7 @@ export const GuestWorkflowManager = () => {
 
             case 'shop':
                 return (
-                    <div className="max-w-5xl mx-auto p-4 min-h-screen">
+                    <div className="max-w-5xl mx-auto p-0 sm:p-4 min-h-screen">
                         <GuestShopSelection />
                     </div>
                 );
@@ -123,7 +123,7 @@ export const GuestWorkflowManager = () => {
                 );
             default:
                 return (
-                    <div className="max-w-5xl mx-auto p-4 min-h-screen">
+                    <div className="max-w-5xl mx-auto p-0 sm:p-4 min-h-screen">
                         <OrderProgress currentStep={1} />
                         <GuestPrintUploadFlow />
                     </div>
@@ -136,7 +136,7 @@ export const GuestWorkflowManager = () => {
             <LandingHeader />
             
             {/* Main Content with padding to account for the 100px fixed header */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[120px] pb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[120px] pb-8">
                 {renderBreadcrumbs()}
                 {renderStep()}
             </div>

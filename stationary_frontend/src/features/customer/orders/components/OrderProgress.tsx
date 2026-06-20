@@ -14,7 +14,7 @@ const steps = [
 
 export const OrderProgress: React.FC<OrderProgressProps> = ({ currentStep }) => {
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8">
+    <div className="w-full max-w-4xl mx-auto px-4 py-4 sm:py-8">
       
       {/* Track line */}
       <div className="relative flex justify-between items-center">
