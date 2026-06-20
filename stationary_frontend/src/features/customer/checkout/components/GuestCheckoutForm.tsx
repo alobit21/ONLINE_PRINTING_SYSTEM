@@ -121,7 +121,18 @@ export const GuestCheckoutForm = () => {
     const handlePaymentFailed = () => { console.error("Payment failed"); setShowPaymentTracker(false); };
 
     if (showPaymentTracker && paymentId) {
-        return <PaymentStatusTracker paymentId={paymentId} phoneNumber={phoneNumber} paymentMethod={paymentMethod} amount={total} onComplete={handlePaymentComplete} onPaymentFailed={handlePaymentFailed} />;
+        return (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 py-12 w-full animate-fade-in">
+                <PaymentStatusTracker 
+                    paymentId={paymentId} 
+                    phoneNumber={phoneNumber} 
+                    paymentMethod={paymentMethod} 
+                    amount={total} 
+                    onComplete={handlePaymentComplete} 
+                    onPaymentFailed={handlePaymentFailed} 
+                />
+            </div>
+        );
     }
 
     if (isSuccess) {

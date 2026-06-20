@@ -321,9 +321,23 @@ export const GuestPrintUploadFlow = () => {
                     <object 
                       data={fileToPreview.preview} 
                       type="application/pdf" 
-                      className="w-full max-w-[90%] h-[500px] shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog"
+                      className="w-full max-w-[90%] h-[500px] shadow-[0_4px_24px_rgba(26,26,26,0.15)] rounded-[8px] bg-canvas border border-fog flex items-center justify-center overflow-hidden"
                     >
-                      <p>Your browser does not support PDFs. <a href={fileToPreview.preview} target="_blank" rel="noreferrer" className="text-hp-primary">Download the PDF</a>.</p>
+                      <div className="flex flex-col items-center justify-center w-full h-[500px] text-center p-8 bg-cloud">
+                          <FileText className="w-16 h-16 text-hp-primary mb-4" />
+                          <p className="text-ink font-medium text-lg">PDF Loaded Successfully</p>
+                          <p className="text-charcoal text-sm mt-2 max-w-xs">
+                              Inline preview is limited on your browser. Your document is ready, and you can safely continue.
+                          </p>
+                          <a 
+                              href={fileToPreview.preview} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="mt-6 inline-flex items-center gap-2 border-2 border-hp-primary text-hp-primary px-6 py-2.5 rounded-[4px] font-semibold text-sm hover:bg-hp-primary hover:text-canvas transition-colors tracking-[0.7px]"
+                          >
+                              Open PDF in New Tab
+                          </a>
+                      </div>
                     </object>
                   ) : (
                     <div className="bg-canvas w-[90%] sm:w-[70%] aspect-[1/1.4] shadow-xl rounded-[4px] flex flex-col relative border border-fog items-center justify-center p-8 text-center">
