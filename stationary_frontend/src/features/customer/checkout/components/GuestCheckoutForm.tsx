@@ -49,10 +49,13 @@ export const GuestCheckoutForm = () => {
             if (data.createGuestOrder.response.success) {
                 setPaymentId(data.createGuestOrder.payment?.id || null);
                 setShowPaymentTracker(true);
+            } else {
+                alert(`Order Failed: ${data.createGuestOrder.response.message}`);
             }
         },
-        onError: (err) => {
-            console.error("Guest order creation failed:", err);
+        onError: (error) => {
+            alert(`Order Error: ${error.message}`);
+            console.error("Order error:", error);
         }
     });
 
@@ -100,13 +103,17 @@ export const GuestCheckoutForm = () => {
             isLamination: file.metadata?.isLamination || false,
             paperSize: file.metadata?.paperSize || "A4"
         }));
-        const payment: PaymentData = { paymentMethod, phoneNumber: phoneNumber.trim() };
+        // ClickPesa expects phone numbers without the leading '+' and without spaces
+        const formattedPhone = phoneNumber.replace(/[\s+]/g, '');
+        const payment: PaymentData = { paymentMethod, phoneNumber: formattedPhone };
+        
         try {
             await createGuestOrder({
                 variables: { shopId: selectedShopId, guestCustomer: { name: guestData.name.trim(), whatsappNumber: guestData.whatsappNumber.trim(), email: guestData.email?.trim() || undefined }, items, payment }
             });
         } catch (err: any) {
             console.error("Guest order creation failed:", err);
+            // Error is handled by onError callback above
         }
     };
 
@@ -154,6 +161,7 @@ export const GuestCheckoutForm = () => {
                                 <label className="block text-sm font-semibold text-ink mb-1.5">Full Name *</label>
                                 <input
                                     type="text"
+                                    autoComplete="name"
                                     placeholder="Enter your full name"
                                     value={guestData.name}
                                     onChange={(e) => handleInputChange('name', e.target.value)}
@@ -166,6 +174,7 @@ export const GuestCheckoutForm = () => {
                                 <label className="block text-sm font-semibold text-ink mb-1.5">WhatsApp Number *</label>
                                 <input
                                     type="tel"
+                                    autoComplete="tel"
                                     placeholder="+255 123 456 789"
                                     value={guestData.whatsappNumber}
                                     onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
@@ -179,6 +188,7 @@ export const GuestCheckoutForm = () => {
                                 <label className="block text-sm font-semibold text-ink mb-1.5">Email <span className="font-normal text-steel">(Optional)</span></label>
                                 <input
                                     type="email"
+                                    autoComplete="email"
                                     placeholder="your@email.com"
                                     value={guestData.email}
                                     onChange={(e) => handleInputChange('email', e.target.value)}
@@ -225,6 +235,7 @@ export const GuestCheckoutForm = () => {
                                 <label className="block text-sm font-semibold text-ink mb-1.5">Payment Phone Number *</label>
                                 <input
                                     type="tel"
+                                    autoComplete="tel"
                                     placeholder="+255 7xx xxx xxx"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}

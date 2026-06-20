@@ -351,6 +351,8 @@ class ClickPesaService:
             'SUCCESS': PaymentModel.Status.COMPLETED,
             'SETTLED': PaymentModel.Status.COMPLETED,
             'FAILED': PaymentModel.Status.FAILED,
+            'CANCELLED': PaymentModel.Status.FAILED,
+            'CANCELED': PaymentModel.Status.FAILED,
         }
 
         if clickpesa_status not in status_mapping:

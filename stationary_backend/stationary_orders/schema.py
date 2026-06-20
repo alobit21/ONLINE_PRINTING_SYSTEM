@@ -458,6 +458,15 @@ class Query(graphene.ObjectType):
                 # For unauthenticated users, check if it's a guest order
                 if not payment.order.guest_customer:
                     return None
+                    
+            # Actively poll ClickPesa for latest status if it is still processing
+            if payment.status in [Payment.Status.PENDING, Payment.Status.PROCESSING]:
+                try:
+                    clickpesa_service = ClickPesaService()
+                    clickpesa_service.check_payment_status(payment)
+                    payment.refresh_from_db()
+                except Exception as e:
+                    print(f"Failed to check payment status from ClickPesa: {e}")
             
             return payment
             
