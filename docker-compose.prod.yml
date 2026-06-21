@@ -35,7 +35,7 @@ services:
       - DB_HOST=db
       - REDIS_URL=redis://redis:6379/0
     ports:
-      - "8001:8000"
+      - "${BACKEND_PORT:-8001}:8000"
     volumes:
       - media_files:/app/media
     depends_on:
@@ -63,7 +63,7 @@ services:
     image: ${DOCKERHUB_USERNAME}/stationary-frontend:latest
     restart: unless-stopped
     ports:
-      - "3001:80"
+      - "${FRONTEND_PORT:-3001}:80"
 
 volumes:
   postgres_data:
