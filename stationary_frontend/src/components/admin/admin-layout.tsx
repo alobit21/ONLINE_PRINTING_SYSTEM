@@ -11,25 +11,23 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
-      <div className="flex h-screen">
-        {/* Sidebar - Full height */}
-        <div className="hidden lg:block h-full">
-          <AdminSidebar />
-        </div>
+    <div className="min-h-screen bg-background text-foreground flex h-screen overflow-hidden transition-colors duration-300">
+      {/* Sidebar - Full height, hidden on mobile */}
+      <aside className="hidden lg:flex h-full flex-shrink-0">
+        <AdminSidebar />
+      </aside>
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Top Navigation */}
-          <AdminNavbar />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+        {/* Top Navigation */}
+        <AdminNavbar />
 
-          {/* Page Content */}
-          <main className="flex-1 p-4 lg:p-6 overflow-auto bg-gray-900">
-            <div className="max-w-7xl mx-auto">
-              {children || <Outlet />}
-            </div>
-          </main>
-        </div>
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto bg-gray-900">
+          <div className="max-w-7xl mx-auto p-4 lg:p-6">
+            {children || <Outlet />}
+          </div>
+        </main>
       </div>
     </div>
   );

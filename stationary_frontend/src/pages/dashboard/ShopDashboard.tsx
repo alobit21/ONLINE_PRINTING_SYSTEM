@@ -11,24 +11,26 @@ import {
     BarChart3,
     Settings,
     Bell,
-    Search,
-    Filter,
-    Download,
     Plus,
     LayoutGrid,
-    FileText
+    Store,
+    Loader2
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/LegacyButton';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
 import { useAuthStore } from '../../stores/authStore';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_MY_SHOPS, CREATE_SHOP } from '../../features/shops/api';
 import { GET_ALL_MY_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
-import { Loader2, Store } from 'lucide-react';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Separator } from "@/components/ui/separator";
 import { ProductsPage } from './ProductsPage';
 import { OrdersPage } from './OrdersPage';
 import { ShopDashboardPage } from './ShopDashboardPage';
+import { ShopOnboardingFlow } from './ShopOnboardingFlow';
+
 
 interface MyShopsData {
     myShops: {
@@ -228,27 +230,27 @@ export const ShopDashboard = () => {
 
         if (shopsError || myShopsStatus === 'false') {
             return (
-                <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
-                    <Card className="max-w-md w-full shadow-2xl bg-gray-800 border-gray-700 overflow-hidden">
-                        <div className="h-2 bg-red-500" />
+                <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+                    <Card className="max-w-md w-full shadow-2xl bg-canvas border-fog overflow-hidden">
+                        <div className="h-2 bg-error" />
                         <CardHeader>
-                            <CardTitle className="text-red-400 flex items-center gap-2">
+                            <CardTitle className="text-error flex items-center gap-2">
                                 <AlertCircle className="h-5 w-5" />
                                 {isAuthError ? 'Session Expired' : 'Connection Error'}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <p className="text-gray-300 text-sm">
+                            <p className="text-steel text-sm">
                                 {isAuthError
                                     ? "Your session has expired. Please log in again to manage your shops."
                                     : (shopsError?.message || myShopsMessage || "We couldn't fetch your shop details.")}
                             </p>
                             <div className="flex gap-3">
-                                <Button onClick={() => isAuthError ? navigate('/login') : refetchShops()} className="flex-1 bg-brand-600 hover:bg-brand-700">
+                                <Button onClick={() => isAuthError ? navigate('/login') : refetchShops()} className="flex-1 bg-hp-primary hover:bg-hp-primary/90 text-white">
                                     {isAuthError ? 'Go to Login' : 'Retry Connection'}
                                 </Button>
                                 {!isAuthError && (
-                                    <Button variant="outline" onClick={() => navigate('/login')} className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">
+                                    <Button variant="outline" onClick={() => navigate('/login')} className="flex-1 border-fog text-steel hover:bg-cloud">
                                         Back to Login
                                     </Button>
                                 )}
@@ -259,94 +261,39 @@ export const ShopDashboard = () => {
             );
         }
 
-        return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-                <Card className="max-w-md w-full text-center p-8 space-y-6 shadow-xl bg-gray-800 border-gray-700">
-                    <div className="h-20 w-20 bg-brand-900/50 rounded-full flex items-center justify-center mx-auto text-brand-400">
-                        <Store className="h-10 w-10" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-white">Welcome to PrintSync!</h1>
-                        <p className="text-gray-400 mt-2">To start accepting orders, you need to set up your shop profile first.</p>
-
-                        <div className="mt-6 p-4 bg-gray-700 rounded-2xl text-left space-y-2 border border-gray-600">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Account Context</p>
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-300">Logged in as:</span>
-                                <span className="text-xs font-bold text-white">{user?.email}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-300">Role:</span>
-                                <span className="text-xs font-bold text-brand-400">{user?.role}</span>
-                            </div>
-                            <div className="flex items-center justify-between border-t border-gray-600 pt-2 mt-2">
-                                <span className="text-xs text-gray-300">Shops Found:</span>
-                                <span className="text-xs font-bold text-white">0</span>
-                            </div>
-                        </div>
-                    </div>
-                    <Button
-                        onClick={handleCreateShop}
-                        disabled={creatingShop}
-                        className="w-full h-12 bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg shadow-lg shadow-brand-500/30"
-                    >
-                        {creatingShop ? <Loader2 className="animate-spin mr-2" /> : <Plus className="mr-2" />}
-                        Create My Shop
-                    </Button>
-                </Card>
-            </div>
-        );
+        return <ShopOnboardingFlow onComplete={() => refetchShops()} />;
     }
 
     return (
-        <div className="fade-in bg-gray-900">
-            {/* Header */}
-            <div className="sticky top-0 z-10 bg-gray-800 border-b border-gray-700 shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex items-center justify-between">
+        <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset className="bg-background min-h-screen">
+                {/* Header */}
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border bg-background px-4 sticky top-0 z-10">
+                    <SidebarTrigger className="-ml-1" />
+                    <Separator orientation="vertical" className="mr-2 h-4" />
+                    <div className="flex flex-1 items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-brand-400">Shop Dashboard</h1>
-                            <p className="text-sm text-gray-400 mt-1">Welcome back, {user?.email}</p>
+                            <h1 className="text-xl font-bold text-ink hidden sm:block">
+                                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                            </h1>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Button variant="ghost" size="sm" className="relative text-gray-300 hover:text-white hover:bg-gray-700">
+                            <Button variant="ghost" size="sm" className="relative text-steel hover:text-ink hover:bg-canvas">
                                 <Bell className="h-5 w-5" />
-                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center">
+                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-error rounded-full text-[10px] text-white flex items-center justify-center">
                                     3
                                 </span>
                             </Button>
-                            <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-gray-700">
-                                <Settings className="h-5 w-5" />
-                            </Button>
-                            <div className="h-10 w-10 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold shadow-lg">
+                            <div className="h-9 w-9 rounded-full bg-hp-primary flex items-center justify-center text-white font-bold shadow-sm">
                                 {user?.email?.charAt(0).toUpperCase()}
                             </div>
                         </div>
                     </div>
+                </header>
 
-                    {/* Tabs */}
-                    <div className="flex gap-2 mt-6 border-b border-gray-700 overflow-x-auto">
-                        {['overview', 'orders', 'products', 'analytics', 'settings'].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 font-medium text-sm transition-all relative whitespace-nowrap ${activeTab === tab
-                                    ? 'text-brand-400'
-                                    : 'text-gray-400 hover:text-white'
-                                    }`}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                                {activeTab === tab && (
-                                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-400" />
-                                )}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Main Content */}
+                <div className="flex flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 fade-in">
                 {activeTab === 'overview' && (
                     <div className="fade-in">
                         <ShopDashboardPage />
@@ -361,15 +308,15 @@ export const ShopDashboard = () => {
 
                 {activeTab === 'analytics' && (
                     <div className="space-y-6 fade-in">
-                        <Card className="bg-gray-800 border-gray-700 shadow-lg">
+                        <Card className="bg-canvas border-fog shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-white">Analytics Dashboard</CardTitle>
-                                <CardDescription className="text-gray-400">Insights and performance metrics</CardDescription>
+                                <CardTitle className="text-ink">Analytics Dashboard</CardTitle>
+                                <p className="text-steel text-sm">Insights and performance metrics</p>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-center py-12 text-gray-400">
-                                    <BarChart3 className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-                                    <p className="text-lg font-medium">Analytics coming soon</p>
+                                <div className="text-center py-12 text-steel">
+                                    <BarChart3 className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                                    <p className="text-lg font-medium text-ink">Analytics coming soon</p>
                                     <p className="text-sm">Detailed charts and insights will be available here</p>
                                 </div>
                             </CardContent>
@@ -385,15 +332,15 @@ export const ShopDashboard = () => {
 
                 {activeTab === 'settings' && (
                     <div className="space-y-6 fade-in">
-                        <Card className="bg-gray-800 border-gray-700 shadow-lg">
+                        <Card className="bg-canvas border-fog shadow-sm">
                             <CardHeader>
-                                <CardTitle className="text-white">Shop Settings</CardTitle>
-                                <CardDescription className="text-gray-400">Configure your shop profile and preferences</CardDescription>
+                                <CardTitle className="text-ink">Shop Settings</CardTitle>
+                                <p className="text-steel text-sm">Configure your shop profile and preferences</p>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-center py-12 text-gray-400">
-                                    <Settings className="h-16 w-16 mx-auto mb-4 text-gray-500" />
-                                    <p className="text-lg font-medium">Settings</p>
+                                <div className="text-center py-12 text-steel">
+                                    <Settings className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                                    <p className="text-lg font-medium text-ink">Settings</p>
                                     <p className="text-sm">Manage operating hours, location, and account details.</p>
                                 </div>
                             </CardContent>
@@ -401,6 +348,7 @@ export const ShopDashboard = () => {
                     </div>
                 )}
             </div>
-        </div >
+            </SidebarInset>
+        </SidebarProvider>
     );
 };

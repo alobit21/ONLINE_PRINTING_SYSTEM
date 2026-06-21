@@ -64,16 +64,16 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
   const currentPath = location.pathname;
 
   const SidebarContent = () => (
-    <div className={cn('flex flex-col h-full w-64 bg-gray-800 border-r border-gray-700', className)}>
+    <div className={cn('flex flex-col h-full w-64 bg-canvas border-r border-fog transition-colors duration-300', className)}>
       {/* Logo */}
-      <div className="p-6 border-b border-gray-700">
+      <div className="p-6 border-b border-fog">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <LayoutDashboard className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-white">PrintSync</h1>
-            <p className="text-xs text-gray-400">Admin Panel</p>
+            <h1 className="text-lg font-semibold text-ink">PrintSync</h1>
+            <p className="text-xs text-steel">Admin Panel</p>
           </div>
         </div>
       </div>
@@ -91,8 +91,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
               className={cn(
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  ? 'bg-hp-primary text-white'
+                  : 'text-steel hover:bg-cloud hover:text-ink'
               )}
             >
               <Icon className="h-4 w-4" />
@@ -108,8 +108,8 @@ export function AdminSidebar({ className }: AdminSidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-700">
-        <div className="text-xs text-gray-400">
+      <div className="p-4 border-t border-fog">
+        <div className="text-xs text-steel">
           <p>Admin Dashboard v1.0</p>
           <p>© 2024 PrintSync</p>
         </div>

@@ -78,7 +78,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <div className="min-h-screen bg-slate-50 dark:bg-gray-900 font-sans antialiased transition-colors duration-200">
+        <div className="min-h-screen bg-background text-foreground font-sans antialiased transition-colors duration-300">
           <PageTitleUpdater />
           <Routes>
             {/* Public Routes */}

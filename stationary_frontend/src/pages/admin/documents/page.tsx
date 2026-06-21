@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { FileText, Download, Trash2, MoreHorizontal, Eye, File, Image, FileArchive } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
@@ -22,92 +22,13 @@ import {
   DropdownMenuTrigger,
 } from '../../../components/ui/dropdown-menu';
 import { Input } from '../../../components/ui/LegacyInput';
-import { GET_ALL_DOCUMENTS, GET_ME } from '../../../features/admin/api';
-import { useAuthStore } from '../../../stores/authStore';
-
-interface Document {
-  id: string;
-  filename: string;
-  originalName: string;
-  fileSize: number;
-  mimeType: string;
-  uploadedBy: {
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-  uploadedAt: string;
-  isPublic: boolean;
-  downloadCount: number;
-}
+import { GET_ALL_DOCUMENTS } from '../../../features/admin/api';
 
 export default function AdminDocumentsPage() {
-  const { user, token, isAuthenticated } = useAuthStore();
-  const { data: meData, loading: meLoading, error: meError } = useQuery(GET_ME);
-  const { data, loading, error } = useQuery(GET_ALL_DOCUMENTS, {
-    // Skip the documents query if we're not authenticated or not admin
-    skip: !meData?.me || meData?.me?.role !== 'ADMIN'
-  });
-
+  const { data, loading, error } = useQuery(GET_ALL_DOCUMENTS);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
 
-  if (meLoading) {
-    return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Checking authentication...</p>
-      </div>
-    );
-  }
-
-  if (meError) {
-    return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Authentication Error</p>
-        <p className="text-sm">{meError.message}</p>
-        <button 
-          onClick={() => window.location.href = '/login'}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Login Again
-        </button>
-      </div>
-    );
-  }
-
-  const currentUser = meData?.me;
-
-  if (!currentUser) {
-    return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Not Authenticated</p>
-        <p className="text-sm">Please login to access this page.</p>
-        <button 
-          onClick={() => window.location.href = '/login'}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
-      </div>
-    );
-  }
-
-  if (currentUser.role !== 'ADMIN') {
-    return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Access Denied</p>
-        <p className="text-sm">You don't have admin permissions to view this page.</p>
-        <p className="text-sm">Your role: {currentUser.role}</p>
-        <button 
-          onClick={() => window.location.href = '/'}
-          className="mt-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-        >
-          Go Home
-        </button>
-      </div>
-    );
-  }
-  
   const documents = data?.documents?.data || [];
 
   const filteredDocuments = documents.filter(doc => {
