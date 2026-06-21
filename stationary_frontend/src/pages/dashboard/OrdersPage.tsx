@@ -17,6 +17,8 @@ import {
     ChevronLeft,
     ChevronRight,
     TrendingUp,
+    LayoutGrid,
+    LayoutList
 } from 'lucide-react';
 import { Button } from '../../components/ui/LegacyButton';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
@@ -38,12 +40,12 @@ import { format } from 'date-fns';
 // Order Status Badge Component
 const OrderStatusBadge = ({ status }: { status: string }) => {
     const styles: Record<string, string> = {
-        UPLOADED: 'bg-blue-900/50 text-blue-400 border-blue-700',
-        ACCEPTED: 'bg-indigo-900/50 text-indigo-400 border-indigo-700',
-        PRINTING: 'bg-amber-900/50 text-amber-400 border-amber-700',
-        READY: 'bg-green-900/50 text-green-400 border-green-700',
-        COMPLETED: 'bg-cloud text-ink-soft border-fog',
-        CANCELLED: 'bg-red-900/50 text-red-400 border-red-700',
+        UPLOADED: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/50 dark:text-blue-400 dark:border-blue-700',
+        ACCEPTED: 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/50 dark:text-indigo-400 dark:border-indigo-700',
+        PRINTING: 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/50 dark:text-amber-400 dark:border-amber-700',
+        READY: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-400 dark:border-green-700',
+        COMPLETED: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-cloud dark:text-ink-soft dark:border-fog',
+        CANCELLED: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-400 dark:border-red-700',
     };
 
     return (
@@ -898,14 +900,15 @@ export function OrdersPage() {
         };
     }>(UPDATE_ORDER_STATUS);
 
-    const orders = data?.allMyShopOrders || [];
+const orders = data?.allMyShopOrders || [];
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [toast, setToast] = useState<ToastState | null>(null);
     
     // Pagination
     const [page, setPage] = useState(1);
-    const ITEMS_PER_PAGE = 10;
+    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+    const ITEMS_PER_PAGE = viewMode === 'grid' ? 6 : 10;
     
     // Stats
     const totalOrders = orders.length;
@@ -993,6 +996,20 @@ export function OrdersPage() {
                             <h1 className="text-2xl font-bold text-ink">Shop Orders</h1>
                             <p className="text-steel mt-1">Manage and track all customer orders</p>
                         </div>
+                        <div className="flex bg-cloud border border-fog rounded-md overflow-hidden">
+                            <button 
+                                onClick={() => setViewMode('list')}
+                                className={cn("px-3 py-1.5 flex items-center gap-2 text-sm font-medium transition-colors", viewMode === 'list' ? 'bg-hp-primary text-white' : 'text-steel hover:bg-paper')}
+                            >
+                                <LayoutList className="h-4 w-4" /> List
+                            </button>
+                            <button 
+                                onClick={() => setViewMode('grid')}
+                                className={cn("px-3 py-1.5 flex items-center gap-2 text-sm font-medium transition-colors", viewMode === 'grid' ? 'bg-hp-primary text-white' : 'text-steel hover:bg-paper')}
+                            >
+                                <LayoutGrid className="h-4 w-4" /> Grid
+                            </button>
+                        </div>
                     </div>
 
                     {/* Stats Grid */}
@@ -1072,7 +1089,10 @@ export function OrdersPage() {
 
                     {/* Orders List */}
                     {!loading && !error && orders.length > 0 && (
-                        <div className="space-y-4">
+                        <>
+                            <div className={cn(
+                                viewMode === 'list' ? "space-y-4" : "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4"
+                        )}>
                             {paginatedOrders.map((order) => {
                                 const customerName = order.customer?.firstName && order.customer?.lastName
                                     ? `${order.customer.firstName} ${order.customer.lastName}`
@@ -1080,35 +1100,47 @@ export function OrdersPage() {
 
                                 return (
                                     <Card key={order.id} className="border border-fog bg-cloud shadow-sm hover:border-steel transition-colors">
-                                        <CardContent className="p-6">
-                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <CardContent className="p-6 flex flex-col h-full">
+                                            <div className={cn(
+                                                "flex justify-between gap-4 flex-1",
+                                                viewMode === 'list' ? "flex-col md:flex-row md:items-center" : "flex-col"
+                                            )}>
                                                 {/* Order Info */}
                                                 <div className="flex items-start gap-4 flex-1">
                                                     <div className="h-12 w-12 rounded-full bg-hp-primary/10 flex items-center justify-center text-hp-primary font-bold flex-shrink-0">
                                                         {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-3 mb-2">
-                                                            <p className="font-bold text-ink">{customerName}</p>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className={cn(
+                                                            "flex items-center gap-3 mb-2",
+                                                            viewMode === 'grid' ? "flex-wrap" : ""
+                                                        )}>
+                                                            <p className="font-bold text-ink truncate">{customerName}</p>
                                                             <OrderStatusBadge status={order.status} />
                                                         </div>
-                                                        <div className="flex flex-wrap items-center gap-2 text-sm text-steel">
-                                                            <span>Order ID: <strong className="text-ink">{order.id.slice(0, 8).toUpperCase()}</strong></span>
-                                                            <span>•</span>
+                                                        <div className={cn(
+                                                            "flex items-center text-sm text-steel gap-y-1 gap-x-2",
+                                                            viewMode === 'grid' ? "flex-col items-start" : "flex-wrap"
+                                                        )}>
+                                                            <span>ID: <strong className="text-ink">{order.id.slice(0, 8).toUpperCase()}</strong></span>
+                                                            <span className={cn(viewMode === 'grid' && "hidden")}>•</span>
                                                             <span>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</span>
-                                                            <span>•</span>
+                                                            <span className={cn(viewMode === 'grid' && "hidden")}>•</span>
                                                             <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
-                                                            <span>•</span>
+                                                            <span className={cn(viewMode === 'grid' && "hidden")}>•</span>
                                                             <span className="font-medium text-ink">TZS {Number(order.totalPrice).toLocaleString()}</span>
                                                         </div>
                                                         {order.shop?.name && (
-                                                            <p className="text-xs text-graphite mt-1">Shop: {order.shop.name}</p>
+                                                            <p className="text-xs text-graphite mt-2">Shop: {order.shop.name}</p>
                                                         )}
                                                     </div>
                                                 </div>
 
                                                 {/* Actions */}
-                                                <div className="flex items-center gap-2">
+                                                <div className={cn(
+                                                    "flex items-center gap-2",
+                                                    viewMode === 'grid' && "pt-4 mt-auto border-t border-fog justify-end w-full"
+                                                )}>
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -1125,38 +1157,39 @@ export function OrdersPage() {
                                     </Card>
                                 );
                             })}
-
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="flex items-center justify-between mt-6">
-                                    <p className="text-sm text-steel">
-                                        Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, totalOrders)}</span> of <span className="font-medium text-ink">{totalOrders}</span> orders
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setPage(Math.max(1, page - 1))}
-                                            disabled={page === 1}
-                                            className="h-8 border-fog text-ink"
-                                        >
-                                            <ChevronLeft className="h-4 w-4 mr-1" />
-                                            Previous
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setPage(Math.min(totalPages, page + 1))}
-                                            disabled={page === totalPages}
-                                            className="h-8 border-fog text-ink"
-                                        >
-                                            Next
-                                            <ChevronRight className="h-4 w-4 ml-1" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            )}
                         </div>
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-between mt-6">
+                                <p className="text-sm text-steel">
+                                    Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, totalOrders)}</span> of <span className="font-medium text-ink">{totalOrders}</span> orders
+                                </p>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setPage(Math.max(1, page - 1))}
+                                        disabled={page === 1}
+                                        className="h-8 border-fog text-ink"
+                                    >
+                                        <ChevronLeft className="h-4 w-4 mr-1" />
+                                        Previous
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setPage(Math.min(totalPages, page + 1))}
+                                        disabled={page === totalPages}
+                                        className="h-8 border-fog text-ink"
+                                    >
+                                        Next
+                                        <ChevronRight className="h-4 w-4 ml-1" />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                        </>
                     )}
                 </div>
 
