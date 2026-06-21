@@ -3,8 +3,35 @@ import { useMutation } from '@apollo/client/react';
 import { CREATE_SHOP, UPDATE_PRICING } from '../../features/shops/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
 import { Button } from '../../components/ui/LegacyButton';
-import { Store, MapPin, DollarSign, CheckCircle, Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Store, MapPin, DollarSign, CheckCircle, Loader2, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icon missing in React-Leaflet
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
+function LocationPicker({ position, setPosition }: { position: [number, number], setPosition: (pos: [number, number]) => void }) {
+    useMapEvents({
+        click(e) {
+            setPosition([e.latlng.lat, e.latlng.lng]);
+        },
+    });
+    return (
+        <Marker position={position}></Marker>
+    );
+}
 
 interface Props {
     onComplete: () => void;
@@ -171,33 +198,51 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
                                         placeholder="e.g. Block A, UDOM Campus"
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-ink flex items-center justify-between">
+                                        <span>Pin your location on the map</span>
+                                        <span className="text-xs text-hp-primary font-normal">Click map to move pin</span>
+                                    </label>
+                                    <div className="h-64 w-full rounded-lg overflow-hidden border border-fog z-0 relative">
+                                        <MapContainer 
+                                            center={[-6.1630, 35.7516]} // Default to Dodoma
+                                            zoom={13} 
+                                            style={{ height: '100%', width: '100%', zIndex: 0 }}
+                                        >
+                                            <TileLayer
+                                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                            />
+                                            <LocationPicker 
+                                                position={[parseFloat(formData.latitude), parseFloat(formData.longitude)]} 
+                                                setPosition={([lat, lng]) => setFormData(prev => ({ ...prev, latitude: lat.toString(), longitude: lng.toString() }))} 
+                                            />
+                                        </MapContainer>
+                                    </div>
+                                </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold text-ink">Latitude</label>
+                                        <label className="text-xs font-semibold text-steel">Selected Latitude</label>
                                         <input 
                                             name="latitude" 
                                             type="number"
                                             step="any"
                                             value={formData.latitude} 
-                                            onChange={handleChange} 
-                                            className="w-full p-3 rounded-lg border border-fog bg-background text-ink focus:border-hp-primary focus:ring-1 focus:ring-hp-primary outline-none transition-all"
+                                            readOnly
+                                            className="w-full p-2 rounded-lg border border-fog bg-cloud text-ink text-sm outline-none cursor-not-allowed opacity-70"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold text-ink">Longitude</label>
+                                        <label className="text-xs font-semibold text-steel">Selected Longitude</label>
                                         <input 
                                             name="longitude" 
                                             type="number"
                                             step="any"
                                             value={formData.longitude} 
-                                            onChange={handleChange} 
-                                            className="w-full p-3 rounded-lg border border-fog bg-background text-ink focus:border-hp-primary focus:ring-1 focus:ring-hp-primary outline-none transition-all"
+                                            readOnly
+                                            className="w-full p-2 rounded-lg border border-fog bg-cloud text-ink text-sm outline-none cursor-not-allowed opacity-70"
                                         />
                                     </div>
-                                </div>
-                                <div className="p-3 bg-blue-500/10 text-blue-600 rounded-lg text-xs font-medium flex items-start gap-2">
-                                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                                    Coordinates are used to show your shop to nearby students. Defaulted to central Dodoma.
                                 </div>
                             </div>
                         )}

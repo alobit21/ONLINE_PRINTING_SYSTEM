@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client/react';
-import { Plus, Loader2, Package, AlertCircle } from 'lucide-react';
+import { Plus, Loader2, Package, AlertCircle, ShoppingBag, Settings, Tag, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { Button } from '../../components/ui/LegacyButton';
 import { Input } from '../../components/ui/LegacyInput';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
@@ -97,6 +97,13 @@ export function ProductsPage() {
     const pricingRules = shop?.pricingRules ?? [];
     const response = shopData?.shopDetails?.response;
 
+    // Pagination
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+    const totalServices = pricingRules.length;
+    const totalPages = Math.ceil(totalServices / ITEMS_PER_PAGE);
+    const paginatedRules = pricingRules.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const errs: { serviceType?: string; price?: string } = {};
@@ -142,116 +149,201 @@ export function ProductsPage() {
                 </div>
             )}
 
-            {/* Header */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white">Products & Services</h1>
-                    <p className="text-gray-400 mt-1">Manage your printing services and pricing</p>
-                </div>
-                <Dialog open={dialogOpen} onOpenChange={(open: boolean) => { setDialogOpen(open); if (!open) closeDialogAndReset(); }}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-brand-600 text-white hover:bg-brand-700">
-                            <Plus className="h-4 w-4 mr-2" />
-                            Add Service
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-gray-800 border-gray-700">
-                        <DialogHeader>
-                            <DialogTitle className="text-white">Add Service</DialogTitle>
-                            <DialogDescription className="text-gray-400">Add a new service and set its base price.</DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <Select
-                                label="Category (Service Type)"
-                                options={SERVICE_TYPE_OPTIONS}
-                                value={formServiceType}
-                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                    setFormServiceType(e.target.value);
-                                    setFormErrors((prev) => ({ ...prev, serviceType: undefined }));
-                                }}
-                                error={formErrors.serviceType}
-                                required
-                            />
-                            <Input
-                                label="Price"
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                placeholder="0.00"
-                                value={formPrice}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    setFormPrice(e.target.value);
-                                    setFormErrors((prev) => ({ ...prev, price: undefined }));
-                                }}
-                                error={formErrors.price}
-                                required
-                            />
-                            <DialogFooter>
-                                <Button type="submit" disabled={updating}>
-                                    {updating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                                    Save Service
+            {/* 3-Section Layout */}
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                {/* Center Column: Products List */}
+                <div className="xl:col-span-3 space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+                        <div>
+                            <h1 className="text-2xl font-bold text-ink">Products & Services</h1>
+                            <p className="text-steel mt-1">Manage your printing services and pricing</p>
+                        </div>
+                        <Dialog open={dialogOpen} onOpenChange={(open: boolean) => { setDialogOpen(open); if (!open) closeDialogAndReset(); }}>
+                            <DialogTrigger asChild>
+                                <Button className="bg-hp-primary text-white hover:bg-hp-primary/90">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Add Service
                                 </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-            </div>
+                            </DialogTrigger>
+                            <DialogContent className="bg-paper border-fog">
+                                <DialogHeader>
+                                    <DialogTitle className="text-ink">Add Service</DialogTitle>
+                                    <DialogDescription className="text-steel">Add a new service and set its base price.</DialogDescription>
+                                </DialogHeader>
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    <Select
+                                        label="Category (Service Type)"
+                                        options={SERVICE_TYPE_OPTIONS}
+                                        value={formServiceType}
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                            setFormServiceType(e.target.value);
+                                            setFormErrors((prev) => ({ ...prev, serviceType: undefined }));
+                                        }}
+                                        error={formErrors.serviceType}
+                                        required
+                                    />
+                                    <Input
+                                        label="Price (TZS)"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                        value={formPrice}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            setFormPrice(e.target.value);
+                                            setFormErrors((prev) => ({ ...prev, price: undefined }));
+                                        }}
+                                        error={formErrors.price}
+                                        required
+                                        className="bg-cloud border-fog text-ink placeholder-steel"
+                                    />
+                                    <DialogFooter>
+                                        <Button type="submit" disabled={updating} className="bg-hp-primary text-white hover:bg-hp-primary/90">
+                                            {updating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                                            Save Service
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
 
-            {/* Content */}
-            {!shopId ? (
-                <Card className="border border-gray-700 bg-gray-800">
-                    <CardContent className="py-12 text-center text-gray-400">
-                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-500" />
-                        <p className="font-medium">No shop found</p>
-                        <p className="text-sm">Create or select a shop to manage products and services.</p>
-                    </CardContent>
-                </Card>
-            ) : pricingLoading ? (
-                <Card className="border border-gray-700 bg-gray-800">
-                    <CardContent className="py-12 flex items-center justify-center gap-2 text-gray-400">
-                        <Loader2 className="h-6 w-6 animate-spin" />
-                        <span>Loading services…</span>
-                    </CardContent>
-                </Card>
-            ) : pricingError || response?.success === false ? (
-                <Card className="border border-red-700 bg-red-900/50">
-                    <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-400">
-                        <AlertCircle className="h-10 w-10" />
-                        <p className="font-medium">Failed to load services</p>
-                        <p className="text-sm">
-                            {pricingError?.message ?? response?.message ?? 'Please try again later.'}
-                        </p>
-                    </CardContent>
-                </Card>
-            ) : pricingRules.length === 0 ? (
-                <Card className="border border-gray-700 bg-gray-800">
-                    <CardContent className="py-12 text-center text-gray-400">
-                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-500" />
-                        <p className="font-medium">No services yet</p>
-                        <p className="text-sm">Add your first service using the button above.</p>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {pricingRules.map((rule: ShopPricingRule) => (
-                        <Card key={rule.id} className="border border-gray-700 bg-gray-800 shadow-sm">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-base text-white">
-                                    {getServiceTypeLabel(rule.serviceType)}
-                                </CardTitle>
-                                <CardDescription className="text-gray-400">
-                                    Per page pricing
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-2xl font-semibold text-white">
-                                    {Number(rule.basePrice).toFixed(2)} <span className="text-sm font-normal text-gray-500">base price</span>
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-steel">Total Services</p>
+                                <h3 className="text-2xl font-bold text-ink mt-1">{totalServices}</h3>
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-hp-primary/10 flex items-center justify-center">
+                                <ShoppingBag className="h-5 w-5 text-hp-primary" />
+                            </div>
+                        </div>
+                        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-steel">Active Services</p>
+                                <h3 className="text-2xl font-bold text-success mt-1">{totalServices}</h3>
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+                                <Tag className="h-5 w-5 text-success" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    {!shopId ? (
+                        <Card className="border border-fog bg-cloud shadow-sm">
+                            <CardContent className="py-12 text-center text-steel">
+                                <Package className="h-12 w-12 mx-auto mb-3 text-steel/50" />
+                                <p className="text-lg font-medium text-ink">No shop found</p>
+                                <p className="text-sm">Create or select a shop to manage products and services.</p>
+                            </CardContent>
+                        </Card>
+                    ) : pricingLoading ? (
+                        <Card className="border border-fog bg-cloud shadow-sm">
+                            <CardContent className="py-12 flex items-center justify-center gap-2 text-steel">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                                <span>Loading services…</span>
+                            </CardContent>
+                        </Card>
+                    ) : pricingError || response?.success === false ? (
+                        <Card className="border border-error bg-error/10">
+                            <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-error">
+                                <AlertCircle className="h-10 w-10" />
+                                <p className="font-medium">Failed to load services</p>
+                                <p className="text-sm">
+                                    {pricingError?.message ?? response?.message ?? 'Please try again later.'}
                                 </p>
                             </CardContent>
                         </Card>
-                    ))}
+                    ) : pricingRules.length === 0 ? (
+                        <Card className="border border-fog bg-cloud shadow-sm">
+                            <CardContent className="py-12 text-center text-steel">
+                                <Package className="h-12 w-12 mx-auto mb-3 text-steel/50" />
+                                <p className="text-lg font-medium text-ink">No services yet</p>
+                                <p className="text-sm">Add your first service using the button above.</p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {paginatedRules.map((rule: ShopPricingRule) => (
+                                    <Card key={rule.id} className="border border-fog bg-cloud shadow-sm hover:border-hp-primary/50 transition-colors">
+                                        <CardHeader className="pb-2">
+                                            <CardTitle className="text-base text-ink">
+                                                {getServiceTypeLabel(rule.serviceType)}
+                                            </CardTitle>
+                                            <CardDescription className="text-steel">
+                                                Per page base pricing
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-2xl font-semibold text-ink">
+                                                <span className="text-sm text-steel mr-1">TZS</span>
+                                                {Number(rule.basePrice).toLocaleString()}
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                            
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <div className="flex items-center justify-between mt-6">
+                                    <p className="text-sm text-steel">
+                                        Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, totalServices)}</span> of <span className="font-medium text-ink">{totalServices}</span> services
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPage(Math.max(1, page - 1))}
+                                            disabled={page === 1}
+                                            className="h-8 border-fog text-ink"
+                                        >
+                                            <ChevronLeft className="h-4 w-4 mr-1" />
+                                            Previous
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPage(Math.min(totalPages, page + 1))}
+                                            disabled={page === totalPages}
+                                            className="h-8 border-fog text-ink"
+                                        >
+                                            Next
+                                            <ChevronRight className="h-4 w-4 ml-1" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
-            )}
+
+                {/* Right Column: Quick Actions */}
+                <div className="xl:col-span-1 space-y-6">
+                    <Card className="bg-cloud border-fog shadow-sm">
+                        <CardHeader className="pb-3 border-b border-fog bg-paper rounded-t-xl">
+                            <CardTitle className="text-lg font-bold text-ink flex items-center gap-2">
+                                <Settings className="h-5 w-5 text-hp-primary" />
+                                Pricing Actions
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 space-y-3">
+                            <Button variant="outline" className="w-full justify-start border-fog text-ink hover:bg-paper" onClick={() => setDialogOpen(true)}>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Add New Service
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start border-fog text-ink hover:bg-paper">
+                                <TrendingUp className="h-4 w-4 mr-2" />
+                                Bulk Update Prices
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
         </div>
     );
 }

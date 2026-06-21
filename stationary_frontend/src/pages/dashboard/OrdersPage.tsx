@@ -10,6 +10,13 @@ import {
     Mail,
     CheckCircle2,
     Paperclip,
+    Clock,
+    Activity,
+    DollarSign,
+    ShoppingCart,
+    ChevronLeft,
+    ChevronRight,
+    TrendingUp,
 } from 'lucide-react';
 import { Button } from '../../components/ui/LegacyButton';
 import { Card, CardContent } from '../../components/ui/LegacyCard';
@@ -858,11 +865,11 @@ const PrintAllOrders = ({ orders }: { orders: Order[] }) => {
     return (
         <Button
             onClick={handlePrintAll}
-            className="bg-brand-600 text-white hover:bg-brand-700"
+            className="w-full bg-hp-primary text-white hover:bg-hp-primary/90 justify-center"
             disabled={orders.length === 0}
         >
             <Printer className="h-4 w-4 mr-2" />
-            Print All
+            Print All Orders
         </Button>
     );
 };
@@ -895,6 +902,19 @@ export function OrdersPage() {
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [toast, setToast] = useState<ToastState | null>(null);
+    
+    // Pagination
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+    
+    // Stats
+    const totalOrders = orders.length;
+    const completedOrders = orders.filter((o: any) => o.status === 'COMPLETED').length;
+    const pendingOrders = orders.filter((o: any) => o.status === 'UPLOADED' || o.status === 'ACCEPTED').length;
+    const totalRevenue = orders.filter((o: any) => o.status === 'COMPLETED').reduce((sum: number, o: any) => sum + (Number(o.totalPrice) || 0), 0);
+
+    const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
+    const paginatedOrders = orders.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
     useEffect(() => {
         if (!toast) return;
@@ -962,106 +982,243 @@ export function OrdersPage() {
                 </div>
             )}
 
-            {/* Header */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white">Orders</h1>
-                    <p className="text-gray-400 mt-1">Manage and track all customer orders</p>
+            {/* 3-Section Layout */}
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                
+                {/* Center Column: Orders List */}
+                <div className="xl:col-span-3 space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+                        <div>
+                            <h1 className="text-2xl font-bold text-ink">Shop Orders</h1>
+                            <p className="text-steel mt-1">Manage and track all customer orders</p>
+                        </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-steel">Total Orders</p>
+                                <h3 className="text-2xl font-bold text-ink mt-1">{totalOrders}</h3>
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-hp-primary/10 flex items-center justify-center">
+                                <ShoppingCart className="h-5 w-5 text-hp-primary" />
+                            </div>
+                        </div>
+                        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-steel">Pending</p>
+                                <h3 className="text-2xl font-bold text-warning mt-1">{pendingOrders}</h3>
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+                                <Clock className="h-5 w-5 text-warning" />
+                            </div>
+                        </div>
+                        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-steel">Completed</p>
+                                <h3 className="text-2xl font-bold text-success mt-1">{completedOrders}</h3>
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+                                <CheckCircle2 className="h-5 w-5 text-success" />
+                            </div>
+                        </div>
+                        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-steel">Revenue (TZS)</p>
+                                <h3 className="text-2xl font-bold text-ink mt-1">{totalRevenue.toLocaleString()}</h3>
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-hp-primary/10 flex items-center justify-center">
+                                <DollarSign className="h-5 w-5 text-hp-primary" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Loading State */}
+                    {loading && (
+                        <Card className="border border-fog bg-cloud shadow-sm">
+                            <CardContent className="py-12 flex items-center justify-center gap-2 text-steel">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                                <span>Loading orders…</span>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <Card className="border border-error bg-error/10">
+                            <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-error">
+                                <AlertCircle className="h-10 w-10" />
+                                <p className="font-medium">Failed to load orders</p>
+                                <p className="text-sm">{error.message || 'Please try again later.'}</p>
+                                <Button variant="outline" onClick={() => refetch()} className="mt-2 border-error text-error hover:bg-error/20">
+                                    Retry
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Empty State */}
+                    {!loading && !error && orders.length === 0 && (
+                        <Card className="border border-fog bg-cloud shadow-sm">
+                            <CardContent className="py-12 text-center text-steel">
+                                <Package className="h-12 w-12 mx-auto mb-3 text-steel/50" />
+                                <p className="text-lg font-medium text-ink">No orders yet</p>
+                                <p className="text-sm">Wait for customers to place orders.</p>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Orders List */}
+                    {!loading && !error && orders.length > 0 && (
+                        <div className="space-y-4">
+                            {paginatedOrders.map((order) => {
+                                const customerName = order.customer?.firstName && order.customer?.lastName
+                                    ? `${order.customer.firstName} ${order.customer.lastName}`
+                                    : order.customer?.email || 'Customer';
+
+                                return (
+                                    <Card key={order.id} className="border border-fog bg-cloud shadow-sm hover:border-steel transition-colors">
+                                        <CardContent className="p-6">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                {/* Order Info */}
+                                                <div className="flex items-start gap-4 flex-1">
+                                                    <div className="h-12 w-12 rounded-full bg-hp-primary/10 flex items-center justify-center text-hp-primary font-bold flex-shrink-0">
+                                                        {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <p className="font-bold text-ink">{customerName}</p>
+                                                            <OrderStatusBadge status={order.status} />
+                                                        </div>
+                                                        <div className="flex flex-wrap items-center gap-2 text-sm text-steel">
+                                                            <span>Order ID: <strong className="text-ink">{order.id.slice(0, 8).toUpperCase()}</strong></span>
+                                                            <span>•</span>
+                                                            <span>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</span>
+                                                            <span>•</span>
+                                                            <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
+                                                            <span>•</span>
+                                                            <span className="font-medium text-ink">TZS {Number(order.totalPrice).toLocaleString()}</span>
+                                                        </div>
+                                                        {order.shop?.name && (
+                                                            <p className="text-xs text-graphite mt-1">Shop: {order.shop.name}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                {/* Actions */}
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleViewOrder(order)}
+                                                        className="border-fog text-ink hover:bg-paper"
+                                                    >
+                                                        <Eye className="h-4 w-4 mr-2" />
+                                                        View
+                                                    </Button>
+                                                    <PrintOrder order={order} />
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })}
+
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <div className="flex items-center justify-between mt-6">
+                                    <p className="text-sm text-steel">
+                                        Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, totalOrders)}</span> of <span className="font-medium text-ink">{totalOrders}</span> orders
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPage(Math.max(1, page - 1))}
+                                            disabled={page === 1}
+                                            className="h-8 border-fog text-ink"
+                                        >
+                                            <ChevronLeft className="h-4 w-4 mr-1" />
+                                            Previous
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPage(Math.min(totalPages, page + 1))}
+                                            disabled={page === totalPages}
+                                            className="h-8 border-fog text-ink"
+                                        >
+                                            Next
+                                            <ChevronRight className="h-4 w-4 ml-1" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
-                <PrintAllOrders orders={orders} />
-            </div>
 
-            {/* Loading State */}
-            {loading && (
-                <Card className="border border-gray-700 bg-gray-800">
-                    <CardContent className="py-12 flex items-center justify-center gap-2 text-gray-400">
-                        <Loader2 className="h-6 w-6 animate-spin" />
-                        <span>Loading orders…</span>
-                    </CardContent>
-                </Card>
-            )}
-
-            {/* Error State */}
-            {error && (
-                <Card className="border border-red-700 bg-red-900/50">
-                    <CardContent className="py-12 flex flex-col items-center justify-center gap-2 text-red-400">
-                        <AlertCircle className="h-10 w-10" />
-                        <p className="font-medium">Failed to load orders</p>
-                        <p className="text-sm">{error.message || 'Please try again later.'}</p>
-                        <Button variant="outline" onClick={() => refetch()} className="mt-2">
-                            Retry
-                        </Button>
-                    </CardContent>
-                </Card>
-            )}
-
-            {/* Empty State */}
-            {!loading && !error && orders.length === 0 && (
-                <Card className="border border-gray-700 bg-gray-800">
-                    <CardContent className="py-12 text-center text-gray-400">
-                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-500" />
-                        <p className="font-medium">No orders yet</p>
-                        <p className="text-sm">Wait for customers to place orders.</p>
-                    </CardContent>
-                </Card>
-            )}
-
-            {/* Orders List */}
-            {!loading && !error && orders.length > 0 && (
-                <div className="space-y-4">
-                    {orders.map((order) => {
-                        const customerName = order.customer?.firstName && order.customer?.lastName
-                            ? `${order.customer.firstName} ${order.customer.lastName}`
-                            : order.customer?.email || 'Customer';
-
-                        return (
-                            <Card key={order.id} className="border border-gray-700 bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
-                                <CardContent className="p-6">
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                        {/* Order Info */}
-                                        <div className="flex items-start gap-4 flex-1">
-                                            <div className="h-12 w-12 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold flex-shrink-0">
-                                                {(order.customer?.firstName?.[0] || order.customer?.email?.[0] || '?').toUpperCase()}
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <p className="font-bold text-white">{customerName}</p>
-                                                    <OrderStatusBadge status={order.status} />
-                                                </div>
-                                                <div className="flex flex-wrap items-center gap-2 text-sm text-gray-400">
-                                                    <span>Order ID: <strong className="text-white">{order.id.slice(0, 8).toUpperCase()}</strong></span>
-                                                    <span>•</span>
-                                                    <span>{order.items.length} {order.items.length === 1 ? 'item' : 'items'}</span>
-                                                    <span>•</span>
-                                                    <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
-                                                    <span>•</span>
-                                                    <span className="font-medium text-white">TZS {Number(order.totalPrice).toLocaleString()}</span>
-                                                </div>
-                                                {order.shop?.name && (
-                                                    <p className="text-xs text-gray-500 mt-1">Shop: {order.shop.name}</p>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleViewOrder(order)}
-                                            >
-                                                <Eye className="h-4 w-4 mr-2" />
-                                                View
-                                            </Button>
-                                            <PrintOrder order={order} />
+                {/* Right Column: Quick Actions & Health */}
+                <div className="xl:col-span-1 space-y-6">
+                    <Card className="bg-cloud border-fog shadow-sm">
+                        <CardHeader className="pb-3 border-b border-fog bg-paper rounded-t-xl">
+                            <CardTitle className="text-lg font-bold text-ink flex items-center gap-2">
+                                <Activity className="h-5 w-5 text-hp-primary" />
+                                Quick Actions
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 space-y-3">
+                            <PrintAllOrders orders={orders} />
+                            <Button variant="outline" className="w-full justify-start border-fog text-ink hover:bg-paper">
+                                <Clock className="h-4 w-4 mr-2" />
+                                Filter Pending
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start border-fog text-ink hover:bg-paper">
+                                <DollarSign className="h-4 w-4 mr-2" />
+                                Export Revenue
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-cloud border-fog shadow-sm">
+                        <CardHeader className="pb-3 border-b border-fog bg-paper rounded-t-xl">
+                            <CardTitle className="text-lg font-bold text-ink flex items-center gap-2">
+                                <TrendingUp className="h-5 w-5 text-success" />
+                                Order Health
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <div className="space-y-4">
+                                <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span className="text-steel">Completion Rate</span>
+                                        <span className="font-medium text-ink">
+                                            {totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-fog rounded-full h-2">
+                                        <div 
+                                            className="bg-success h-2 rounded-full" 
+                                            style={{ width: `${totalOrders > 0 ? (completedOrders / totalOrders) * 100 : 0}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div className="p-3 bg-warning/10 rounded-lg border border-warning/20">
+                                    <div className="flex items-start gap-2">
+                                        <AlertCircle className="h-4 w-4 text-warning mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-medium text-warning-dark">Action Required</p>
+                                            <p className="text-xs text-warning-dark/80 mt-1">You have {pendingOrders} pending orders requiring attention.</p>
                                         </div>
                                     </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-            )}
+            </div>
 
             {/* Order Details Dialog */}
             <OrderDetailsDialog

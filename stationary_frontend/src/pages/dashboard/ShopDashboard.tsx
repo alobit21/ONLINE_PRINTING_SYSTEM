@@ -23,12 +23,10 @@ import { useAuthStore } from '../../stores/authStore';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_MY_SHOPS, CREATE_SHOP } from '../../features/shops/api';
 import { GET_ALL_MY_SHOP_ORDERS, UPDATE_ORDER_STATUS } from '../../features/customer/orders/api';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
 import { ProductsPage } from './ProductsPage';
 import { OrdersPage } from './OrdersPage';
 import { ShopDashboardPage } from './ShopDashboardPage';
+import { ShopSettingsPage } from './ShopSettingsPage';
 import { ShopOnboardingFlow } from './ShopOnboardingFlow';
 
 
@@ -265,90 +263,48 @@ export const ShopDashboard = () => {
     }
 
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset className="bg-background min-h-screen">
-                {/* Header */}
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border bg-background px-4 sticky top-0 z-10">
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 h-4" />
-                    <div className="flex flex-1 items-center justify-between">
-                        <div>
-                            <h1 className="text-xl font-bold text-ink hidden sm:block">
-                                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                            </h1>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <Button variant="ghost" size="sm" className="relative text-steel hover:text-ink hover:bg-canvas">
-                                <Bell className="h-5 w-5" />
-                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-error rounded-full text-[10px] text-white flex items-center justify-center">
-                                    3
-                                </span>
-                            </Button>
-                            <div className="h-9 w-9 rounded-full bg-hp-primary flex items-center justify-center text-white font-bold shadow-sm">
-                                {user?.email?.charAt(0).toUpperCase()}
+        <div className="flex flex-1 flex-col gap-4 fade-in">
+            {activeTab === 'overview' && (
+                <div className="fade-in">
+                    <ShopDashboardPage />
+                </div>
+            )}
+
+            {activeTab === 'orders' && (
+                <div className="fade-in">
+                    <OrdersPage />
+                </div>
+            )}
+
+            {activeTab === 'analytics' && (
+                <div className="space-y-6 fade-in">
+                    <Card className="bg-canvas border-fog shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-ink">Analytics Dashboard</CardTitle>
+                            <p className="text-steel text-sm">Insights and performance metrics</p>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-center py-12 text-steel">
+                                <BarChart3 className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                                <p className="text-lg font-medium text-ink">Analytics coming soon</p>
+                                <p className="text-sm">Detailed charts and insights will be available here</p>
                             </div>
-                        </div>
-                    </div>
-                </header>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
 
-                {/* Main Content */}
-                <div className="flex flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 fade-in">
-                {activeTab === 'overview' && (
-                    <div className="fade-in">
-                        <ShopDashboardPage />
-                    </div>
-                )}
+            {activeTab === 'products' && (
+                <div className="fade-in">
+                    <ProductsPage />
+                </div>
+            )}
 
-                {activeTab === 'orders' && (
-                    <div className="fade-in">
-                        <OrdersPage />
-                    </div>
-                )}
-
-                {activeTab === 'analytics' && (
-                    <div className="space-y-6 fade-in">
-                        <Card className="bg-canvas border-fog shadow-sm">
-                            <CardHeader>
-                                <CardTitle className="text-ink">Analytics Dashboard</CardTitle>
-                                <p className="text-steel text-sm">Insights and performance metrics</p>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-center py-12 text-steel">
-                                    <BarChart3 className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                                    <p className="text-lg font-medium text-ink">Analytics coming soon</p>
-                                    <p className="text-sm">Detailed charts and insights will be available here</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
-
-                {activeTab === 'products' && (
-                    <div className="fade-in">
-                        <ProductsPage />
-                    </div>
-                )}
-
-                {activeTab === 'settings' && (
-                    <div className="space-y-6 fade-in">
-                        <Card className="bg-canvas border-fog shadow-sm">
-                            <CardHeader>
-                                <CardTitle className="text-ink">Shop Settings</CardTitle>
-                                <p className="text-steel text-sm">Configure your shop profile and preferences</p>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-center py-12 text-steel">
-                                    <Settings className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                                    <p className="text-lg font-medium text-ink">Settings</p>
-                                    <p className="text-sm">Manage operating hours, location, and account details.</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
-            </div>
-            </SidebarInset>
-        </SidebarProvider>
+            {activeTab === 'settings' && (
+                <div className="fade-in">
+                    <ShopSettingsPage />
+                </div>
+            )}
+        </div>
     );
 };

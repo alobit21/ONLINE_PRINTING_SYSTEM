@@ -207,11 +207,11 @@ export default function AdminSettingsPage() {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map(i => (
-          <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div key={i} className="bg-cloud border border-fog rounded-xl p-6">
             <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-gray-700 rounded w-1/3"></div>
-              <div className="h-6 bg-gray-700 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+              <div className="h-4 bg-fog rounded w-1/3"></div>
+              <div className="h-6 bg-fog rounded w-1/2"></div>
+              <div className="h-4 bg-fog rounded w-1/4"></div>
             </div>
           </div>
         ))}
@@ -224,15 +224,15 @@ export default function AdminSettingsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <Settings className="h-8 w-8 text-blue-400" />
+          <h1 className="text-2xl font-bold text-ink mb-1 flex items-center gap-3">
+            <Settings className="h-7 w-7 text-hp-primary" />
             System Settings
           </h1>
-          <p className="text-gray-400">Configure platform settings and preferences</p>
+          <p className="text-steel text-sm">Configure platform settings and preferences</p>
         </div>
         <Button 
           onClick={handleSaveSettings}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-hp-primary hover:bg-hp-primary/90 text-white rounded-lg"
         >
           <Save className="h-4 w-4 mr-2" />
           Save Changes
@@ -240,13 +240,13 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+      <div className="flex space-x-1 bg-cloud border border-fog p-1 rounded-xl max-w-[800px] overflow-x-auto">
         <button
           onClick={() => setActiveTab('general')}
-          className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
             activeTab === 'general'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              ? 'bg-paper text-ink shadow-sm'
+              : 'text-steel hover:bg-paper/50'
           }`}
         >
           <Globe className="h-4 w-4" />
@@ -254,10 +254,10 @@ export default function AdminSettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab('security')}
-          className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
             activeTab === 'security'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              ? 'bg-paper text-ink shadow-sm'
+              : 'text-steel hover:bg-paper/50'
           }`}
         >
           <Shield className="h-4 w-4" />
@@ -265,10 +265,10 @@ export default function AdminSettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab('notifications')}
-          className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
             activeTab === 'notifications'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              ? 'bg-paper text-ink shadow-sm'
+              : 'text-steel hover:bg-paper/50'
           }`}
         >
           <Bell className="h-4 w-4" />
@@ -276,10 +276,10 @@ export default function AdminSettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab('logs')}
-          className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
             activeTab === 'logs'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              ? 'bg-paper text-ink shadow-sm'
+              : 'text-steel hover:bg-paper/50'
           }`}
         >
           <Database className="h-4 w-4" />
@@ -289,17 +289,17 @@ export default function AdminSettingsPage() {
 
       {/* Settings Content */}
       {(activeTab === 'general' || activeTab === 'security' || activeTab === 'notifications') && (
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+        <div className="bg-cloud border border-fog rounded-xl p-6">
           <div className="space-y-6">
             {settings
               .filter(setting => setting.category === activeTab)
               .map((setting) => (
                 <div key={setting.id} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-300">
+                    <label className="text-sm font-semibold text-ink uppercase tracking-wide">
                       {setting.key.replace('_', ' ').toUpperCase()}
                     </label>
-                    <Badge variant="outline" className="border-gray-600 text-gray-400">
+                    <Badge variant="outline" className="border-fog text-steel bg-paper">
                       {setting.type}
                     </Badge>
                   </div>
@@ -307,10 +307,10 @@ export default function AdminSettingsPage() {
                     value={editingSettings[setting.id] || ''}
                     onChange={(e) => handleSettingChange(setting.id, e.target.value)}
                     disabled={!setting.isEditable}
-                    className="bg-gray-700 border-gray-600 text-white"
+                    className="bg-cloud border-fog text-ink placeholder-steel focus-visible:ring-hp-primary"
                     placeholder={setting.value}
                   />
-                  <p className="text-sm text-gray-400">{setting.description}</p>
+                  <p className="text-sm text-steel">{setting.description}</p>
                 </div>
               ))}
           </div>
@@ -318,30 +318,30 @@ export default function AdminSettingsPage() {
       )}
 
       {activeTab === 'logs' && (
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-          <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">System Logs</h3>
-            <Button variant="outline" size="sm">
+        <div className="bg-cloud border border-fog rounded-xl overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-fog flex items-center justify-between bg-paper">
+            <h3 className="text-lg font-semibold text-ink">System Logs</h3>
+            <Button variant="outline" size="sm" className="border-fog text-ink hover:bg-cloud">
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
           </div>
           <Table>
             <TableHeader>
-              <TableRow className="border-gray-700">
-                <TableHead className="text-gray-300">Level</TableHead>
-                <TableHead className="text-gray-300">Message</TableHead>
-                <TableHead className="text-gray-300">User</TableHead>
-                <TableHead className="text-gray-300">Timestamp</TableHead>
+              <TableRow className="border-fog bg-paper">
+                <TableHead className="text-graphite font-semibold">Level</TableHead>
+                <TableHead className="text-graphite font-semibold">Message</TableHead>
+                <TableHead className="text-graphite font-semibold">User</TableHead>
+                <TableHead className="text-graphite font-semibold">Timestamp</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {logs.map((log) => (
-                <TableRow key={log.id} className="border-gray-700 hover:bg-gray-750">
+                <TableRow key={log.id} className="border-fog hover:bg-paper/50 transition-colors">
                   <TableCell>{getLogLevelBadge(log.level)}</TableCell>
-                  <TableCell className="text-gray-300">{log.message}</TableCell>
-                  <TableCell className="text-gray-300">{log.user || 'System'}</TableCell>
-                  <TableCell className="text-gray-300">{formatDate(log.timestamp)}</TableCell>
+                  <TableCell className="text-ink font-medium">{log.message}</TableCell>
+                  <TableCell className="text-steel">{log.user || 'System'}</TableCell>
+                  <TableCell className="text-steel">{formatDate(log.timestamp)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
