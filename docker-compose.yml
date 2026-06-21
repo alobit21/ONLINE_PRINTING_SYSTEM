@@ -40,7 +40,7 @@ services:
       - DB_HOST=db          # Docker internal hostname — matches service name above
       - REDIS_URL=redis://redis:6379/0
     ports:
-      - "8001:8000"         # host:container — using 8001 since 80/443 are taken by github_management's nginx
+      - "${BACKEND_PORT:-8001}:8000"         # host:container — using 8001 since 80/443 are taken by github_management's nginx
     volumes:
       - media_files:/app/media    # uploaded files persist across deploys
     depends_on:
@@ -78,7 +78,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3001:80"            # host:container — using 3001 to keep clear of other apps
+      - "${FRONTEND_PORT:-3001}:80"            # host:container — using 3001 to keep clear of other apps
 
 
 # ── Named volumes (data persists across docker compose down/up) ───────────────

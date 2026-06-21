@@ -1,4 +1,4 @@
- 
+
 import { FileUp, Search, Sliders, CreditCard, Printer, CheckCircle } from 'lucide-react';
 
 export const HowItWorks = () => {
@@ -63,16 +63,16 @@ export const HowItWorks = () => {
           {steps.map((step, index) => {
             const Icon = step.icon;
 
-            const alignmentClass = index % 2 === 0 
-                ? "items-start text-left" 
-                : "items-end text-right sm:items-start sm:text-left";
+            const alignmentClass = index % 2 === 0
+              ? "items-start text-left"
+              : "items-end text-right sm:items-start sm:text-left";
 
             return (
               <div
                 key={step.title}
                 className={`flex flex-col relative ${alignmentClass}`}
               >
-                
+
                 {/* Responsive connecting arrows */}
                 {index % 3 !== 2 && index < steps.length - 1 && (
                   <div className="hidden lg:flex absolute top-[48px] -right-8 w-8 -translate-y-1/2 text-white/40 items-center justify-center">
@@ -82,7 +82,7 @@ export const HowItWorks = () => {
                     </svg>
                   </div>
                 )}
-                
+
                 {index % 2 !== 1 && index < steps.length - 1 && (
                   <div className="hidden sm:flex lg:hidden absolute top-[48px] -right-8 w-8 -translate-y-1/2 text-white/40 items-center justify-center">
                     <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,8 +92,28 @@ export const HowItWorks = () => {
                   </div>
                 )}
 
+                {/* Mobile zig-zag arrow: Left to Right (Odd -> Even) */}
+                {index % 2 === 0 && index < steps.length - 1 && (
+                  <div className="flex sm:hidden absolute -bottom-8 left-8 text-white/40 z-0">
+                    <svg width="120" height="48" viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 0 V 24 Q 20 36 32 36 H 112" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+                      <path d="M104 28 L 114 36 L 104 44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+
+                {/* Mobile zig-zag arrow: Right to Left (Even -> Odd) */}
+                {index % 2 !== 0 && index < steps.length - 1 && (
+                  <div className="flex sm:hidden absolute -bottom-8 right-8 text-white/40 z-0">
+                    <svg width="120" height="48" viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M100 0 V 24 Q 100 36 88 36 H 8" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+                      <path d="M16 28 L 6 36 L 16 44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+
                 {/* Step number */}
-                <div className="text-sm text-white/70 font-medium mb-4">
+                <div className="text-sm text-white/70 font-medium mb-4 relative z-10">
                   Step {index + 1}
                 </div>
 
@@ -121,4 +141,3 @@ export const HowItWorks = () => {
     </section>
   );
 };
- 
