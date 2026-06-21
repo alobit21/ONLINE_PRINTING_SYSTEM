@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FileUp, Clock, MapPin, Zap, TrendingUp, ChevronRight, Star, AlertCircle } from 'lucide-react';
+import { FileUp, Clock, MapPin, Zap, TrendingUp, ChevronRight, Star, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent } from '../../../components/ui/LegacyCard';
 import { Button } from '../../../components/ui/LegacyButton';
 import { Skeleton } from '../../../components/ui/skeleton';
@@ -52,6 +52,7 @@ interface Shop {
     name: string;
     rating?: number;
     distance?: number;
+    banner?: string | null;
 }
 
 interface ShopsResponse {
@@ -140,43 +141,57 @@ export const CustomerHome = () => {
     }
 
     return (
-        <div className="space-y-8 fade-in">
+        <div className="space-y-10 fade-in pb-12">
             {/* Hero Welcome Card */}
-            <div className="bg-hp-primary rounded-[16px] p-8 md:p-12 text-white relative overflow-hidden shadow-sm">
-                <div className="relative z-10 max-w-2xl">
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+            <div className="bg-gradient-to-br from-hp-primary to-blue-900 rounded-[4px] text-white relative overflow-hidden shadow-md border border-blue-800/50 flex flex-col md:flex-row items-center min-h-[360px]">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-white/5 rounded-[4px] blur-3xl -translate-y-1/2"></div>
+                <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-blue-500/20 rounded-[4px] blur-2xl translate-y-1/3"></div>
+                
+                <div className="relative z-10 p-8 md:p-14 flex-1 w-full md:w-[60%]">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-white/10 backdrop-blur-md border border-white/10 mb-6">
+                        <Zap className="w-4 h-4 text-amber-300" />
+                        <span className="text-xs font-semibold text-blue-50 uppercase tracking-widest">Enterprise Printing</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.15]">
                         Need prints fast? <br />
                         <span className="text-blue-200">We've got you covered.</span>
                     </h2>
-                    <p className="text-blue-100 mt-4 text-lg font-medium max-w-md">
-                        The smartest way to upload, optimize, and print documents at nearby stations.
+                    <p className="text-blue-100/90 mt-5 text-lg font-normal max-w-lg leading-relaxed">
+                        Upload your documents, choose finishing options, and pick them up at a nearby station. The smartest way to print.
                     </p>
 
-                    <div className="mt-8 flex flex-wrap gap-4">
-                        <Button
-                            className="bg-white text-hp-primary hover:bg-cloud h-14 px-8 rounded-[4px] font-bold flex items-center gap-3 transition-transform"
+                    <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                        <button
+                            className="bg-white text-hp-primary hover:bg-cloud h-14 px-8 w-full sm:w-auto rounded-[4px] font-semibold flex items-center justify-center gap-3 transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-sm"
                             onClick={() => navigate('/checkout')}
                         >
-                            <FileUp className="h-6 w-6" />
+                            <FileUp className="h-5 w-5" />
                             Start New Job
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            className="text-white hover:bg-white/10 h-14 px-8 rounded-[4px] font-bold flex items-center gap-2 border border-white/20"
+                        </button>
+                        <button
+                            className="text-white hover:bg-white/10 h-14 px-8 w-full sm:w-auto rounded-[4px] font-semibold flex items-center justify-center gap-2 border border-white/20 transition-colors backdrop-blur-sm"
                             onClick={() => navigate('/dashboard/customer/orders')}
                         >
                             Track Recent
-                            <ChevronRight className="h-5 w-5" />
-                        </Button>
+                            <ChevronRight className="h-4 w-4" />
+                        </button>
                     </div>
                 </div>
 
-                {/* Background decoration icon */}
-                <FileUp className="absolute right-12 bottom-12 h-48 w-48 text-white/10 rotate-12" />
+                {/* Hero Image Side */}
+                <div className="hidden md:block absolute right-0 top-0 bottom-0 w-[45%] z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-transparent z-10"></div>
+                    <img 
+                        src="https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?q=80&w=2070&auto=format&fit=crop" 
+                        alt="Enterprise Printing" 
+                        className="w-full h-full object-cover opacity-80"
+                    />
+                </div>
             </div>
 
             {/* Quick Stats / Info Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {isLoading ? (
                     <>
                         <StatSkeleton />
@@ -186,48 +201,52 @@ export const CustomerHome = () => {
                     </>
                 ) : (
                     <>
-                        <QuickStat icon={Zap} label="Average Speed" value={stats.avgSpeed} color="bg-amber-500/20 text-amber-400 border border-amber-500/30" />
-                        <QuickStat icon={MapPin} label="Nearby Shops" value={`${stats.nearbyCount} active`} color="bg-blue-500/20 text-blue-400 border border-blue-500/30" />
-                        <QuickStat 
-                            icon={TrendingUp} 
-                            label="Total Spent" 
-                            value={`$${Number(stats?.totalSpent || 0).toFixed(2)}`} 
-                            color="bg-green-500/20 text-green-400 border border-green-500/30" 
-                        />
-                        <QuickStat icon={Clock} label="Recent Job" value={stats.recentStatus} color="bg-purple-500/20 text-purple-400 border border-purple-500/30" />
+                        <QuickStat icon={Zap} label="Average Speed" value={stats.avgSpeed} />
+                        <QuickStat icon={MapPin} label="Nearby Shops" value={`${stats.nearbyCount} active`} />
+                        <QuickStat icon={TrendingUp} label="Total Spent" value={`TZS ${Number(stats?.totalSpent || 0).toLocaleString()}`} />
+                        <QuickStat icon={Clock} label="Recent Job" value={stats.recentStatus} />
                     </>
                 )}
             </div>
 
             {/* Section: Recent Orders */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center px-2">
-                    <h3 className="text-xl font-bold text-ink">Recent Print Jobs</h3>
-                    <Button variant="ghost" size="sm" className="text-hp-primary font-bold hover:bg-cloud" onClick={() => navigate('/dashboard/customer/orders')}>See all</Button>
+            <div className="space-y-6">
+                <div className="flex justify-between items-end px-2">
+                    <div>
+                        <h3 className="text-xl md:text-2xl font-bold text-ink tracking-tight">Recent Print Jobs</h3>
+                        <p className="text-sm text-steel mt-1">Track the status of your latest documents.</p>
+                    </div>
+                    <button 
+                        className="text-sm font-semibold text-hp-primary hover:text-blue-800 transition-colors flex items-center gap-1" 
+                        onClick={() => navigate('/dashboard/customer/orders')}
+                    >
+                        View All <ChevronRight className="w-4 h-4" />
+                    </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {isLoading ? (
                         <>
                             <JobCardSkeleton />
                             <JobCardSkeleton />
+                            <JobCardSkeleton />
                         </>
                     ) : recentOrders.length === 0 ? (
-                        <Card className="border border-fog bg-canvas shadow-sm rounded-[16px]">
-                            <CardContent className="p-8 text-center flex flex-col items-center">
-                                <div className="h-12 w-12 rounded-full bg-cloud flex items-center justify-center mb-4">
-                                    <FileUp className="h-6 w-6 text-charcoal" />
-                                </div>
-                                <p className="font-bold text-ink">No recent orders yet</p>
-                                <p className="text-sm text-charcoal mt-1 mb-4">Start your first print job today!</p>
-                                <Button 
-                                    className="bg-hp-primary text-white hover:bg-blue-800 rounded-[4px]"
-                                    onClick={() => navigate('/checkout')}
-                                >
-                                    Upload Document
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <div className="lg:col-span-3 border border-dashed border-fog bg-cloud/50 rounded-[4px] p-12 text-center flex flex-col items-center justify-center min-h-[250px]">
+                            <div className="h-16 w-16 rounded-full bg-canvas flex items-center justify-center mb-5 shadow-sm">
+                                <FileUp className="h-8 w-8 text-steel" />
+                            </div>
+                            <p className="text-lg font-semibold text-ink">No recent orders found</p>
+                            <p className="text-sm text-charcoal mt-2 mb-6 max-w-sm">
+                                You haven't placed any print orders recently. Upload a document to get started.
+                            </p>
+                            <button 
+                                className="bg-hp-primary text-canvas hover:bg-hp-primary/90 px-6 py-3 rounded-[4px] font-semibold tracking-wide transition-colors"
+                                onClick={() => navigate('/checkout')}
+                            >
+                                Upload Document
+                            </button>
+                        </div>
                     ) : (
                         recentOrders.map((order: Order) => (
                             <RecentJobCard
@@ -261,8 +280,9 @@ export const CustomerHome = () => {
                             <RecommendedShop
                                 key={shop.id}
                                 name={shop.name}
-                                rating={shop.rating || 4.8}
+                                rating={shop.rating}
                                 distance={shop.distance !== undefined ? `${Number(shop.distance).toFixed(1)}km` : undefined}
+                                banner={shop.banner}
                             />
                         ))
                     )}
@@ -277,7 +297,6 @@ interface QuickStatProps {
     icon: React.ComponentType<{ className?: string }>;
     label: string;
     value: string;
-    color: string;
 }
 
 interface RecentJobCardProps {
@@ -291,111 +310,126 @@ interface RecentJobCardProps {
 
 interface RecommendedShopProps {
     name: string;
-    rating: number;
+    rating?: number;
     distance?: string;
+    banner?: string | null;
 }
 
-const QuickStat = ({ icon: Icon, label, value, color }: QuickStatProps) => (
-    <Card className="border border-fog shadow-sm bg-canvas rounded-[16px]">
-        <CardContent className="p-4 flex flex-col items-center text-center">
-            <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mb-2 shadow-sm", color)}>
+const QuickStat = ({ icon: Icon, label, value }: QuickStatProps) => (
+    <div className="bg-canvas border border-fog rounded-[4px] p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-[140px]">
+        <div className="flex items-center gap-3 mb-2">
+            <div className="h-10 w-10 rounded-full bg-cloud flex items-center justify-center text-hp-primary shrink-0">
                 <Icon className="h-5 w-5" />
             </div>
-            <p className="text-[10px] font-bold text-charcoal uppercase tracking-wider">{label}</p>
-            <p className="text-sm font-black text-ink mt-0.5 truncate w-full">{value}</p>
-        </CardContent>
-    </Card>
+            <p className="text-sm font-medium text-steel">{label}</p>
+        </div>
+        <p className="text-2xl md:text-3xl font-bold text-ink tracking-tight truncate w-full">{value}</p>
+    </div>
 );
 
-const RecentJobCard = ({ id, shop, status, time, price, files }: RecentJobCardProps) => (
-    <Card className="border border-fog shadow-sm bg-canvas rounded-[16px] hover:shadow-md transition-shadow">
-        <CardContent className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+const RecentJobCard = ({ id, shop, status, time, price, files }: RecentJobCardProps) => {
+    const isCompleted = status === 'completed' || status === 'ready';
+    return (
+        <div className="bg-canvas border border-fog rounded-[4px] p-5 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between min-h-[160px]">
+            <div className="flex justify-between items-start mb-4">
                 <div className={cn(
-                    "h-12 w-12 rounded-[8px] flex items-center justify-center",
-                    status === 'ready' || status === 'completed' ? "bg-green-100" : "bg-blue-100"
+                    "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
+                    isCompleted ? "bg-green-50 text-green-600" : "bg-blue-50 text-blue-600"
                 )}>
-                    {status === 'ready' || status === 'pending' ? <Clock className={cn("h-6 w-6", status === 'ready' ? "text-green-600" : "text-blue-600")} /> : <TrendingUp className="h-6 w-6 text-blue-600" />}
+                    {isCompleted ? <CheckCircle2 className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
                 </div>
-                <div>
-                    <div className="flex items-center gap-2">
-                        <span className="font-black text-ink">{id}</span>
-                        <span className={cn(
-                            "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full",
-                            status === 'ready' || status === 'completed' ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"
-                        )}>
-                            {status}
-                        </span>
-                    </div>
-                    <p className="text-xs font-bold text-charcoal mt-0.5">{shop} • {files} files</p>
+                <div className="text-right">
+                    <span className={cn(
+                        "text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px]",
+                        isCompleted ? "bg-green-100/50 text-green-700" : "bg-blue-100/50 text-blue-700"
+                    )}>
+                        {status}
+                    </span>
+                    <p className="text-[11px] font-medium text-steel mt-2">{time}</p>
                 </div>
             </div>
-            <div className="text-right">
-                <p className="font-black text-ink">${Number(price || 0).toFixed(2)}</p>
-                <p className="text-[10px] font-medium text-charcoal">{time}</p>
-            </div>
-        </CardContent>
-    </Card>
-);
-
-const RecommendedShop = ({ name, rating, distance }: RecommendedShopProps) => (
-    <div className="min-w-[200px] bg-canvas rounded-[16px] p-5 shadow-sm border border-fog group cursor-pointer hover:shadow-md transition-shadow">
-        <div className="h-28 w-full bg-cloud rounded-lg mb-4 overflow-hidden relative">
-            <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${name}`} className="h-full w-full object-cover" alt={name} />
-            <div className="absolute top-2 right-2 h-7 w-7 bg-white rounded-md flex items-center justify-center shadow-sm border border-fog">
-                <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-                <span className="ml-1 text-[10px] font-bold text-ink">{rating}</span>
+            <div>
+                <p className="font-semibold text-ink text-sm mb-1">{id}</p>
+                <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-charcoal truncate pr-2 max-w-[70%]">{shop}</p>
+                    <p className="text-xs text-steel font-medium">{files} files</p>
+                </div>
+                <div className="h-[1px] w-full bg-fog my-3" />
+                <div className="flex justify-between items-center">
+                    <span className="text-xs text-steel">Total Amount</span>
+                    <span className="font-bold text-ink">TZS {Number(price || 0).toLocaleString()}</span>
+                </div>
             </div>
         </div>
-        <h4 className="font-bold text-ink truncate">{name}</h4>
-        <div className="flex items-center justify-between mt-2">
-            {distance && <p className="text-xs font-bold text-charcoal">{distance}</p>}
-            <div className="flex items-center gap-1 text-xs font-bold text-hp-primary ml-auto">
-                View <ChevronRight className="h-3 w-3" />
+    );
+};
+
+const RecommendedShop = ({ name, rating, distance, banner }: RecommendedShopProps) => {
+    return (
+        <div className="min-w-[260px] bg-canvas rounded-[4px] shadow-sm border border-fog group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
+            <div className="h-32 w-full bg-cloud relative overflow-hidden flex items-center justify-center">
+                {banner ? (
+                    <img src={banner} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" alt={name} />
+                ) : (
+                    <div className="text-steel flex flex-col items-center">
+                        <MapPin className="h-8 w-8 mb-1 opacity-50" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
+                    </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end">
+                    <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-2 py-1 rounded-md">
+                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        <span className="text-xs font-semibold text-white">{rating ? Number(rating).toFixed(1) : 'New'}</span>
+                    </div>
+                    {distance && <div className="text-xs font-medium text-white/90 bg-black/30 backdrop-blur-md px-2 py-1 rounded-md">{distance}</div>}
+                </div>
+            </div>
+            <div className="p-4 flex-1 flex flex-col justify-between">
+                <h4 className="font-semibold text-ink truncate mb-2">{name}</h4>
+                <div className="flex items-center text-xs font-medium text-hp-primary group-hover:text-blue-700 transition-colors">
+                    Start printing here <ChevronRight className="h-4 w-4 ml-0.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Skeletons
+const StatSkeleton = () => (
+    <div className="bg-canvas border border-fog rounded-[4px] p-6 shadow-sm flex flex-col justify-between h-[140px]">
+        <div className="flex items-center gap-3 mb-2">
+            <Skeleton className="h-10 w-10 rounded-full bg-cloud" />
+            <Skeleton className="h-4 w-24 bg-cloud" />
+        </div>
+        <Skeleton className="h-8 w-20 bg-cloud mt-4" />
+    </div>
+);
+
+const JobCardSkeleton = () => (
+    <div className="bg-canvas border border-fog rounded-[4px] p-5 shadow-sm min-h-[160px] flex flex-col justify-between">
+        <div className="flex justify-between items-start mb-4">
+            <Skeleton className="h-10 w-10 rounded-full bg-cloud" />
+            <Skeleton className="h-6 w-16 rounded-full bg-cloud" />
+        </div>
+        <div>
+            <Skeleton className="h-4 w-24 mb-2 bg-cloud" />
+            <Skeleton className="h-3 w-32 mb-4 bg-cloud" />
+            <div className="h-[1px] w-full bg-fog my-3" />
+            <div className="flex justify-between items-center">
+                <Skeleton className="h-3 w-20 bg-cloud" />
+                <Skeleton className="h-4 w-16 bg-cloud" />
             </div>
         </div>
     </div>
 );
 
-// Skeletons
-const StatSkeleton = () => (
-    <Card className="border border-fog shadow-sm bg-canvas rounded-[16px]">
-        <CardContent className="p-4 flex flex-col items-center">
-            <Skeleton className="h-10 w-10 rounded-xl mb-2 bg-cloud" />
-            <Skeleton className="h-3 w-16 mb-1 bg-cloud" />
-            <Skeleton className="h-4 w-20 bg-cloud" />
-        </CardContent>
-    </Card>
-);
-
-const JobCardSkeleton = () => (
-    <Card className="border border-fog shadow-sm bg-canvas rounded-[16px]">
-        <CardContent className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-12 w-12 rounded-[8px] bg-cloud" />
-                <div className="space-y-2">
-                    <div className="flex gap-2">
-                        <Skeleton className="h-4 w-20 bg-cloud" />
-                        <Skeleton className="h-4 w-12 rounded-full bg-cloud" />
-                    </div>
-                    <Skeleton className="h-3 w-32 bg-cloud" />
-                </div>
-            </div>
-            <div className="text-right space-y-2">
-                <Skeleton className="h-4 w-12 ml-auto bg-cloud" />
-                <Skeleton className="h-3 w-16 ml-auto bg-cloud" />
-            </div>
-        </CardContent>
-    </Card>
-);
-
 const ShopSkeleton = () => (
-    <div className="min-w-[200px] bg-canvas rounded-[16px] p-5 shadow-sm border border-fog">
-        <Skeleton className="h-28 w-full rounded-lg mb-4 bg-cloud" />
-        <Skeleton className="h-5 w-3/4 mb-3 bg-cloud" />
-        <div className="flex justify-between items-center">
-            <Skeleton className="h-3 w-12 bg-cloud" />
-            <Skeleton className="h-3 w-8 bg-cloud" />
+    <div className="min-w-[260px] bg-canvas rounded-[4px] p-0 shadow-sm border border-fog flex flex-col overflow-hidden">
+        <Skeleton className="h-32 w-full bg-cloud rounded-none" />
+        <div className="p-4">
+            <Skeleton className="h-5 w-3/4 mb-3 bg-cloud" />
+            <Skeleton className="h-4 w-1/2 bg-cloud" />
         </div>
     </div>
 );

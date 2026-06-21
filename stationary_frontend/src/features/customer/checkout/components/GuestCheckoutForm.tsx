@@ -23,6 +23,7 @@ export const GuestCheckoutForm = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [paymentId, setPaymentId] = useState<string | null>(null);
     const [showPaymentTracker, setShowPaymentTracker] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
     const { user, isAuthenticated } = useAuthStore();
     const [guestData, setGuestData] = useState<GuestCustomerData>({
         name: user?.email?.split('@')[0] || '',
@@ -52,11 +53,11 @@ export const GuestCheckoutForm = () => {
                 setPaymentId(data.createGuestOrder.payment?.id || null);
                 setShowPaymentTracker(true);
             } else {
-                alert(`Order Failed: ${data.createGuestOrder.response.message}`);
+                setApiError(`Order Failed: ${data.createGuestOrder.response.message}`);
             }
         },
         onError: (error) => {
-            alert(`Order Error: ${error.message}`);
+            setApiError(`Order Error: ${error.message}`);
             console.error("Order error:", error);
         }
     });
@@ -71,11 +72,11 @@ export const GuestCheckoutForm = () => {
                 setPaymentId(data.createOrder.payment?.id || null);
                 setShowPaymentTracker(true);
             } else {
-                alert(`Order Failed: ${data.createOrder.response.message}`);
+                setApiError(`Order Failed: ${data.createOrder.response.message}`);
             }
         },
         onError: (error) => {
-            alert(`Order Error: ${error.message}`);
+            setApiError(`Order Error: ${error.message}`);
             console.error("Order error:", error);
         }
     });
@@ -106,7 +107,7 @@ export const GuestCheckoutForm = () => {
             }
         }
         if (!phoneNumber.trim()) {
-            alert('Payment phone number is required');
+            setApiError('Payment phone number is required');
             return false;
         }
         setErrors(newErrors);
@@ -119,6 +120,7 @@ export const GuestCheckoutForm = () => {
     };
 
     const handleGuestCheckout = async () => {
+        setApiError(null);
         if (!selectedShopId || !validateForm()) return;
         const items = readyFiles.map(file => ({
             documentId: file.id,
@@ -144,12 +146,12 @@ export const GuestCheckoutForm = () => {
             }
         } catch (err: any) {
             console.error("Order creation failed:", err);
-            // Error is handled by onError callback above
+            setApiError(err.message || "An unexpected error occurred");
         }
     };
 
-    const handlePaymentComplete = () => { setIsSuccess(true); setShowPaymentTracker(false); };
-    const handlePaymentFailed = () => { console.error("Payment failed"); setShowPaymentTracker(false); };
+    const handlePaymentComplete = () => { setIsSuccess(true); setShowPaymentTracker(false); setApiError(null); };
+    const handlePaymentFailed = () => { console.error("Payment failed"); setShowPaymentTracker(false); setApiError("Payment failed or was cancelled."); };
 
     if (showPaymentTracker && paymentId) {
         return (
@@ -364,6 +366,15 @@ export const GuestCheckoutForm = () => {
                                     <button onClick={resetWorkflow} className="text-xs text-red-700 dark:text-red-300 hover:underline">
                                         Click here to restart
                                     </button>
+                                </div>
+                            )}
+
+                            {apiError && (
+                                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-[8px] animate-fade-in">
+                                    <p className="text-sm text-red-600 font-medium flex items-start gap-2">
+                                        <AlertTriangle size={16} className="shrink-0 mt-0.5" /> 
+                                        <span>{apiError}</span>
+                                    </p>
                                 </div>
                             )}
 

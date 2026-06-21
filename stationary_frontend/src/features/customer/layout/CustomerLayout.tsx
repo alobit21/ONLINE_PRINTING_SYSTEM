@@ -12,11 +12,8 @@ export const CustomerLayout = () => {
 
       {/* Main Content */}
       <main className="flex-1 pb-28 md:pb-32 lg:pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Optional subtle background panel for content */}
-          <div className="bg-background  backdrop-blur-md rounded-2xl p-6 shadow-inner">
-            <Outlet />
-          </div>
+        <div className="w-[96%] max-w-[1440px] mx-auto py-6">
+          <Outlet />
         </div>
       </main>
 
