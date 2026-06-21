@@ -10,13 +10,13 @@ export default function AdminUsersPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-in fade-in">
         {[1, 2, 3].map(i => (
-          <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div key={i} className="bg-cloud border border-fog rounded-xl p-6">
             <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-gray-700 rounded w-1/3"></div>
-              <div className="h-6 bg-gray-700 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+              <div className="h-4 bg-fog rounded w-1/3"></div>
+              <div className="h-6 bg-fog rounded w-1/2"></div>
+              <div className="h-4 bg-fog rounded w-1/4"></div>
             </div>
           </div>
         ))}
@@ -26,9 +26,10 @@ export default function AdminUsersPage() {
 
   if (error) {
     return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Error loading users</p>
-        <p className="text-sm">{error.message}</p>
+      <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+        <Users className="h-12 w-12 text-error" />
+        <h2 className="text-xl font-bold text-ink">Error loading users</h2>
+        <p className="text-steel max-w-sm">{error.message}</p>
       </div>
     );
   }
@@ -37,17 +38,17 @@ export default function AdminUsersPage() {
   const users = data?.usersSimple || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <Users className="h-8 w-8 text-blue-400" />
+          <h1 className="text-2xl font-bold text-ink mb-1 flex items-center gap-3">
+            <Users className="h-7 w-7 text-hp-primary" />
             User Management
           </h1>
-          <p className="text-gray-400">Manage platform users and permissions</p>
+          <p className="text-steel text-sm">Manage platform users and permissions</p>
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
           Total: {users.length} users
         </div>
       </div>

@@ -19,13 +19,13 @@ export default function AdminShopsPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-in fade-in">
         {[1, 2, 3].map(i => (
-          <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <div key={i} className="bg-cloud border border-fog rounded-xl p-6">
             <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-gray-700 rounded w-1/3"></div>
-              <div className="h-6 bg-gray-700 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+              <div className="h-4 bg-fog rounded w-1/3"></div>
+              <div className="h-6 bg-fog rounded w-1/2"></div>
+              <div className="h-4 bg-fog rounded w-1/4"></div>
             </div>
           </div>
         ))}
@@ -35,9 +35,10 @@ export default function AdminShopsPage() {
 
   if (error) {
     return (
-      <div className="text-center py-12 text-gray-400">
-        <p className="text-lg font-medium">Error loading shops</p>
-        <p className="text-sm">{error.message}</p>
+      <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+        <Ban className="h-12 w-12 text-error" />
+        <h2 className="text-xl font-bold text-ink">Error loading shops</h2>
+        <p className="text-steel max-w-sm">{error.message}</p>
       </div>
     );
   }
@@ -73,76 +74,77 @@ export default function AdminShopsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <Store className="h-8 w-8 text-blue-400" />
+          <h1 className="text-2xl font-bold text-ink mb-1 flex items-center gap-3">
+            <Store className="h-7 w-7 text-hp-primary" />
             Shop Management
           </h1>
-          <p className="text-gray-400">Manage printing shops and verification</p>
+          <p className="text-steel text-sm">Manage printing shops and verification</p>
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
           Total: {shops.length} shops
         </div>
       </div>
 
       {/* Shops List */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {shops.map((shop: any) => (
-          <div key={shop.id} className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+          <div key={shop.id} className="bg-cloud border border-fog rounded-xl overflow-hidden hover:border-steel transition-colors">
             {/* Shop Header */}
-            <div className="p-6 border-b border-gray-700">
+            <div className="p-6 border-b border-fog bg-paper">
               <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-white">{shop.name}</h3>
+                <div className="flex-1 min-w-0 pr-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-semibold text-ink truncate">{shop.name}</h3>
+                  </div>
+                  <div className="flex items-center gap-2 mb-3">
                     {getVerificationBadge(shop.isVerified)}
                     {getSubscriptionBadge(shop.subscriptionTier)}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-300">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      <span>{shop.address}</span>
+                  
+                  <div className="space-y-2 text-sm text-steel">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 shrink-0 text-graphite" />
+                      <span className="truncate">{shop.address}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span>Rating:</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-graphite font-medium">Rating:</span>
                       <div className="flex">
                         {getRatingStars(shop.rating)}
                       </div>
-                      <span className="text-gray-400">({shop.rating})</span>
+                      <span className="text-steel">({shop.rating})</span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400">Owner: {shop.owner?.firstName} {shop.owner?.lastName}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge className={shop.isAcceptingOrders ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}>
-                    {shop.isAcceptingOrders ? 'Accepting Orders' : 'Not Accepting'}
-                  </Badge>
+                
+                {/* Actions Menu */}
+                <div className="flex items-center gap-2 shrink-0">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-steel hover:text-ink hover:bg-cloud border border-transparent hover:border-fog">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                      <DropdownMenuLabel className="text-gray-300">Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                    <DropdownMenuContent align="end" className="bg-canvas border-fog shadow-lg">
+                      <DropdownMenuLabel className="text-ink">Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Edit className="h-4 w-4 mr-2" />
                         Edit Shop
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-green-400 hover:bg-gray-700 hover:text-green-400">
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-success hover:bg-success/10 cursor-pointer focus:bg-success/10 focus:text-success">
                         <Check className="h-4 w-4 mr-2" />
                         Verify Shop
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-400 hover:bg-gray-700 hover:text-red-400">
+                      <DropdownMenuItem className="text-error hover:bg-error/10 cursor-pointer focus:bg-error/10 focus:text-error">
                         <Ban className="h-4 w-4 mr-2" />
                         Suspend Shop
                       </DropdownMenuItem>
@@ -151,14 +153,24 @@ export default function AdminShopsPage() {
                 </div>
               </div>
             </div>
+            
+            {/* Shop Footer */}
+            <div className="px-6 py-4 flex items-center justify-between">
+              <p className="text-xs font-medium text-graphite">
+                Owner: <span className="text-ink">{shop.owner?.firstName} {shop.owner?.lastName}</span>
+              </p>
+              <Badge className={shop.isAcceptingOrders ? 'bg-success/10 text-success border-success/20' : 'bg-error/10 text-error border-error/20'}>
+                {shop.isAcceptingOrders ? 'Accepting Orders' : 'Not Accepting'}
+              </Badge>
+            </div>
           </div>
         ))}
 
         {shops.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            <Store className="h-16 w-16 mx-auto mb-4 text-gray-600" />
-            <p className="text-lg font-medium">No shops found</p>
-            <p className="text-sm">Try adjusting your search or filters</p>
+          <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
+            <Store className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
+            <p className="text-lg font-medium text-ink">No shops found</p>
+            <p className="text-sm text-steel mt-1">Try adjusting your search or filters</p>
           </div>
         )}
       </div>

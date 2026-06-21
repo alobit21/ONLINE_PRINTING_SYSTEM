@@ -23,8 +23,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <AdminNavbar />
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-900">
-          <div className="max-w-7xl mx-auto p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto bg-background transition-colors duration-300">
+          <div className="w-full p-4 lg:p-6 lg:px-8">
             {children || <Outlet />}
           </div>
         </main>

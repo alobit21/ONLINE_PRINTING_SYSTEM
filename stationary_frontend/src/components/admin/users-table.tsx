@@ -88,11 +88,11 @@ export function UsersTable({ users, loading }: UsersTableProps) {
     return (
       <div className="space-y-4">
         {[1, 2, 3, 4, 5].map(i => (
-          <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+          <div key={i} className="bg-cloud border border-fog rounded-xl p-4">
             <div className="animate-pulse space-y-3">
-              <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-              <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+              <div className="h-4 bg-fog rounded w-1/4"></div>
+              <div className="h-4 bg-fog rounded w-1/2"></div>
+              <div className="h-4 bg-fog rounded w-3/4"></div>
             </div>
           </div>
         ))}
@@ -109,7 +109,7 @@ export function UsersTable({ users, loading }: UsersTableProps) {
             placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+            className="bg-cloud border-fog text-ink placeholder-steel focus-visible:ring-hp-primary"
           />
         </div>
         <Select 
@@ -135,54 +135,54 @@ export function UsersTable({ users, loading }: UsersTableProps) {
       </div>
 
       {/* Table */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+      <div className="bg-cloud border border-fog rounded-xl overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-700">
-              <TableHead className="text-gray-300">Email</TableHead>
-              <TableHead className="text-gray-300">First Name</TableHead>
-              <TableHead className="text-gray-300">Last Name</TableHead>
-              <TableHead className="text-gray-300">Role</TableHead>
-              <TableHead className="text-gray-300">Subscription</TableHead>
-              <TableHead className="text-gray-300">Verified</TableHead>
-              <TableHead className="text-gray-300">Staff Status</TableHead>
-              <TableHead className="text-gray-300 text-right">Actions</TableHead>
+            <TableRow className="border-fog bg-paper">
+              <TableHead className="text-graphite font-semibold">Email</TableHead>
+              <TableHead className="text-graphite font-semibold">First Name</TableHead>
+              <TableHead className="text-graphite font-semibold">Last Name</TableHead>
+              <TableHead className="text-graphite font-semibold">Role</TableHead>
+              <TableHead className="text-graphite font-semibold">Subscription</TableHead>
+              <TableHead className="text-graphite font-semibold">Verified</TableHead>
+              <TableHead className="text-graphite font-semibold">Staff Status</TableHead>
+              <TableHead className="text-graphite font-semibold text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredUsers.map((user) => (
-              <TableRow key={user.id} className="border-gray-700 hover:bg-gray-750">
-                <TableCell className="text-gray-100 font-medium">{user.email}</TableCell>
-                <TableCell className="text-gray-300">{user.firstName || '-'}</TableCell>
-                <TableCell className="text-gray-300">{user.lastName || '-'}</TableCell>
+              <TableRow key={user.id} className="border-fog hover:bg-paper/50 transition-colors">
+                <TableCell className="text-ink font-medium">{user.email}</TableCell>
+                <TableCell className="text-steel">{user.firstName || '-'}</TableCell>
+                <TableCell className="text-steel">{user.lastName || '-'}</TableCell>
                 <TableCell>{getRoleBadge(user.role)}</TableCell>
                 <TableCell>{getSubscriptionBadge(user.subscriptionTier)}</TableCell>
                 <TableCell>{getVerificationBadge(user.isVerified)}</TableCell>
                 <TableCell>
-                  <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+                  <Badge className="bg-hp-primary/10 text-hp-primary border-hp-primary/20">
                     {user.role}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-steel hover:text-ink hover:bg-cloud border border-transparent hover:border-fog">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                      <DropdownMenuLabel className="text-gray-300">Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                    <DropdownMenuContent align="end" className="bg-canvas border-fog shadow-lg">
+                      <DropdownMenuLabel className="text-ink">Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Eye className="h-4 w-4 mr-2" />
                         View Profile
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Edit className="h-4 w-4 mr-2" />
                         Edit User
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-red-400 hover:bg-gray-700 hover:text-red-400">
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-error hover:bg-error/10 cursor-pointer focus:bg-error/10 focus:text-error">
                         <Ban className="h-4 w-4 mr-2" />
                         Deactivate
                       </DropdownMenuItem>
@@ -196,9 +196,9 @@ export function UsersTable({ users, loading }: UsersTableProps) {
       </div>
 
       {filteredUsers.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
-          <p className="text-lg font-medium">No users found</p>
-          <p className="text-sm">Try adjusting your search or filters</p>
+        <div className="py-16 text-center border-2 border-dashed border-fog rounded-xl">
+          <p className="text-lg font-medium text-ink">No users found</p>
+          <p className="text-sm text-steel mt-1">Try adjusting your search or filters</p>
         </div>
       )}
     </div>

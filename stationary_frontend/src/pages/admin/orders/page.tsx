@@ -29,12 +29,12 @@ export default function AdminOrdersPage() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      UPLOADED: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      ACCEPTED: 'bg-blue-100 text-blue-800 border-blue-200',
-      PRINTING: 'bg-purple-100 text-purple-800 border-purple-200',
-      READY: 'bg-green-100 text-green-800 border-green-200',
-      COMPLETED: 'bg-green-100 text-green-800 border-green-200',
-      CANCELLED: 'bg-red-100 text-red-800 border-red-200',
+      UPLOADED: 'bg-warning/10 text-warning border-warning/20',
+      ACCEPTED: 'bg-info/10 text-info border-info/20',
+      PRINTING: 'bg-hp-primary/10 text-hp-primary border-hp-primary/20',
+      READY: 'bg-success/10 text-success border-success/20',
+      COMPLETED: 'bg-success/10 text-success border-success/20',
+      CANCELLED: 'bg-error/10 text-error border-error/20',
     };
     
     const icons = {
@@ -65,90 +65,90 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <ShoppingCart className="h-8 w-8 text-blue-400" />
+          <h1 className="text-2xl font-bold text-ink mb-1 flex items-center gap-3">
+            <ShoppingCart className="h-7 w-7 text-hp-primary" />
             Order Management
           </h1>
-          <p className="text-gray-400">Manage all platform orders and fulfillment</p>
+          <p className="text-steel text-sm">Manage all platform orders and fulfillment</p>
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
           Total: {orders.length} orders
         </div>
       </div>
 
       {/* Orders Table */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+      <div className="bg-cloud border border-fog rounded-xl overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-700">
-              <TableHead className="text-gray-300">Order ID</TableHead>
-              <TableHead className="text-gray-300">Customer</TableHead>
-              <TableHead className="text-gray-300">Shop</TableHead>
-              <TableHead className="text-gray-300">Status</TableHead>
-              <TableHead className="text-gray-300">Total Price</TableHead>
-              <TableHead className="text-gray-300">Date</TableHead>
-              <TableHead className="text-gray-300 text-right">Actions</TableHead>
+            <TableRow className="border-fog bg-paper">
+              <TableHead className="text-graphite font-semibold">Order ID</TableHead>
+              <TableHead className="text-graphite font-semibold">Customer</TableHead>
+              <TableHead className="text-graphite font-semibold">Shop</TableHead>
+              <TableHead className="text-graphite font-semibold">Status</TableHead>
+              <TableHead className="text-graphite font-semibold">Total Price</TableHead>
+              <TableHead className="text-graphite font-semibold">Date</TableHead>
+              <TableHead className="text-graphite font-semibold text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.map((order: any) => (
-              <TableRow key={order.id} className="border-gray-700 hover:bg-gray-750">
-                <TableCell className="text-gray-100 font-medium">
+              <TableRow key={order.id} className="border-fog hover:bg-paper/50 transition-colors">
+                <TableCell className="text-ink font-medium">
                   {order.id?.substring(0, 8)}...
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel">
                   <div>
-                    <p className="font-medium">
+                    <p className="font-medium text-ink">
                       {order.customer?.firstName} {order.customer?.lastName}
                     </p>
-                    <p className="text-sm text-gray-400">{order.customer?.email}</p>
+                    <p className="text-xs text-graphite">{order.customer?.email}</p>
                   </div>
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel">
                   <div>
-                    <p className="font-medium">{order.shop?.name}</p>
-                    <p className="text-sm text-gray-400">{order.shop?.owner?.firstName} {order.shop?.owner?.lastName}</p>
+                    <p className="font-medium text-ink">{order.shop?.name}</p>
+                    <p className="text-xs text-graphite">{order.shop?.owner?.firstName} {order.shop?.owner?.lastName}</p>
                   </div>
                 </TableCell>
                 <TableCell>{getStatusBadge(order.status)}</TableCell>
-                <TableCell className="text-gray-100 font-medium">
+                <TableCell className="text-ink font-medium">
                   TZS {order.totalPrice?.toLocaleString()}
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel">
                   {order.createdAt && formatDate(order.createdAt)}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-steel hover:text-ink hover:bg-cloud border border-transparent hover:border-fog">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                      <DropdownMenuLabel className="text-gray-300">Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                    <DropdownMenuContent align="end" className="bg-canvas border-fog shadow-lg">
+                      <DropdownMenuLabel className="text-ink">Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Download className="h-4 w-4 mr-2" />
                         Download Invoice
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-blue-400 hover:bg-gray-700 hover:text-blue-400">
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-info hover:bg-info/10 cursor-pointer focus:bg-info/10 focus:text-info">
                         <Package className="h-4 w-4 mr-2" />
                         Accept Order
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-green-400 hover:bg-gray-700 hover:text-green-400">
+                      <DropdownMenuItem className="text-success hover:bg-success/10 cursor-pointer focus:bg-success/10 focus:text-success">
                         <Truck className="h-4 w-4 mr-2" />
                         Mark as Completed
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-400 hover:bg-gray-700 hover:text-red-400">
+                      <DropdownMenuItem className="text-error hover:bg-error/10 cursor-pointer focus:bg-error/10 focus:text-error">
                         <XCircle className="h-4 w-4 mr-2" />
                         Cancel Order
                       </DropdownMenuItem>
@@ -162,10 +162,10 @@ export default function AdminOrdersPage() {
       </div>
 
       {orders.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
-          <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-gray-600" />
-          <p className="text-lg font-medium">No orders found</p>
-          <p className="text-sm">Orders will appear here when customers place them</p>
+        <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
+          <ShoppingCart className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
+          <p className="text-lg font-medium text-ink">No orders found</p>
+          <p className="text-sm text-steel mt-1">Orders will appear here when customers place them</p>
         </div>
       )}
     </div>

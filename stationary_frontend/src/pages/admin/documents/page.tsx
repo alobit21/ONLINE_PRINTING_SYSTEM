@@ -76,17 +76,17 @@ export default function AdminDocumentsPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <FileText className="h-8 w-8 text-blue-400" />
+          <h1 className="text-2xl font-bold text-ink mb-1 flex items-center gap-3">
+            <FileText className="h-7 w-7 text-hp-primary" />
             Document Management
           </h1>
-          <p className="text-gray-400">Manage all platform documents and files</p>
+          <p className="text-steel text-sm">Manage all platform documents and files</p>
         </div>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
           Total: {documents.length} documents
         </div>
       </div>
@@ -98,13 +98,13 @@ export default function AdminDocumentsPage() {
             placeholder="Search documents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+            className="bg-cloud border-fog text-ink placeholder-steel focus-visible:ring-hp-primary"
           />
         </div>
         <select 
           value={typeFilter} 
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTypeFilter(e.target.value)}
-          className="bg-gray-700 border-gray-600 text-white rounded px-3 py-2"
+          className="bg-cloud border border-fog text-ink rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-hp-primary focus:border-hp-primary"
         >
           <option value="all">All Types</option>
           <option value="pdf">PDF</option>
@@ -115,88 +115,90 @@ export default function AdminDocumentsPage() {
       </div>
 
       {/* Documents Table */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+      <div className="bg-cloud border border-fog rounded-xl overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="border-gray-700">
-              <TableHead className="text-gray-300">File Name</TableHead>
-              <TableHead className="text-gray-300">Type</TableHead>
-              <TableHead className="text-gray-300">Size</TableHead>
-              <TableHead className="text-gray-300">Owner</TableHead>
-              <TableHead className="text-gray-300">Status</TableHead>
-              <TableHead className="text-gray-300">Date</TableHead>
-              <TableHead className="text-gray-300 text-right">Actions</TableHead>
+            <TableRow className="border-fog bg-paper">
+              <TableHead className="text-graphite font-semibold">File Name</TableHead>
+              <TableHead className="text-graphite font-semibold">Type</TableHead>
+              <TableHead className="text-graphite font-semibold">Size</TableHead>
+              <TableHead className="text-graphite font-semibold">Owner</TableHead>
+              <TableHead className="text-graphite font-semibold">Status</TableHead>
+              <TableHead className="text-graphite font-semibold">Date</TableHead>
+              <TableHead className="text-graphite font-semibold text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredDocuments.map((doc: any) => (
-              <TableRow key={doc.id} className="border-gray-700 hover:bg-gray-750">
-                <TableCell className="text-gray-100 font-medium">
-                  <div className="flex items-center gap-2">
-                    {getFileIcon(doc.fileType)}
+              <TableRow key={doc.id} className="border-fog hover:bg-paper/50 transition-colors">
+                <TableCell className="text-ink font-medium">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded bg-hp-primary/10 flex items-center justify-center text-hp-primary shrink-0">
+                        {getFileIcon(doc.fileType)}
+                    </div>
                     <div>
-                      <p className="font-medium">{doc.fileName}</p>
-                      <p className="text-sm text-gray-400">{doc.fileType}</p>
+                      <p className="font-medium text-ink truncate max-w-[200px]">{doc.fileName}</p>
+                      <p className="text-xs text-graphite truncate max-w-[200px]">{doc.fileType}</p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="text-gray-300">
-                  <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+                <TableCell className="text-steel">
+                  <Badge className="bg-cloud text-steel border-fog">
                     {doc.fileType.split('/')[1]?.toUpperCase() || 'Unknown'}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel font-medium">
                   {formatFileSize(doc.fileSize)}
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel">
                   <div>
-                    <p className="font-medium">
+                    <p className="font-medium text-ink">
                       {doc.owner?.firstName} {doc.owner?.lastName}
                     </p>
-                    <p className="text-sm text-gray-400">{doc.owner?.email}</p>
+                    <p className="text-xs text-graphite">{doc.owner?.email}</p>
                   </div>
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel">
                   {doc.virusDetected ? (
-                    <Badge className="bg-red-100 text-red-800 border-red-200">
+                    <Badge className="bg-error/10 text-error border-error/20">
                       Virus Detected
                     </Badge>
                   ) : doc.isScanned ? (
-                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                    <Badge className="bg-success/10 text-success border-success/20">
                       Scanned
                     </Badge>
                   ) : (
-                    <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                    <Badge className="bg-warning/10 text-warning border-warning/20">
                       Pending Scan
                     </Badge>
                   )}
                 </TableCell>
-                <TableCell className="text-gray-300">
+                <TableCell className="text-steel">
                   {doc.createdAt && formatDate(doc.createdAt)}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-steel hover:text-ink hover:bg-cloud border border-transparent hover:border-fog">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                      <DropdownMenuLabel className="text-gray-300">Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                    <DropdownMenuContent align="end" className="bg-canvas border-fog shadow-lg">
+                      <DropdownMenuLabel className="text-ink">Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-gray-300 hover:bg-gray-700">
+                      <DropdownMenuItem className="text-ink hover:bg-cloud cursor-pointer">
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator className="bg-gray-700" />
-                      <DropdownMenuItem className="text-blue-400 hover:bg-gray-700 hover:text-blue-400">
+                      <DropdownMenuSeparator className="bg-fog" />
+                      <DropdownMenuItem className="text-info hover:bg-info/10 cursor-pointer focus:bg-info/10 focus:text-info">
                         Scan for Viruses
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-400 hover:bg-gray-700 hover:text-red-400">
+                      <DropdownMenuItem className="text-error hover:bg-error/10 cursor-pointer focus:bg-error/10 focus:text-error">
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
                       </DropdownMenuItem>
@@ -210,10 +212,10 @@ export default function AdminDocumentsPage() {
       </div>
 
       {filteredDocuments.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
-          <FileText className="h-16 w-16 mx-auto mb-4 text-gray-600" />
-          <p className="text-lg font-medium">No documents found</p>
-          <p className="text-sm">Documents will appear here when users upload them</p>
+        <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
+          <FileText className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
+          <p className="text-lg font-medium text-ink">No documents found</p>
+          <p className="text-sm text-steel mt-1">Documents will appear here when users upload them</p>
         </div>
       )}
     </div>
