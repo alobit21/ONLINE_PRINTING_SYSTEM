@@ -19,7 +19,7 @@ import {
     TrendingUp,
 } from 'lucide-react';
 import { Button } from '../../components/ui/LegacyButton';
-import { Card, CardContent } from '../../components/ui/LegacyCard';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
 import {
     Dialog,
     DialogContent,
@@ -42,7 +42,7 @@ const OrderStatusBadge = ({ status }: { status: string }) => {
         ACCEPTED: 'bg-indigo-900/50 text-indigo-400 border-indigo-700',
         PRINTING: 'bg-amber-900/50 text-amber-400 border-amber-700',
         READY: 'bg-green-900/50 text-green-400 border-green-700',
-        COMPLETED: 'bg-gray-700 text-gray-300 border-gray-600',
+        COMPLETED: 'bg-cloud text-ink-soft border-fog',
         CANCELLED: 'bg-red-900/50 text-red-400 border-red-700',
     };
 
@@ -140,10 +140,10 @@ function OrderDetailsDialog({
     return (
         <>
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-800 border-gray-700">
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-canvas border-fog">
                     <DialogHeader>
-                        <DialogTitle className="text-white">Order Details</DialogTitle>
-                        <DialogDescription className="text-gray-400">
+                        <DialogTitle className="text-ink">Order Details</DialogTitle>
+                        <DialogDescription className="text-steel">
                             Order ID: {order.id.slice(0, 8).toUpperCase()}
                         </DialogDescription>
                     </DialogHeader>
@@ -151,23 +151,23 @@ function OrderDetailsDialog({
                     <div className="space-y-6 py-4">
                         {/* Customer Information */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Customer Information</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide">Customer Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-cloud rounded-lg border border-fog">
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Full Name</p>
-                                    <p className="text-sm font-medium text-white">{customerName}</p>
+                                    <p className="text-xs text-steel mb-1">Full Name</p>
+                                    <p className="text-sm font-medium text-ink">{customerName}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Email</p>
-                                    <p className="text-sm font-medium text-white">{customerEmail}</p>
+                                    <p className="text-xs text-steel mb-1">Email</p>
+                                    <p className="text-sm font-medium text-ink">{customerEmail}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Phone/WhatsApp</p>
-                                    <p className="text-sm font-medium text-white">{customerPhone}</p>
+                                    <p className="text-xs text-steel mb-1">Phone/WhatsApp</p>
+                                    <p className="text-sm font-medium text-ink">{customerPhone}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Customer Type</p>
-                                    <p className="text-sm font-medium text-white">
+                                    <p className="text-xs text-steel mb-1">Customer Type</p>
+                                    <p className="text-sm font-medium text-ink">
                                         {order.customer?.email ? 'Registered' : 'Guest'}
                                     </p>
                                 </div>
@@ -176,56 +176,56 @@ function OrderDetailsDialog({
 
                         {/* Order Information */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Order Information</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide">Order Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-cloud rounded-lg border border-fog">
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Order ID</p>
-                                    <p className="text-sm font-mono font-medium text-white">{order.id.slice(0, 8).toUpperCase()}</p>
+                                    <p className="text-xs text-steel mb-1">Order ID</p>
+                                    <p className="text-sm font-mono font-medium text-ink">{order.id.slice(0, 8).toUpperCase()}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Date Created</p>
-                                    <p className="text-sm font-medium text-white">
+                                    <p className="text-xs text-steel mb-1">Date Created</p>
+                                    <p className="text-sm font-medium text-ink">
                                         {format(new Date(order.createdAt), 'MMM d, yyyy h:mm a')}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Current Status</p>
+                                    <p className="text-xs text-steel mb-1">Current Status</p>
                                     <OrderStatusBadge status={order.status} />
                                 </div>
                                 {order.completedAt && (
                                     <div>
-                                        <p className="text-xs text-gray-400 mb-1">Completed At</p>
-                                        <p className="text-sm font-medium text-white">
+                                        <p className="text-xs text-steel mb-1">Completed At</p>
+                                        <p className="text-sm font-medium text-ink">
                                             {format(new Date(order.completedAt), 'MMM d, yyyy h:mm a')}
                                         </p>
                                     </div>
                                 )}
                                 {order.estimatedCompletionTime && (
                                     <div>
-                                        <p className="text-xs text-gray-400 mb-1">Estimated Completion</p>
-                                        <p className="text-sm font-medium text-white">
+                                        <p className="text-xs text-steel mb-1">Estimated Completion</p>
+                                        <p className="text-sm font-medium text-ink">
                                             {format(new Date(order.estimatedCompletionTime), 'MMM d, yyyy h:mm a')}
                                         </p>
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-xs text-gray-400 mb-1">Shop</p>
-                                    <p className="text-sm font-medium text-white">{order.shop?.name || 'N/A'}</p>
+                                    <p className="text-xs text-steel mb-1">Shop</p>
+                                    <p className="text-sm font-medium text-ink">{order.shop?.name || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Items List */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Order Items</h3>
-                            <div className="border border-gray-600 rounded-lg overflow-hidden">
+                            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide">Order Items</h3>
+                            <div className="border border-fog rounded-lg overflow-hidden">
                                 <table className="w-full text-sm">
-                                    <thead className="bg-gray-700 border-b border-gray-600">
+                                    <thead className="bg-cloud border-b border-fog">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">Item</th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">Pages</th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase">Configuration</th>
-                                            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-300 uppercase">Price</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-ink-soft uppercase">Item</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-ink-soft uppercase">Pages</th>
+                                            <th className="px-4 py-3 text-left text-xs font-semibold text-ink-soft uppercase">Configuration</th>
+                                            <th className="px-4 py-3 text-right text-xs font-semibold text-ink-soft uppercase">Price</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -239,20 +239,20 @@ function OrderDetailsDialog({
                                             ].filter(Boolean);
 
                                             return (
-                                                <tr key={item.id} className="border-b border-gray-600 last:border-0">
+                                                <tr key={item.id} className="border-b border-fog last:border-0">
                                                     <td className="px-4 py-3">
-                                                        <p className="font-medium text-white">{item.document?.fileName || 'Document'}</p>
-                                                        <p className="text-xs text-gray-400">{item.document?.fileType || 'N/A'}</p>
+                                                        <p className="font-medium text-ink">{item.document?.fileName || 'Document'}</p>
+                                                        <p className="text-xs text-steel">{item.document?.fileType || 'N/A'}</p>
                                                     </td>
-                                                    <td className="px-4 py-3 text-gray-300">{item.pageCount}</td>
+                                                    <td className="px-4 py-3 text-ink-soft">{item.pageCount}</td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex flex-wrap gap-1">
                                                             {configParts.map((part, idx) => (
-                                                                <span key={idx} className="text-xs text-gray-300">{part}</span>
+                                                                <span key={idx} className="text-xs text-ink-soft">{part}</span>
                                                             ))}
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3 text-right font-medium text-white">
+                                                    <td className="px-4 py-3 text-right font-medium text-ink">
                                                         TZS {Number(item.price).toLocaleString()}
                                                     </td>
                                                 </tr>
@@ -265,21 +265,21 @@ function OrderDetailsDialog({
 
                         {/* Totals Section */}
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Totals</h3>
-                            <div className="space-y-2 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide">Totals</h3>
+                            <div className="space-y-2 p-4 bg-cloud rounded-lg border border-fog">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-300">Subtotal:</span>
-                                    <span className="font-medium text-white">TZS {subtotal.toLocaleString()}</span>
+                                    <span className="text-ink-soft">Subtotal:</span>
+                                    <span className="font-medium text-ink">TZS {subtotal.toLocaleString()}</span>
                                 </div>
                                 {commissionFee > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-gray-300">Commission Fee:</span>
-                                        <span className="font-medium text-white">TZS {commissionFee.toLocaleString()}</span>
+                                        <span className="text-ink-soft">Commission Fee:</span>
+                                        <span className="font-medium text-ink">TZS {commissionFee.toLocaleString()}</span>
                                     </div>
                                 )}
-                                <div className="pt-2 border-t border-gray-600 flex justify-between">
-                                    <span className="font-semibold text-white">Total:</span>
-                                    <span className="font-bold text-lg text-white">TZS {total.toLocaleString()}</span>
+                                <div className="pt-2 border-t border-fog flex justify-between">
+                                    <span className="font-semibold text-ink">Total:</span>
+                                    <span className="font-bold text-lg text-ink">TZS {total.toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -287,7 +287,7 @@ function OrderDetailsDialog({
                         {/* Attachments Section */}
                         {fileAttachments.length > 0 && (
                             <div className="space-y-3">
-                                <h3 className="text-sm font-semibold text-white uppercase tracking-wide flex items-center gap-2">
+                                <h3 className="text-sm font-semibold text-ink uppercase tracking-wide flex items-center gap-2">
                                     <Paperclip className="h-4 w-4" />
                                     Attachments ({fileAttachments.length})
                                 </h3>
@@ -304,8 +304,8 @@ function OrderDetailsDialog({
                         )}
 
                         {/* Status Update Section */}
-                        <div className="space-y-3 pt-4 border-t border-gray-600">
-                            <h3 className="text-sm font-semibold text-white uppercase tracking-wide">Update Status</h3>
+                        <div className="space-y-3 pt-4 border-t border-fog">
+                            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide">Update Status</h3>
                             <div className="flex gap-3 items-end">
                                 <div className="flex-1">
                                     <Select

@@ -111,7 +111,17 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
+            if (!formData.name.trim()) throw new Error("Shop Name is required.");
+            if (!formData.address.trim()) throw new Error("Physical Address is required. Please go back to Step 2 and select a location.");
+            
             // 1. Create Shop
+            console.log("Creating shop with variables:", {
+                name: formData.name,
+                description: formData.description,
+                address: formData.address,
+                latitude: parseFloat(formData.latitude),
+                longitude: parseFloat(formData.longitude),
+            });
             const { data: shopData } = await createShop({
                 variables: {
                     name: formData.name,
@@ -122,13 +132,18 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
                 }
             });
 
+            console.log("Create Shop Response:", shopData);
+
             const shopId = shopData?.createShop?.shop?.id;
-            if (!shopId) throw new Error("Failed to create shop.");
+            if (!shopId) {
+                const backendMsg = shopData?.createShop?.response?.message;
+                throw new Error(backendMsg || "Failed to create shop. Check required fields like Address.");
+            }
 
             // 2. Set Pricing Rules
             const services = [
-                { type: 'BW', price: parseFloat(formData.bwPrice) },
-                { type: 'COLOR', price: parseFloat(formData.colorPrice) },
+                { type: 'PRINTING_BW', price: parseFloat(formData.bwPrice) },
+                { type: 'PRINTING_COLOR', price: parseFloat(formData.colorPrice) },
             ];
 
             for (const service of services) {
@@ -144,9 +159,9 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
 
             // Finish
             onComplete();
-        } catch (error) {
-            console.error(error);
-            alert("Error setting up shop. Please try again.");
+        } catch (error: any) {
+            console.error("Submit Error:", error);
+            alert(`Error setting up shop: ${error.message || "Please try again."}`);
         } finally {
             setLoading(false);
         }
