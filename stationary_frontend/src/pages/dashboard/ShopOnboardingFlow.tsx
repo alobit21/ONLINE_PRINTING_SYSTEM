@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_SHOP, UPDATE_PRICING } from '../../features/shops/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/LegacyCard';
 import { Button } from '../../components/ui/LegacyButton';
-import { Store, MapPin, DollarSign, CheckCircle, Loader2, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Store, MapPin, DollarSign, CheckCircle, Loader2, ArrowRight, ArrowLeft, AlertCircle, Search } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -33,6 +33,16 @@ function LocationPicker({ position, setPosition }: { position: [number, number],
     );
 }
 
+function MapUpdater({ center }: { center: [number, number] }) {
+    const map = useMapEvents({});
+    useEffect(() => {
+        map.setView(center, map.getZoom(), {
+            animate: true
+        });
+    }, [center, map]);
+    return null;
+}
+
 interface Props {
     onComplete: () => void;
 }
@@ -41,6 +51,9 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
     const { user } = useAuthStore();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [searchResults, setSearchResults] = useState<any[]>([]);
     
     // Form state
     const [formData, setFormData] = useState({
@@ -55,6 +68,38 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
 
     const [createShop] = useMutation(CREATE_SHOP);
     const [updatePricing] = useMutation(UPDATE_PRICING);
+
+    const handleSearchLocation = async () => {
+        if (!searchQuery.trim()) return;
+        setSearchLoading(true);
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                setSearchResults(data);
+                // Optionally auto-select the first one
+                const { lat, lon } = data[0];
+                setFormData(prev => ({ ...prev, latitude: lat, longitude: lon }));
+            } else {
+                setSearchResults([]);
+                alert("Location not found. Please try a different search term.");
+            }
+        } catch (err) {
+            console.error("Error searching location:", err);
+            alert("Error searching location. Please check your connection.");
+        } finally {
+            setSearchLoading(false);
+        }
+    };
+
+    const handleSelectLocation = (place: any) => {
+        setFormData(prev => ({
+            ...prev,
+            latitude: place.lat,
+            longitude: place.lon,
+            address: place.display_name.split(',').slice(0, 3).join(',') // Get a shorter version of the name
+        }));
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -109,7 +154,7 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-2xl">
+            <div className={`w-full transition-all duration-500 ${step === 2 ? 'max-w-5xl' : 'max-w-2xl'}`}>
                 {/* Progress Indicator */}
                 <div className="mb-8 flex items-center justify-between relative">
                     <div className="absolute left-0 top-1/2 w-full h-1 bg-fog -z-10 -translate-y-1/2 rounded" />
@@ -187,61 +232,119 @@ export const ShopOnboardingFlow = ({ onComplete }: Props) => {
                         )}
 
                         {step === 2 && (
-                            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-semibold text-ink">Physical Address</label>
-                                    <input 
-                                        name="address" 
-                                        value={formData.address} 
-                                        onChange={handleChange} 
-                                        className="w-full p-3 rounded-lg border border-fog bg-background text-ink focus:border-hp-primary focus:ring-1 focus:ring-hp-primary outline-none transition-all"
-                                        placeholder="e.g. Block A, UDOM Campus"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-semibold text-ink flex items-center justify-between">
-                                        <span>Pin your location on the map</span>
-                                        <span className="text-xs text-hp-primary font-normal">Click map to move pin</span>
-                                    </label>
-                                    <div className="h-64 w-full rounded-lg overflow-hidden border border-fog z-0 relative">
-                                        <MapContainer 
-                                            center={[-6.1630, 35.7516]} // Default to Dodoma
-                                            zoom={13} 
-                                            style={{ height: '100%', width: '100%', zIndex: 0 }}
-                                        >
-                                            <TileLayer
-                                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                            />
-                                            <LocationPicker 
-                                                position={[parseFloat(formData.latitude), parseFloat(formData.longitude)]} 
-                                                setPosition={([lat, lng]) => setFormData(prev => ({ ...prev, latitude: lat.toString(), longitude: lng.toString() }))} 
-                                            />
-                                        </MapContainer>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-right-4">
+                                <div className="md:col-span-2 space-y-4">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-steel">Selected Latitude</label>
+                                        <label className="text-sm font-semibold text-ink">Physical Address</label>
                                         <input 
-                                            name="latitude" 
-                                            type="number"
-                                            step="any"
-                                            value={formData.latitude} 
-                                            readOnly
-                                            className="w-full p-2 rounded-lg border border-fog bg-cloud text-ink text-sm outline-none cursor-not-allowed opacity-70"
+                                            name="address" 
+                                            value={formData.address} 
+                                            onChange={handleChange} 
+                                            className="w-full p-3 rounded-lg border border-fog bg-background text-ink focus:border-hp-primary focus:ring-1 focus:ring-hp-primary outline-none transition-all"
+                                            placeholder="e.g. Block A, UDOM Campus"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-steel">Selected Longitude</label>
-                                        <input 
-                                            name="longitude" 
-                                            type="number"
-                                            step="any"
-                                            value={formData.longitude} 
-                                            readOnly
-                                            className="w-full p-2 rounded-lg border border-fog bg-cloud text-ink text-sm outline-none cursor-not-allowed opacity-70"
-                                        />
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-semibold text-ink flex items-center justify-between">
+                                            <span>Search & Pin location on the map</span>
+                                            <span className="text-xs text-hp-primary font-normal">Click map to move pin</span>
+                                        </label>
+                                        
+                                        <div className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-steel" />
+                                                <input 
+                                                    type="text"
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleSearchLocation()}
+                                                    placeholder="Search city, street, or landmark..."
+                                                    className="w-full pl-10 p-2 rounded-lg border border-fog bg-background text-ink focus:border-hp-primary focus:ring-1 focus:ring-hp-primary outline-none transition-all"
+                                                />
+                                            </div>
+                                            <Button 
+                                                variant="outline" 
+                                                onClick={handleSearchLocation} 
+                                                disabled={searchLoading}
+                                                className="bg-cloud border-fog text-ink hover:bg-fog"
+                                            >
+                                                {searchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
+                                            </Button>
+                                        </div>
+
+                                        <div className="h-64 w-full rounded-lg overflow-hidden border border-fog z-0 relative">
+                                            <MapContainer 
+                                                center={[parseFloat(formData.latitude), parseFloat(formData.longitude)]} 
+                                                zoom={13} 
+                                                style={{ height: '100%', width: '100%', zIndex: 0 }}
+                                            >
+                                                <TileLayer
+                                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                                />
+                                                <LocationPicker 
+                                                    position={[parseFloat(formData.latitude), parseFloat(formData.longitude)]} 
+                                                    setPosition={([lat, lng]) => setFormData(prev => ({ ...prev, latitude: lat.toString(), longitude: lng.toString() }))} 
+                                                />
+                                                <MapUpdater center={[parseFloat(formData.latitude), parseFloat(formData.longitude)]} />
+                                            </MapContainer>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-semibold text-steel">Selected Latitude</label>
+                                            <input 
+                                                name="latitude" 
+                                                type="number"
+                                                step="any"
+                                                value={formData.latitude} 
+                                                readOnly
+                                                className="w-full p-2 rounded-lg border border-fog bg-cloud text-ink text-sm outline-none cursor-not-allowed opacity-70"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-semibold text-steel">Selected Longitude</label>
+                                            <input 
+                                                name="longitude" 
+                                                type="number"
+                                                step="any"
+                                                value={formData.longitude} 
+                                                readOnly
+                                                className="w-full p-2 rounded-lg border border-fog bg-cloud text-ink text-sm outline-none cursor-not-allowed opacity-70"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="md:col-span-1 border border-fog rounded-lg bg-cloud/50 overflow-hidden flex flex-col h-[480px]">
+                                    <div className="p-3 bg-paper border-b border-fog">
+                                        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                                            <MapPin className="w-4 h-4 text-hp-primary" />
+                                            Nearby Places
+                                        </h3>
+                                        <p className="text-xs text-steel mt-1">Select a place to update your location</p>
+                                    </div>
+                                    <div className="overflow-y-auto flex-1 p-2 space-y-2">
+                                        {searchResults.length > 0 ? (
+                                            searchResults.map((place, idx) => (
+                                                <div 
+                                                    key={idx}
+                                                    onClick={() => handleSelectLocation(place)}
+                                                    className="p-3 rounded-md bg-paper border border-fog hover:border-hp-primary/50 cursor-pointer transition-colors"
+                                                >
+                                                    <p className="text-sm font-medium text-ink line-clamp-2 leading-tight mb-1">
+                                                        {place.name || place.display_name.split(',')[0]}
+                                                    </p>
+                                                    <p className="text-xs text-steel line-clamp-2">
+                                                        {place.display_name}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="h-full flex flex-col items-center justify-center text-steel p-4 text-center">
+                                                <Search className="w-8 h-8 mb-2 opacity-20" />
+                                                <p className="text-sm">Search for a location to see nearby places here.</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
