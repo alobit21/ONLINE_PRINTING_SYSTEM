@@ -85,13 +85,13 @@ export const CustomerOrdersPage = () => {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/dashboard/customer')}
-                        className="p-2 hover:bg-slate-700 rounded-full transition-colors border border-transparent hover:border-slate-600"
+                        className="p-2 hover:bg-cloud rounded-full transition-colors border border-transparent hover:border-fog"
                     >
-                        <ArrowLeft className="h-6 w-6 text-slate-200" />
+                        <ArrowLeft className="h-6 w-6 text-charcoal" />
                     </button>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-100 tracking-tight">Your Orders</h1>
-                        <p className="text-slate-400 font-medium text-sm">Track and manage your print jobs</p>
+                        <h1 className="text-3xl font-black text-ink tracking-tight">Your Orders</h1>
+                        <p className="text-charcoal font-medium text-sm">Track and manage your print jobs</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -107,7 +107,7 @@ export const CustomerOrdersPage = () => {
                     <button
                         onClick={() => refetch()}
                         disabled={loading}
-                        className="p-2.5 bg-slate-800 border border-slate-700 rounded-2xl shadow-sm text-slate-400 hover:text-cyan-400 transition-all hover:rotate-180 disabled:opacity-50"
+                        className="p-2.5 bg-canvas border border-fog rounded-[16px] shadow-sm text-charcoal hover:text-hp-primary transition-all hover:rotate-180 disabled:opacity-50"
                     >
                         <RotateCcw className={cn("h-5 w-5", loading && "animate-spin")} />
                     </button>
@@ -118,14 +118,14 @@ export const CustomerOrdersPage = () => {
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
                 counts={counts}
-                className="bg-slate-900 text-slate-200"
+                className="bg-canvas text-charcoal"
             />
 
             <div className="min-h-[400px]">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
-                        <Loader2 className="h-10 w-10 text-cyan-400 animate-spin" />
-                        <span className="text-slate-400 font-bold uppercase tracking-widest text-xs">Syncing your orders...</span>
+                        <Loader2 className="h-10 w-10 text-hp-primary animate-spin" />
+                        <span className="text-charcoal font-bold uppercase tracking-widest text-xs">Syncing your orders...</span>
                     </div>
                 ) : currentOrders.length === 0 ? (
                     <motion.div
@@ -133,25 +133,23 @@ export const CustomerOrdersPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col items-center justify-center py-20 text-center space-y-4"
                     >
-                        <div className="w-24 h-24 rounded-[32px] bg-slate-800 flex items-center justify-center">
-                            <PackageSearch className="h-12 w-12 text-slate-400" />
+                        <div className="w-24 h-24 rounded-[16px] bg-cloud flex items-center justify-center">
+                            <PackageSearch className="h-12 w-12 text-charcoal" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-100">No {activeTab} orders yet</h3>
-                            <p className="text-sm text-slate-400 mt-1 max-w-[240px] mx-auto">
+                            <h3 className="text-lg font-bold text-ink">No {activeTab} orders yet</h3>
+                            <p className="text-sm text-charcoal mt-1 max-w-[240px] mx-auto">
                                 {activeTab === 'active'
                                     ? "Any orders you place will show up here for live tracking."
                                     : `You don't have any ${activeTab} orders at the moment.`}
                             </p>
                         </div>
-                        {activeTab === 'active' && (
-                            <Button
-                                onClick={() => navigate('/dashboard/customer/upload')}
-                                className="mt-4 bg-cyan-500 text-black rounded-2xl px-8 h-12 shadow-lg shadow-cyan-500/20"
-                            >
-                                Start Printing
-                            </Button>
-                        )}
+                        <Button
+                            onClick={() => navigate('/checkout')}
+                            className="mt-4 bg-hp-primary text-white rounded-[4px] px-8 h-12 shadow-sm hover:bg-blue-800"
+                        >
+                            Start Printing
+                        </Button>
                     </motion.div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4">

@@ -19,23 +19,23 @@ export const OrdersTabs = ({ activeTab, onTabChange, counts, className }: Orders
     ] as const;
 
     return (
-        <div className={cn("flex bg-slate-800/50 p-1 rounded-xl sticky top-20 z-20 backdrop-blur-md border border-slate-700/50 shadow-sm", className)}>
+        <div className={cn("flex bg-cloud p-1 rounded-[8px] sticky top-20 z-20 shadow-sm", className)}>
             {tabs.map((tab) => (
                 <button
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
                     className={cn(
-                        "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all relative",
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[4px] text-sm font-bold transition-all relative",
                         activeTab === tab.id
-                            ? "bg-slate-700 text-cyan-400 shadow-sm border border-cyan-400/30"
-                            : "text-slate-400 hover:text-slate-200"
+                            ? "bg-white text-hp-primary shadow-sm"
+                            : "text-charcoal hover:text-ink hover:bg-white/50"
                     )}
                 >
                     {tab.label}
                     {tab.count > 0 && (
                         <span className={cn(
                             "px-1.5 py-0.5 rounded-md text-[10px] min-w-[18px]",
-                            activeTab === tab.id ? "bg-cyan-500/20 text-cyan-300 border border-cyan-400/30" : "bg-slate-700/50 text-slate-400 border border-slate-600/50"
+                            activeTab === tab.id ? "bg-blue-50 text-hp-primary" : "bg-fog text-charcoal"
                         )}>
                             {tab.count}
                         </span>

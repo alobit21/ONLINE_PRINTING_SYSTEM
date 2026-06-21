@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { User, Phone, ShieldCheck, AlertTriangle, Loader2, ShoppingBag, FileText, CheckCircle2 } from 'lucide-react';
 import { useCustomerStore } from '../../../../stores/customerStore';
 import { useMutation } from '@apollo/client/react';
-import { CREATE_GUEST_ORDER } from '../../orders/api';
-import type { CreateGuestOrderData, OrderItemInput } from '../../orders/types';
+import { CREATE_GUEST_ORDER, CREATE_ORDER } from '../../orders/api';
+import type { CreateGuestOrderData, CreateOrderData, OrderItemInput } from '../../orders/types';
+import { useAuthStore } from '../../../../stores/authStore';
 import PaymentStatusTracker from './PaymentStatusTracker';
 
 interface GuestCustomerData {
@@ -22,10 +23,11 @@ export const GuestCheckoutForm = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [paymentId, setPaymentId] = useState<string | null>(null);
     const [showPaymentTracker, setShowPaymentTracker] = useState(false);
+    const { user, isAuthenticated } = useAuthStore();
     const [guestData, setGuestData] = useState<GuestCustomerData>({
-        name: '',
+        name: user?.email?.split('@')[0] || '',
         whatsappNumber: '',
-        email: ''
+        email: user?.email || ''
     });
     const [errors, setErrors] = useState<Partial<GuestCustomerData>>({});
     const [paymentMethod, setPaymentMethod] = useState('MPESA');
@@ -39,7 +41,7 @@ export const GuestCheckoutForm = () => {
     const readyFiles = files.filter(f => f.status === 'ready' && isUUID(f.id));
     const hasInvalidFiles = files.some(f => f.status === 'ready' && !isUUID(f.id));
 
-    const [createGuestOrder, { loading: isProcessing }] = useMutation<CreateGuestOrderData, { 
+    const [createGuestOrder, { loading: isProcessingGuest }] = useMutation<CreateGuestOrderData, { 
         shopId: string; 
         guestCustomer: GuestCustomerData; 
         items: OrderItemInput[];
@@ -59,6 +61,27 @@ export const GuestCheckoutForm = () => {
         }
     });
 
+    const [createAuthOrder, { loading: isProcessingAuth }] = useMutation<CreateOrderData, { 
+        shopId: string; 
+        items: OrderItemInput[];
+        payment: PaymentData;
+    }>(CREATE_ORDER, {
+        onCompleted: (data) => {
+            if (data.createOrder.response.success) {
+                setPaymentId(data.createOrder.payment?.id || null);
+                setShowPaymentTracker(true);
+            } else {
+                alert(`Order Failed: ${data.createOrder.response.message}`);
+            }
+        },
+        onError: (error) => {
+            alert(`Order Error: ${error.message}`);
+            console.error("Order error:", error);
+        }
+    });
+
+    const isProcessing = isProcessingGuest || isProcessingAuth;
+
     const subtotal = readyFiles.reduce((acc, f) => {
         const baseRate = f.metadata?.isColor ? 500 : 100;
         let itemCost = (f.metadata?.pageCount || 0) * baseRate;
@@ -71,14 +94,16 @@ export const GuestCheckoutForm = () => {
 
     const validateForm = (): boolean => {
         const newErrors: Partial<GuestCustomerData> = {};
-        if (!guestData.name.trim()) newErrors.name = 'Name is required';
-        if (!guestData.whatsappNumber.trim()) {
-            newErrors.whatsappNumber = 'WhatsApp number is required';
-        } else if (!/^\+?[\d\s-()]+$/.test(guestData.whatsappNumber)) {
-            newErrors.whatsappNumber = 'Invalid phone number format';
-        }
-        if (guestData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestData.email)) {
-            newErrors.email = 'Invalid email format';
+        if (!isAuthenticated) {
+            if (!guestData.name.trim()) newErrors.name = 'Name is required';
+            if (!guestData.whatsappNumber.trim()) {
+                newErrors.whatsappNumber = 'WhatsApp number is required';
+            } else if (!/^\+?[\d\s-()]+$/.test(guestData.whatsappNumber)) {
+                newErrors.whatsappNumber = 'Invalid phone number format';
+            }
+            if (guestData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestData.email)) {
+                newErrors.email = 'Invalid email format';
+            }
         }
         if (!phoneNumber.trim()) {
             alert('Payment phone number is required');
@@ -108,11 +133,17 @@ export const GuestCheckoutForm = () => {
         const payment: PaymentData = { paymentMethod, phoneNumber: formattedPhone };
         
         try {
-            await createGuestOrder({
-                variables: { shopId: selectedShopId, guestCustomer: { name: guestData.name.trim(), whatsappNumber: guestData.whatsappNumber.trim(), email: guestData.email?.trim() || undefined }, items, payment }
-            });
+            if (isAuthenticated) {
+                await createAuthOrder({
+                    variables: { shopId: selectedShopId, items, payment }
+                });
+            } else {
+                await createGuestOrder({
+                    variables: { shopId: selectedShopId, guestCustomer: { name: guestData.name.trim(), whatsappNumber: guestData.whatsappNumber.trim(), email: guestData.email?.trim() || undefined }, items, payment }
+                });
+            }
         } catch (err: any) {
-            console.error("Guest order creation failed:", err);
+            console.error("Order creation failed:", err);
             // Error is handled by onError callback above
         }
     };
@@ -142,12 +173,19 @@ export const GuestCheckoutForm = () => {
                     <CheckCircle2 className="h-12 w-12" />
                 </div>
                 <h2 className="text-4xl font-extrabold text-ink mb-2">Order Confirmed!</h2>
-                <p className="text-charcoal max-w-sm mx-auto leading-relaxed">
+                <p className="text-charcoal max-w-sm mx-auto leading-relaxed mb-8">
                     Your payment was successful. The shop owner will contact you on WhatsApp at <span className="font-semibold text-ink">{guestData.whatsappNumber}</span> when your print is ready.
                 </p>
-                <button onClick={resetWorkflow} className="mt-10 px-8 py-3 bg-hp-primary text-canvas font-semibold rounded-[4px] hover:bg-hp-primary/90 transition-colors tracking-[0.7px]">
-                    Place Another Order
-                </button>
+                <div className="flex gap-4">
+                    {isAuthenticated && (
+                        <button onClick={() => window.location.href = '/dashboard/customer/orders'} className="px-8 py-3 bg-canvas border border-fog text-ink font-semibold rounded-[4px] hover:bg-cloud transition-colors tracking-[0.7px]">
+                            View My Orders
+                        </button>
+                    )}
+                    <button onClick={resetWorkflow} className="px-8 py-3 bg-hp-primary text-canvas font-semibold rounded-[4px] hover:bg-hp-primary/90 transition-colors tracking-[0.7px]">
+                        Place Another Order
+                    </button>
+                </div>
             </div>
         );
     }
@@ -159,59 +197,61 @@ export const GuestCheckoutForm = () => {
                 <div className="lg:col-span-7 space-y-12">
                     
                     {/* Contact Section */}
-                    <section>
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-8 h-8 rounded-full bg-cloud flex items-center justify-center text-hp-primary">
-                                <User size={16} />
+                    {!isAuthenticated && (
+                        <section>
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-8 h-8 rounded-full bg-cloud flex items-center justify-center text-hp-primary">
+                                    <User size={16} />
+                                </div>
+                                <h3 className="text-xl font-medium text-ink">Contact Information</h3>
                             </div>
-                            <h3 className="text-xl font-medium text-ink">Contact Information</h3>
-                        </div>
-                        
-                        <div className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-semibold text-ink mb-1.5">Full Name *</label>
-                                <input
-                                    type="text"
-                                    autoComplete="name"
-                                    placeholder="Enter your full name"
-                                    value={guestData.name}
-                                    onChange={(e) => handleInputChange('name', e.target.value)}
-                                    className={`w-full h-12 bg-canvas border ${errors.name ? 'border-red-400 focus:ring-red-400/20' : 'border-steel focus:border-ink'} rounded-[4px] px-4 text-ink outline-none transition-all`}
-                                />
-                                {errors.name && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1"><AlertTriangle size={12} />{errors.name}</p>}
-                            </div>
+                            
+                            <div className="space-y-5">
+                                <div>
+                                    <label className="block text-sm font-semibold text-ink mb-1.5">Full Name *</label>
+                                    <input
+                                        type="text"
+                                        autoComplete="name"
+                                        placeholder="Enter your full name"
+                                        value={guestData.name}
+                                        onChange={(e) => handleInputChange('name', e.target.value)}
+                                        className={`w-full h-12 bg-canvas border ${errors.name ? 'border-red-400 focus:ring-red-400/20' : 'border-steel focus:border-ink'} rounded-[4px] px-4 text-ink outline-none transition-all`}
+                                    />
+                                    {errors.name && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1"><AlertTriangle size={12} />{errors.name}</p>}
+                                </div>
 
-                            <div>
-                                <label className="block text-sm font-semibold text-ink mb-1.5">WhatsApp Number *</label>
-                                <input
-                                    type="tel"
-                                    autoComplete="tel"
-                                    placeholder="+255 123 456 789"
-                                    value={guestData.whatsappNumber}
-                                    onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
-                                    className={`w-full h-12 bg-canvas border ${errors.whatsappNumber ? 'border-red-400 focus:ring-red-400/20' : 'border-steel focus:border-ink'} rounded-[4px] px-4 text-ink outline-none transition-all`}
-                                />
-                                {errors.whatsappNumber && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1"><AlertTriangle size={12} />{errors.whatsappNumber}</p>}
-                                <p className="text-xs text-steel mt-2">The shop will notify you on WhatsApp when the order is ready.</p>
-                            </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-ink mb-1.5">WhatsApp Number *</label>
+                                    <input
+                                        type="tel"
+                                        autoComplete="tel"
+                                        placeholder="+255 123 456 789"
+                                        value={guestData.whatsappNumber}
+                                        onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
+                                        className={`w-full h-12 bg-canvas border ${errors.whatsappNumber ? 'border-red-400 focus:ring-red-400/20' : 'border-steel focus:border-ink'} rounded-[4px] px-4 text-ink outline-none transition-all`}
+                                    />
+                                    {errors.whatsappNumber && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1"><AlertTriangle size={12} />{errors.whatsappNumber}</p>}
+                                    <p className="text-xs text-steel mt-2">The shop will notify you on WhatsApp when the order is ready.</p>
+                                </div>
 
-                            <div>
-                                <label className="block text-sm font-semibold text-ink mb-1.5">Email <span className="font-normal text-steel">(Optional)</span></label>
-                                <input
-                                    type="email"
-                                    autoComplete="email"
-                                    placeholder="your@email.com"
-                                    value={guestData.email}
-                                    onChange={(e) => handleInputChange('email', e.target.value)}
-                                    className={`w-full h-12 bg-canvas border ${errors.email ? 'border-red-400 focus:ring-red-400/20' : 'border-steel focus:border-ink'} rounded-[4px] px-4 text-ink outline-none transition-all`}
-                                />
-                                {errors.email && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1"><AlertTriangle size={12} />{errors.email}</p>}
+                                <div>
+                                    <label className="block text-sm font-semibold text-ink mb-1.5">Email <span className="font-normal text-steel">(Optional)</span></label>
+                                    <input
+                                        type="email"
+                                        autoComplete="email"
+                                        placeholder="your@email.com"
+                                        value={guestData.email}
+                                        onChange={(e) => handleInputChange('email', e.target.value)}
+                                        className={`w-full h-12 bg-canvas border ${errors.email ? 'border-red-400 focus:ring-red-400/20' : 'border-steel focus:border-ink'} rounded-[4px] px-4 text-ink outline-none transition-all`}
+                                    />
+                                    {errors.email && <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1"><AlertTriangle size={12} />{errors.email}</p>}
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    )}
 
                     {/* Divider */}
-                    <hr className="border-fog" />
+                    {!isAuthenticated && <hr className="border-fog" />}
 
                     {/* Payment Section */}
                     <section>
@@ -330,7 +370,7 @@ export const GuestCheckoutForm = () => {
                             {/* Desktop Button */}
                             <button
                                 className="hidden lg:flex w-full h-12 rounded-[4px] bg-hp-primary hover:bg-hp-primary/90 text-canvas font-semibold transition-colors items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed tracking-[0.7px] uppercase text-[14px]"
-                                disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim() || !guestData.name.trim() || !guestData.whatsappNumber.trim()}
+                                disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim() || (!isAuthenticated && (!guestData.name.trim() || !guestData.whatsappNumber.trim()))}
                                 onClick={handleGuestCheckout}
                             >
                                 {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
@@ -350,7 +390,7 @@ export const GuestCheckoutForm = () => {
                     </div>
                     <button
                         className="flex-1 h-12 rounded-[4px] bg-hp-primary hover:bg-hp-primary/90 text-canvas font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed tracking-[0.7px] uppercase text-[14px]"
-                        disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim() || !guestData.name.trim() || !guestData.whatsappNumber.trim()}
+                        disabled={!selectedShopId || readyFiles.length === 0 || isProcessing || hasInvalidFiles || !phoneNumber.trim() || (!isAuthenticated && (!guestData.name.trim() || !guestData.whatsappNumber.trim()))}
                         onClick={handleGuestCheckout}
                     >
                         {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : null}

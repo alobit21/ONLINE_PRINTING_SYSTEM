@@ -19,16 +19,18 @@ const steps = [
 ];
 
 export const UploadFlowManager = () => {
-    const { currentStep, setCurrentStep } = useCustomerStore();
+    const { currentStep, setCurrentStep, files } = useCustomerStore();
     const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+
+    const isNextDisabled = currentStep === 'upload' && files.length === 0;
 
     return (
         <div className="space-y-8 max-w-4xl mx-auto pb-24">
             {/* Horizontal Step Indicator */}
             <div className="relative flex justify-between px-2">
-                <div className="absolute top-5 left-8 right-8 h-0.5 bg-slate-700" />
+                <div className="absolute top-5 left-8 right-8 h-0.5 bg-fog" />
                 <div
-                    className="absolute top-5 left-8 h-0.5 bg-cyan-500 transition-all duration-500"
+                    className="absolute top-5 left-8 h-0.5 bg-hp-primary transition-all duration-500"
                     style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
                 />
 
@@ -40,15 +42,15 @@ export const UploadFlowManager = () => {
                         <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 group">
                             <div className={cn(
                                 "h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 border-2",
-                                isCompleted ? "bg-cyan-500 border-cyan-500 text-black" :
-                                    isActive ? "bg-slate-800 border-cyan-500 text-cyan-500 shadow-lg scale-110" :
-                                        "bg-slate-800 border-slate-600 text-slate-400"
+                                isCompleted ? "bg-hp-primary border-hp-primary text-white" :
+                                    isActive ? "bg-canvas border-hp-primary text-hp-primary shadow-sm scale-110" :
+                                        "bg-cloud border-fog text-charcoal"
                             )}>
-                                {isCompleted ? <Check className="h-5 w-5" /> : <span>{index + 1}</span>}
+                                {isCompleted ? <Check className="h-5 w-5" /> : <span className="font-bold">{index + 1}</span>}
                             </div>
                             <span className={cn(
                                 "text-[10px] font-bold uppercase tracking-wider transition-all duration-300",
-                                isActive ? "text-cyan-500" : "text-slate-400"
+                                isActive ? "text-hp-primary" : "text-charcoal"
                             )}>
                                 {step.label}
                             </span>
@@ -78,7 +80,7 @@ export const UploadFlowManager = () => {
             </div>
 
             {/* Navigation Controls (Standardized) */}
-            <div className="fixed bottom-20 left-0 right-0 p-4 sm:p-6 glass border-t border-slate-700/50 bg-slate-900/95 md:relative md:bottom-0 md:glass-none md:bg-transparent md:border-t-0">
+            <div className="fixed bottom-20 left-0 right-0 p-4 sm:p-6 bg-canvas border-t border-fog md:relative md:bottom-0 md:bg-transparent md:border-t-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:shadow-none z-50">
                 <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
                     <button
                         onClick={() => {
@@ -86,7 +88,7 @@ export const UploadFlowManager = () => {
                             if (prev) setCurrentStep(prev.id as any);
                         }}
                         disabled={currentStepIndex === 0}
-                        className="px-6 py-2 rounded-xl text-slate-400 font-medium disabled:opacity-30 transition-all hover:bg-slate-700/50 hover:text-slate-300"
+                        className="px-6 py-2 rounded-[4px] text-charcoal font-bold border border-fog hover:bg-cloud hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                     >
                         Back
                     </button>
@@ -97,10 +99,16 @@ export const UploadFlowManager = () => {
                                 const next = steps[currentStepIndex + 1];
                                 if (next) setCurrentStep(next.id as any);
                             }}
-                            className="px-8 py-3 rounded-xl bg-cyan-500 text-black font-bold shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group hover:shadow-cyan-500/30"
+                            disabled={isNextDisabled}
+                            className={cn(
+                                "px-8 py-3 rounded-[4px] font-bold flex items-center gap-2 transition-all group",
+                                isNextDisabled 
+                                    ? "bg-[#c2c2c2] text-white cursor-not-allowed" 
+                                    : "bg-hp-primary text-white hover:bg-blue-800 hover:shadow-md active:scale-95"
+                            )}
                         >
                             Next
-                            <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                            <ChevronRight className={cn("h-5 w-5 transition-transform", !isNextDisabled && "group-hover:translate-x-1")} />
                         </button>
                     )}
                 </div>

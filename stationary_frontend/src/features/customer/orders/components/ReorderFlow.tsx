@@ -61,7 +61,7 @@ export const ReorderFlow = ({ order, onClose, onSuccess }: ReorderFlowProps) => 
 
     const handleEditAndReorder = () => {
         // Navigate to upload page with pre-filled data
-        navigate('/dashboard/customer/upload', {
+        navigate('/checkout', {
             state: {
                 reorderData: {
                     shopId: order.shop.id,

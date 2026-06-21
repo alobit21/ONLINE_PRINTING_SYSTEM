@@ -15,8 +15,8 @@ const statusConfig: Record<OrderStatus, { label: string; color: string; progress
     ACCEPTED: { label: 'Accepted', color: 'bg-indigo-500', progress: 40 },
     PRINTING: { label: 'Printing', color: 'bg-amber-500', progress: 60 },
     READY: { label: 'Ready for Pickup', color: 'bg-green-500', progress: 85 },
-    COMPLETED: { label: 'Completed', color: 'bg-slate-500', progress: 100 },
-    CANCELLED: { label: 'Cancelled', color: 'bg-red-500', progress: 0 },
+    COMPLETED: { label: 'Completed', color: 'bg-charcoal', progress: 100 },
+    CANCELLED: { label: 'Cancelled', color: 'bg-error', progress: 0 },
 };
 
 export const OrderCard = ({ order, onClick }: OrderCardProps) => {
@@ -28,8 +28,8 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
     return (
         <Card
             className={cn(
-                "cursor-pointer transition-all hover:shadow-md active:scale-[0.98] border-none shadow-sm overflow-hidden group bg-slate-800/50 border border-slate-700/50",
-                isActive ? "ring-1 ring-cyan-400/30" : ""
+                "cursor-pointer transition-all hover:shadow-md active:scale-[0.98] border shadow-sm overflow-hidden group bg-canvas rounded-[16px]",
+                isActive ? "border-hp-primary ring-1 ring-hp-primary/30" : "border-fog"
             )}
             onClick={() => onClick(order)}
         >
@@ -37,31 +37,31 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
                 <div className="p-4 space-y-4">
                     <div className="flex justify-between items-start">
                         <div className="flex gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-slate-700/50 flex-shrink-0 overflow-hidden border border-slate-600/50">
+                            <div className="w-12 h-12 rounded-[8px] bg-cloud flex-shrink-0 overflow-hidden border border-fog">
                                 {order.shop.banner ? (
                                     <img src={order.shop.banner} alt={order.shop.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-cyan-500/20 text-cyan-400 font-bold uppercase text-lg border border-cyan-400/30">
+                                    <div className="w-full h-full flex items-center justify-center bg-blue-50 text-hp-primary font-bold uppercase text-lg">
                                         {order.shop.name.charAt(0)}
                                     </div>
                                 )}
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-100 group-hover:text-cyan-400 transition-colors uppercase tracking-tight leading-tight">
+                                <h3 className="font-bold text-ink group-hover:text-hp-primary transition-colors uppercase tracking-tight leading-tight">
                                     {order.shop.name}
                                 </h3>
-                                <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                                <p className="text-xs text-charcoal flex items-center gap-1 mt-0.5">
                                     <MapPin className="h-3 w-3" />
                                     {order.shop.address}
                                 </p>
                             </div>
                         </div>
                         <div className="flex flex-col items-end gap-1.5">
-                            <Badge className={cn("text-[10px] uppercase tracking-wider font-bold", config.color)}>
+                            <Badge className={cn("text-[10px] uppercase tracking-wider font-bold text-white", config.color)}>
                                 {config.label}
                             </Badge>
                             {isActive && (
-                                <span className="text-[10px] font-bold text-cyan-400 flex items-center gap-1 animate-pulse">
+                                <span className="text-[10px] font-bold text-hp-primary flex items-center gap-1 animate-pulse">
                                     <Clock className="h-3 w-3" />
                                     ETA: 12 min
                                 </span>
@@ -71,35 +71,35 @@ export const OrderCard = ({ order, onClick }: OrderCardProps) => {
 
                     {isActive && (
                         <div className="space-y-1.5">
-                            <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase">
+                            <div className="flex justify-between text-[10px] font-bold text-charcoal uppercase">
                                 <span>Progress</span>
                                 <span>{config.progress}%</span>
                             </div>
-                            <Progress value={config.progress} className="h-1.5 bg-slate-700" barClassName={config.color} />
+                            <Progress value={config.progress} className="h-1.5 bg-cloud" barClassName={config.color} />
                         </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-700/50">
-                        <div className="flex gap-3 text-slate-400">
+                    <div className="flex items-center justify-between pt-2 border-t border-fog">
+                        <div className="flex gap-3 text-charcoal">
                             <div className="flex items-center gap-1">
                                 <FileText className="h-3.5 w-3.5" />
                                 <span className="text-xs font-bold">{order.items.length} Files</span>
                             </div>
-                            <div className="font-bold text-slate-100 text-xs">
+                            <div className="font-bold text-ink text-xs">
                                 TZS {Number(order.totalPrice).toLocaleString()}
                             </div>
                         </div>
 
                         <div className="flex items-center gap-2">
                             {order.status === 'READY' && (
-                                <div className="p-1.5 bg-green-500/20 text-green-400 rounded-lg border border-green-400/30">
+                                <div className="p-1.5 bg-green-50 text-green-600 rounded-[4px] border border-green-200">
                                     <QrCode className="h-4 w-4" />
                                 </div>
                             )}
-                            <button className="p-1.5 hover:bg-slate-700/50 text-slate-400 rounded-lg transition-colors">
+                            <button className="p-1.5 hover:bg-cloud text-charcoal rounded-[4px] transition-colors">
                                 <MessageCircle className="h-4 w-4" />
                             </button>
-                            <ChevronRight className="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                            <ChevronRight className="h-4 w-4 text-charcoal group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ export const BottomNavigation = () => {
 
     const handleQuickUpload = () => {
         resetWorkflow();
-        navigate('/dashboard/customer/upload');
+        navigate('/checkout');
     };
 
     const handleLogout = () => {

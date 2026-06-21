@@ -22,7 +22,7 @@ export const TopHeader = () => {
     const navItems = isLoggedIn ? [
         { icon: Home, label: 'Home', path: '/dashboard/customer' },
         { icon: ClipboardList, label: 'Orders', path: '/dashboard/customer/orders' },
-        { icon: FileUp, label: 'Upload', path: '/dashboard/customer/upload' },
+        { icon: FileUp, label: 'Upload', path: '/checkout' },
         { icon: Wallet, label: 'Wallet', path: '/dashboard/customer/wallet' },
         { icon: User, label: 'Profile', path: '/dashboard/customer/profile' },
     ] : [
@@ -41,7 +41,7 @@ export const TopHeader = () => {
     const handleQuickUpload = () => {
         resetWorkflow();
         if (isLoggedIn) {
-            navigate('/dashboard/customer/upload');
+            navigate('/checkout');
         } else {
             navigate('/checkout');
         }
