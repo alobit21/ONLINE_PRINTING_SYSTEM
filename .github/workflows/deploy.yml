@@ -96,6 +96,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.prod.yml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.CONTABO_HOST }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          key: ${{ secrets.CONTABO_SSH_KEY }}
+          source: "docker-compose.prod.yml"
+          target: "/home/tarxemo/stationary_app"
+
+      - name: Deploy on Contabo
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.CONTABO_HOST }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          key: ${{ secrets.CONTABO_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/tarxemo/stationary_app
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker image prune -f
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Copy docker-compose.prod.yml to server
         uses: appleboy/scp-action@v0.1.7
         with:
