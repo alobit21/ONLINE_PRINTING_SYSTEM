@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useQuery } from '@apollo/client/react';
-import { Store, MapPin, Star, Check, MoreHorizontal, Eye, Edit, Ban, CheckCircle, ShieldCheck, TrendingUp, Plus, Activity } from 'lucide-react';
+import { Store, MapPin, Star, Check, MoreHorizontal, Eye, Edit, Ban, CheckCircle, ShieldCheck, TrendingUp, Plus, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import {
@@ -16,6 +18,8 @@ import { GET_ALL_SHOPS } from '../../../features/admin/api';
 
 export default function AdminShopsPage() {
   const { data, loading, error } = useQuery(GET_ALL_SHOPS);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   if (loading) {
     return (
@@ -78,6 +82,9 @@ export default function AdminShopsPage() {
   const acceptingOrders = shops.filter((s: any) => s.isAcceptingOrders).length;
   const premiumShops = shops.filter((s: any) => s.subscriptionTier !== 'FREE').length;
 
+  const totalPages = Math.ceil(shops.length / ITEMS_PER_PAGE);
+  const paginatedShops = shops.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
@@ -139,7 +146,7 @@ export default function AdminShopsPage() {
         <div className="xl:col-span-3 space-y-6">
           {/* Shops List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {shops.map((shop: any) => (
+            {paginatedShops.map((shop: any) => (
               <div key={shop.id} className="bg-cloud border border-fog rounded-xl overflow-hidden hover:border-steel transition-colors">
                 {/* Shop Header */}
                 <div className="p-5 border-b border-fog bg-paper">
@@ -222,6 +229,36 @@ export default function AdminShopsPage() {
               </div>
             )}
           </div>
+
+          {shops.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-sm text-steel">
+                Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, shops.length)}</span> of <span className="font-medium text-ink">{shops.length}</span> shops
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="h-8 border-fog text-ink"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="h-8 border-fog text-ink"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column */}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Edit, Trash2, Plus, MoreHorizontal, Settings, Tag } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Edit, Trash2, Plus, MoreHorizontal, Settings, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import { 
@@ -44,6 +44,9 @@ export default function AdminPricingPage() {
   const [discounts, setDiscounts] = useState<PageRangeDiscount[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'pricing' | 'discounts'>('pricing');
+  const [rulesPage, setRulesPage] = useState(1);
+  const [discountsPage, setDiscountsPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
     const fetchPricingData = async () => {
@@ -167,6 +170,12 @@ export default function AdminPricingPage() {
   const totalDiscounts = discounts.length;
   const activeDiscounts = discounts.filter(d => d.isActive).length;
 
+  const totalRulesPages = Math.ceil(totalRules / ITEMS_PER_PAGE);
+  const paginatedRules = pricingRules.slice((rulesPage - 1) * ITEMS_PER_PAGE, rulesPage * ITEMS_PER_PAGE);
+
+  const totalDiscountsPages = Math.ceil(totalDiscounts / ITEMS_PER_PAGE);
+  const paginatedDiscounts = discounts.slice((discountsPage - 1) * ITEMS_PER_PAGE, discountsPage * ITEMS_PER_PAGE);
+
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
@@ -268,7 +277,7 @@ export default function AdminPricingPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pricingRules.map((rule) => (
+              {paginatedRules.map((rule) => (
                 <TableRow key={rule.id} className="border-fog hover:bg-paper/50 transition-colors">
                   <TableCell className="text-ink font-medium">
                     {rule.serviceType.replace('_', ' ')}
@@ -312,6 +321,36 @@ export default function AdminPricingPage() {
               ))}
             </TableBody>
           </Table>
+
+          {totalRules > 0 && totalRulesPages > 1 && (
+            <div className="flex items-center justify-between p-4 border-t border-fog bg-cloud">
+              <p className="text-sm text-steel">
+                Showing <span className="font-medium text-ink">{(rulesPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(rulesPage * ITEMS_PER_PAGE, totalRules)}</span> of <span className="font-medium text-ink">{totalRules}</span> rules
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setRulesPage(Math.max(1, rulesPage - 1))}
+                  disabled={rulesPage === 1}
+                  className="h-8 border-fog text-ink"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setRulesPage(Math.min(totalRulesPages, rulesPage + 1))}
+                  disabled={rulesPage === totalRulesPages}
+                  className="h-8 border-fog text-ink"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -329,7 +368,7 @@ export default function AdminPricingPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {discounts.map((discount) => (
+              {paginatedDiscounts.map((discount) => (
                 <TableRow key={discount.id} className="border-fog hover:bg-paper/50 transition-colors">
                   <TableCell className="text-ink font-medium">
                     {discount.minPages} - {discount.maxPages} pages
@@ -370,6 +409,36 @@ export default function AdminPricingPage() {
               ))}
             </TableBody>
           </Table>
+
+          {totalDiscounts > 0 && totalDiscountsPages > 1 && (
+            <div className="flex items-center justify-between p-4 border-t border-fog bg-cloud">
+              <p className="text-sm text-steel">
+                Showing <span className="font-medium text-ink">{(discountsPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(discountsPage * ITEMS_PER_PAGE, totalDiscounts)}</span> of <span className="font-medium text-ink">{totalDiscounts}</span> discounts
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDiscountsPage(Math.max(1, discountsPage - 1))}
+                  disabled={discountsPage === 1}
+                  className="h-8 border-fog text-ink"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDiscountsPage(Math.min(totalDiscountsPages, discountsPage + 1))}
+                  disabled={discountsPage === totalDiscountsPages}
+                  className="h-8 border-fog text-ink"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
         </div>

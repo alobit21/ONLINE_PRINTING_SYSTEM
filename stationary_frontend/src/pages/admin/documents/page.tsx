@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { FileText, Download, Trash2, MoreHorizontal, Eye, File, Image, FileArchive, ShieldAlert, CheckCircle, Database } from 'lucide-react';
+import { FileText, Download, Trash2, MoreHorizontal, Eye, File, Image, FileArchive, ShieldAlert, CheckCircle, Database, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import { 
@@ -28,6 +28,13 @@ export default function AdminDocumentsPage() {
   const { data, loading, error } = useQuery(GET_ALL_DOCUMENTS);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, typeFilter]);
 
   const documents = data?.documents?.data || [];
 
@@ -79,6 +86,9 @@ export default function AdminDocumentsPage() {
   const safeDocuments = documents.filter((d: any) => d.isScanned && !d.virusDetected).length;
   const pendingScan = documents.filter((d: any) => !d.isScanned).length;
   const totalSize = documents.reduce((acc: number, curr: any) => acc + (curr.fileSize || 0), 0);
+
+  const totalPages = Math.ceil(filteredDocuments.length / ITEMS_PER_PAGE);
+  const paginatedDocuments = filteredDocuments.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -178,7 +188,7 @@ export default function AdminDocumentsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredDocuments.map((doc: any) => (
+            {paginatedDocuments.map((doc: any) => (
               <TableRow key={doc.id} className="border-fog hover:bg-paper/50 transition-colors">
                 <TableCell className="text-ink font-medium">
                   <div className="flex items-center gap-3">
@@ -265,6 +275,36 @@ export default function AdminDocumentsPage() {
               <FileText className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
               <p className="text-lg font-medium text-ink">No documents found</p>
               <p className="text-sm text-steel mt-1">Documents will appear here when users upload them</p>
+            </div>
+          )}
+
+          {filteredDocuments.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-sm text-steel">
+                Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, filteredDocuments.length)}</span> of <span className="font-medium text-ink">{filteredDocuments.length}</span> documents
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="h-8 border-fog text-ink"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="h-8 border-fog text-ink"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </div>

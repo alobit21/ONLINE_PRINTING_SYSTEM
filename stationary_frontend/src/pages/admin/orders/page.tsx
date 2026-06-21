@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useQuery } from '@apollo/client/react';
-import { ShoppingCart, Package, Clock, CheckCircle, XCircle, MoreHorizontal, Eye, Download, Truck, Activity, DollarSign, Calendar } from 'lucide-react';
+import { ShoppingCart, Package, Clock, CheckCircle, XCircle, MoreHorizontal, Eye, Download, Truck, Activity, DollarSign, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import { 
@@ -24,6 +26,8 @@ import { GET_ALL_ORDERS } from '../../../features/admin/api';
 
 export default function AdminOrdersPage() {
   const { data, loading, error } = useQuery(GET_ALL_ORDERS);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   const orders = data?.orders?.data || [];
 
@@ -68,6 +72,9 @@ export default function AdminOrdersPage() {
   const completedOrders = orders.filter((o: any) => o.status === 'COMPLETED').length;
   const activeOrders = orders.filter((o: any) => o.status === 'ACCEPTED' || o.status === 'PRINTING' || o.status === 'READY').length;
   const totalRevenue = orders.filter((o: any) => o.status === 'COMPLETED').reduce((sum: number, o: any) => sum + (o.totalPrice || 0), 0);
+
+  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
+  const paginatedOrders = orders.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <div className="space-y-6 animate-in fade-in">
@@ -144,7 +151,7 @@ export default function AdminOrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order: any) => (
+            {paginatedOrders.map((order: any) => (
               <TableRow key={order.id} className="border-fog hover:bg-paper/50 transition-colors">
                 <TableCell className="text-ink font-medium">
                   {order.id?.substring(0, 8)}...
@@ -215,6 +222,36 @@ export default function AdminOrdersPage() {
               <ShoppingCart className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
               <p className="text-lg font-medium text-ink">No orders found</p>
               <p className="text-sm text-steel mt-1">Orders will appear here when customers place them</p>
+            </div>
+          )}
+
+          {orders.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-sm text-steel">
+                Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, orders.length)}</span> of <span className="font-medium text-ink">{orders.length}</span> orders
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="h-8 border-fog text-ink"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="h-8 border-fog text-ink"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
           )}
         </div>

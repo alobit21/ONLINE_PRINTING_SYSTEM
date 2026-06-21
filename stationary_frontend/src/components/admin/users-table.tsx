@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { MoreHorizontal, Edit, Ban, Eye } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MoreHorizontal, Edit, Ban, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/LegacyButton';
 import { 
@@ -42,6 +42,13 @@ export function UsersTable({ users, loading }: UsersTableProps) {
   const [roleFilter, setRoleFilter] = useState('all');
   const [subscriptionFilter, setSubscriptionFilter] = useState('all');
 
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, roleFilter, subscriptionFilter]);
+
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,6 +58,9 @@ export function UsersTable({ users, loading }: UsersTableProps) {
     
     return matchesSearch && matchesRole && matchesSubscription;
   });
+
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+  const paginatedUsers = filteredUsers.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const getRoleBadge = (role: string) => {
     const styles = {
@@ -150,7 +160,7 @@ export function UsersTable({ users, loading }: UsersTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map((user) => (
+            {paginatedUsers.map((user) => (
               <TableRow key={user.id} className="border-fog hover:bg-paper/50 transition-colors">
                 <TableCell className="text-ink font-medium">{user.email}</TableCell>
                 <TableCell className="text-steel">{user.firstName || '-'}</TableCell>
@@ -194,6 +204,36 @@ export function UsersTable({ users, loading }: UsersTableProps) {
           </TableBody>
         </Table>
       </div>
+
+      {filteredUsers.length > 0 && totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4">
+          <p className="text-sm text-steel">
+            Showing <span className="font-medium text-ink">{(page - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-medium text-ink">{Math.min(page * ITEMS_PER_PAGE, filteredUsers.length)}</span> of <span className="font-medium text-ink">{filteredUsers.length}</span> results
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className="h-8 border-fog text-ink"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages}
+              className="h-8 border-fog text-ink"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {filteredUsers.length === 0 && (
         <div className="py-16 text-center border-2 border-dashed border-fog rounded-xl">
