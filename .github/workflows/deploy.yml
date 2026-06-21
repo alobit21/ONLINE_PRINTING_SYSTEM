@@ -90,63 +90,33 @@ jobs:
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/stationary-frontend:buildcache,mode=max
 
 
-  # ── Deploy to EC2 ──────────────────────────────────────────────────────────
-  deploy:
+  # ── Deploy to Contabo ────────────────────────────────────────────────────
+  deploy-contabo:
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Copy docker-compose.prod.yml to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.CONTABO_HOST }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          key: ${{ secrets.CONTABO_SSH_KEY }}
           source: "docker-compose.prod.yml"
-          target: "/home/ubuntu/stationary_app"
+          target: "/home/tarxemo/stationary_app"
 
-      - name: Deploy on EC2
+      - name: Deploy on Contabo
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.CONTABO_HOST }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          key: ${{ secrets.CONTABO_SSH_KEY }}
           script: |
             set -e
-            cd /home/ubuntu/stationary_app
+            cd /home/tarxemo/stationary_app
 
-            # Create .env if it doesn't exist yet (first deploy only — won't overwrite existing secrets)
-            if [ ! -f .env ]; then
-              echo "No .env found — creating from template. EDIT THIS FILE WITH REAL VALUES."
-              cat > .env << 'ENVEOF'
-            SECRET_KEY=changeme-generate-a-real-secret-key
-            DEBUG=False
-            ALLOWED_HOSTS=*
-            DB_NAME=stationary_db
-            DB_USER=stationary_user
-            DB_PASSWORD=changeme-strong-password
-            DB_HOST=db
-            DB_PORT=5432
-            REDIS_URL=redis://redis:6379/0
-            CLICKPESA_CLIENT_ID=
-            CLICKPESA_API_KEY=
-            CLICKPESA_SECRET_KEY=
-            BASE_URL=http://CHANGE_TO_SERVER_IP:8001
-            FRONTEND_URL=http://CHANGE_TO_SERVER_IP:3001
-            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-            ENVEOF
-            fi
+            # .env already exists on this server with correct values — never overwrite it here
 
-            # Make sure DOCKERHUB_USERNAME is always current (used by compose to pull correct image)
-            sed -i '/^DOCKERHUB_USERNAME=/d' .env
-            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env
-
-            # Pull latest images and restart
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
-
-            # Clean up old unused images to save disk space
             docker image prune -f
