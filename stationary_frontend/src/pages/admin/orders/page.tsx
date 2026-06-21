@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@apollo/client/react';
-import { ShoppingCart, Package, Clock, CheckCircle, XCircle, MoreHorizontal, Eye, Download, Truck } from 'lucide-react';
+import { ShoppingCart, Package, Clock, CheckCircle, XCircle, MoreHorizontal, Eye, Download, Truck, Activity, DollarSign, Calendar } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import { 
@@ -64,6 +64,11 @@ export default function AdminOrdersPage() {
     });
   };
 
+  const totalOrders = orders.length;
+  const completedOrders = orders.filter((o: any) => o.status === 'COMPLETED').length;
+  const activeOrders = orders.filter((o: any) => o.status === 'ACCEPTED' || o.status === 'PRINTING' || o.status === 'READY').length;
+  const totalRevenue = orders.filter((o: any) => o.status === 'COMPLETED').reduce((sum: number, o: any) => sum + (o.totalPrice || 0), 0);
+
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
@@ -76,9 +81,53 @@ export default function AdminOrdersPage() {
           <p className="text-steel text-sm">Manage all platform orders and fulfillment</p>
         </div>
         <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
-          Total: {orders.length} orders
+          Total: {totalOrders} orders
         </div>
       </div>
+
+      {/* Top Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-hp-primary/10 flex items-center justify-center flex-shrink-0">
+            <ShoppingCart className="h-6 w-6 text-hp-primary" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Total Orders</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{totalOrders}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-info/10 flex items-center justify-center flex-shrink-0">
+            <Activity className="h-6 w-6 text-info" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Active / Printing</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{activeOrders}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-success/10 flex items-center justify-center flex-shrink-0">
+            <CheckCircle className="h-6 w-6 text-success" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Completed</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{completedOrders}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+            <DollarSign className="h-6 w-6 text-emerald-500" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Est. Revenue</p>
+            <p className="text-xl font-bold text-ink leading-tight">TZS {totalRevenue.toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        {/* Main / Centered Content */}
+        <div className="xl:col-span-3 space-y-6">
 
       {/* Orders Table */}
       <div className="bg-cloud border border-fog rounded-xl overflow-hidden shadow-sm">
@@ -161,13 +210,69 @@ export default function AdminOrdersPage() {
         </Table>
       </div>
 
-      {orders.length === 0 && (
-        <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
-          <ShoppingCart className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
-          <p className="text-lg font-medium text-ink">No orders found</p>
-          <p className="text-sm text-steel mt-1">Orders will appear here when customers place them</p>
+          {orders.length === 0 && (
+            <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
+              <ShoppingCart className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
+              <p className="text-lg font-medium text-ink">No orders found</p>
+              <p className="text-sm text-steel mt-1">Orders will appear here when customers place them</p>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Right Column */}
+        <div className="xl:col-span-1 space-y-6">
+          {/* Quick Actions */}
+          <div className="bg-cloud border border-fog rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide mb-4">Quick Actions</h3>
+            <div className="space-y-3">
+              <button className="w-full flex items-center justify-start gap-2 bg-hp-primary hover:bg-hp-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                <Download className="h-4 w-4" />
+                Export Orders CSV
+              </button>
+              <button className="w-full flex items-center justify-start gap-2 border border-fog hover:bg-paper text-ink px-4 py-2 rounded-lg font-medium transition-colors">
+                <Calendar className="h-4 w-4 text-graphite" />
+                Filter by Date
+              </button>
+            </div>
+          </div>
+
+          {/* Fulfillment Summary */}
+          <div className="bg-cloud border border-fog rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide mb-4">Fulfillment Status</h3>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-steel">Completion Rate</span>
+                  <span className="font-medium text-ink">
+                    {totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-fog rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-success h-2 rounded-full" 
+                    style={{ width: `${totalOrders > 0 ? (completedOrders / totalOrders) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-steel">Active Load</span>
+                  <span className="font-medium text-info">
+                    {totalOrders > 0 ? Math.round((activeOrders / totalOrders) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-fog rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-info h-2 rounded-full" 
+                    style={{ width: `${totalOrders > 0 ? (activeOrders / totalOrders) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

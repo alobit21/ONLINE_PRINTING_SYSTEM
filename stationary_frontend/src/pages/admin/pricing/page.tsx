@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Edit, Trash2, Plus, MoreHorizontal } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Edit, Trash2, Plus, MoreHorizontal, Settings, Tag } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import { 
@@ -162,6 +162,11 @@ export default function AdminPricingPage() {
     );
   }
 
+  const totalRules = pricingRules.length;
+  const activeRules = pricingRules.filter(r => r.isActive).length;
+  const totalDiscounts = discounts.length;
+  const activeDiscounts = discounts.filter(d => d.isActive).length;
+
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
@@ -173,11 +178,54 @@ export default function AdminPricingPage() {
           </h1>
           <p className="text-steel text-sm">Manage service pricing rules and discounts</p>
         </div>
-        <Button className="bg-hp-primary hover:bg-hp-primary/90 text-white rounded-lg">
-          <Plus className="h-4 w-4 mr-2" />
-          Add New Rule
-        </Button>
+        <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
+          {totalRules} Rules • {totalDiscounts} Discounts
+        </div>
       </div>
+
+      {/* Top Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-hp-primary/10 flex items-center justify-center flex-shrink-0">
+            <DollarSign className="h-6 w-6 text-hp-primary" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Base Rules</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{totalRules}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-success/10 flex items-center justify-center flex-shrink-0">
+            <TrendingUp className="h-6 w-6 text-success" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Active Rules</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{activeRules}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+            <Tag className="h-6 w-6 text-purple-500" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Total Discounts</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{totalDiscounts}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-info/10 flex items-center justify-center flex-shrink-0">
+            <TrendingDown className="h-6 w-6 text-info" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Active Discounts</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{activeDiscounts}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        {/* Main / Centered Content */}
+        <div className="xl:col-span-3 space-y-6">
 
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-cloud border border-fog p-1 rounded-xl max-w-sm">
@@ -324,6 +372,62 @@ export default function AdminPricingPage() {
           </Table>
         </div>
       )}
+        </div>
+
+        {/* Right Column */}
+        <div className="xl:col-span-1 space-y-6">
+          {/* Quick Actions */}
+          <div className="bg-cloud border border-fog rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide mb-4">Quick Actions</h3>
+            <div className="space-y-3">
+              <Button className="w-full justify-start bg-hp-primary hover:bg-hp-primary/90 text-white rounded-lg">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Pricing Rule
+              </Button>
+              <Button variant="outline" className="w-full justify-start border-fog hover:bg-paper text-ink rounded-lg">
+                <Tag className="h-4 w-4 mr-2 text-purple-500" />
+                Add Discount Range
+              </Button>
+            </div>
+          </div>
+
+          {/* Pricing Config Summary */}
+          <div className="bg-cloud border border-fog rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide mb-4">Configuration Health</h3>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-steel">Rules Coverage</span>
+                  <span className="font-medium text-ink">
+                    {totalRules > 0 ? Math.round((activeRules / totalRules) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-fog rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-success h-2 rounded-full" 
+                    style={{ width: `${totalRules > 0 ? (activeRules / totalRules) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-steel">Discount Usage</span>
+                  <span className="font-medium text-info">
+                    {totalDiscounts > 0 ? Math.round((activeDiscounts / totalDiscounts) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-fog rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-info h-2 rounded-full" 
+                    style={{ width: `${totalDiscounts > 0 ? (activeDiscounts / totalDiscounts) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

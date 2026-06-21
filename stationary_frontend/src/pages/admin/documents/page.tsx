@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { FileText, Download, Trash2, MoreHorizontal, Eye, File, Image, FileArchive } from 'lucide-react';
+import { FileText, Download, Trash2, MoreHorizontal, Eye, File, Image, FileArchive, ShieldAlert, CheckCircle, Database } from 'lucide-react';
 import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/LegacyButton';
 import { 
@@ -75,6 +75,11 @@ export default function AdminDocumentsPage() {
     </Badge>
   );
 
+  const totalDocuments = documents.length;
+  const safeDocuments = documents.filter((d: any) => d.isScanned && !d.virusDetected).length;
+  const pendingScan = documents.filter((d: any) => !d.isScanned).length;
+  const totalSize = documents.reduce((acc: number, curr: any) => acc + (curr.fileSize || 0), 0);
+
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Page Header */}
@@ -87,9 +92,53 @@ export default function AdminDocumentsPage() {
           <p className="text-steel text-sm">Manage all platform documents and files</p>
         </div>
         <div className="text-sm font-medium text-steel bg-cloud border border-fog px-4 py-2 rounded-lg">
-          Total: {documents.length} documents
+          Total: {totalDocuments} documents
         </div>
       </div>
+
+      {/* Top Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-hp-primary/10 flex items-center justify-center flex-shrink-0">
+            <FileText className="h-6 w-6 text-hp-primary" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Total Files</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{totalDocuments}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-success/10 flex items-center justify-center flex-shrink-0">
+            <CheckCircle className="h-6 w-6 text-success" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Safe & Scanned</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{safeDocuments}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-warning/10 flex items-center justify-center flex-shrink-0">
+            <ShieldAlert className="h-6 w-6 text-warning" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Pending Scan</p>
+            <p className="text-2xl font-bold text-ink leading-tight">{pendingScan}</p>
+          </div>
+        </div>
+        <div className="bg-cloud border border-fog rounded-xl p-5 flex items-center gap-4 hover:border-steel transition-colors">
+          <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+            <Database className="h-6 w-6 text-purple-500" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-steel uppercase tracking-wide">Storage Used</p>
+            <p className="text-xl font-bold text-ink leading-tight">{formatFileSize(totalSize)}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        {/* Main / Centered Content */}
+        <div className="xl:col-span-3 space-y-6">
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -211,13 +260,69 @@ export default function AdminDocumentsPage() {
         </Table>
       </div>
 
-      {filteredDocuments.length === 0 && (
-        <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
-          <FileText className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
-          <p className="text-lg font-medium text-ink">No documents found</p>
-          <p className="text-sm text-steel mt-1">Documents will appear here when users upload them</p>
+          {filteredDocuments.length === 0 && (
+            <div className="col-span-full py-16 text-center border-2 border-dashed border-fog rounded-xl">
+              <FileText className="h-12 w-12 mx-auto mb-3 text-steel opacity-50" />
+              <p className="text-lg font-medium text-ink">No documents found</p>
+              <p className="text-sm text-steel mt-1">Documents will appear here when users upload them</p>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Right Column */}
+        <div className="xl:col-span-1 space-y-6">
+          {/* Quick Actions */}
+          <div className="bg-cloud border border-fog rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide mb-4">Quick Actions</h3>
+            <div className="space-y-3">
+              <button className="w-full flex items-center justify-start gap-2 bg-hp-primary hover:bg-hp-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                <ShieldAlert className="h-4 w-4" />
+                Scan All Pending
+              </button>
+              <button className="w-full flex items-center justify-start gap-2 border border-fog hover:bg-paper text-ink px-4 py-2 rounded-lg font-medium transition-colors">
+                <Trash2 className="h-4 w-4 text-error" />
+                Clear Infected Files
+              </button>
+            </div>
+          </div>
+
+          {/* Storage Summary */}
+          <div className="bg-cloud border border-fog rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wide mb-4">Storage Health</h3>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-steel">Scan Coverage</span>
+                  <span className="font-medium text-ink">
+                    {totalDocuments > 0 ? Math.round(((totalDocuments - pendingScan) / totalDocuments) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-fog rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-success h-2 rounded-full" 
+                    style={{ width: `${totalDocuments > 0 ? ((totalDocuments - pendingScan) / totalDocuments) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-steel">Malware Detected</span>
+                  <span className="font-medium text-error">
+                    {totalDocuments > 0 ? Math.round(((totalDocuments - safeDocuments - pendingScan) / totalDocuments) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full bg-fog rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-error h-2 rounded-full" 
+                    style={{ width: `${totalDocuments > 0 ? ((totalDocuments - safeDocuments - pendingScan) / totalDocuments) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
